@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Negocio;
+using Dominio;
 
 namespace TPC_Equipo20B
 {
@@ -11,7 +13,19 @@ namespace TPC_Equipo20B
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
+                cargarProductos();
+            }
+        }
 
+        private void cargarProductos()
+        {
+            ProductoNegocio negocio = new ProductoNegocio();
+            List<Producto> lista = negocio.Listar();
+
+            gvProductos.DataSource = lista;
+            gvProductos.DataBind();
         }
     }
 }
