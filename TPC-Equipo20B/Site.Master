@@ -1,0 +1,133 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="TPC_Equipo20B.Site" %>
+
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AGIAPURR distribuidora</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#11d452",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                        "card-light": "#ffffff",
+                        "card-dark": "#182c1e",
+                        "border-light": "#dbe6df",
+                        "border-dark": "#344a3b"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Manrope', sans-serif; }
+        .menu-link {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            color: #334155; /* slate-700 */
+            transition: all 0.2s;
+        }
+        .menu-link:hover, .menu-link.active {
+            background-color: rgba(17, 212, 82, 0.1);
+            color: #11d452;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 min-h-screen">
+    <form id="form1" runat="server">
+
+        <!-- Contenedor principal -->
+        <div class="flex min-h-screen">
+
+            <!-- 🟩 Sidebar -->
+            <aside class="w-64 bg-card-light dark:bg-card-dark border-r border-border-light dark:border-border-dark flex flex-col fixed inset-y-0 left-0">
+                <div class="p-6 border-b border-border-light dark:border-border-dark">
+                    <div class="flex items-center gap-3">
+                        <div class="size-6 text-primary">
+                            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white">AGIAPURR</h2>
+                    </div>
+                </div>
+
+                <!-- Navegación -->
+                <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+
+                    <!-- 🟢 General -->
+                    <span class="block px-3 py-2 text-xs uppercase text-slate-400 dark:text-slate-500">General</span>
+                    <asp:LinkButton ID="lnkDashboard" runat="server" CssClass="menu-link" OnClick="lnkDashboard_Click">🏠 Dashboard</asp:LinkButton>
+                    <asp:LinkButton ID="lnkVentas" runat="server" CssClass="menu-link" OnClick="lnkVentas_Click">💸 Ventas</asp:LinkButton>
+                    <asp:LinkButton ID="lnkCompras" runat="server" CssClass="menu-link" OnClick="lnkCompras_Click">🧾 Compras</asp:LinkButton>
+
+                    <!-- 🧱 Gestión -->
+                    <span class="block px-3 py-2 mt-4 text-xs uppercase text-slate-400 dark:text-slate-500">Gestión</span>
+                    <asp:LinkButton ID="lnkProductos" runat="server" CssClass="menu-link" OnClick="lnkProductos_Click">📦 Productos</asp:LinkButton>
+                    <asp:LinkButton ID="lnkCategorias" runat="server" CssClass="menu-link" OnClick="lnkCategorias_Click">🏷️ Categorías</asp:LinkButton>
+                    <asp:LinkButton ID="lnkMarcas" runat="server" CssClass="menu-link" OnClick="lnkMarcas_Click">🧩 Marcas</asp:LinkButton>
+                    <asp:LinkButton ID="lnkProveedores" runat="server" CssClass="menu-link" OnClick="lnkProveedores_Click">🚚 Proveedores</asp:LinkButton>
+                    <asp:LinkButton ID="lnkClientes" runat="server" CssClass="menu-link" OnClick="lnkClientes_Click">👥 Clientes</asp:LinkButton>
+
+                    <!-- 📊 Reportes -->
+                    <span class="block px-3 py-2 mt-4 text-xs uppercase text-slate-400 dark:text-slate-500">Reportes</span>
+                    <asp:LinkButton ID="lnkReportes" runat="server" CssClass="menu-link" OnClick="lnkReportes_Click">📈 Informes</asp:LinkButton>
+
+                </nav>
+
+                <!-- 🔴 Cerrar sesión -->
+                <div class="p-4 border-t border-border-light dark:border-border-dark">
+                    <asp:LinkButton ID="lnkLogout" runat="server" CssClass="text-sm text-red-500 font-semibold hover:underline" OnClick="lnkLogout_Click">
+                        Cerrar sesión
+                    </asp:LinkButton>
+                </div>
+            </aside>
+
+            <!-- 🧭 Contenido principal -->
+            <div class="flex-1 flex flex-col ml-64">
+                <!-- Header -->
+                <header class="flex justify-between items-center px-8 py-4 border-b border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark/50">
+                    <h1 class="text-xl font-bold text-slate-900 dark:text-white">Panel Principal</h1>
+                    <span class="text-sm text-slate-700 dark:text-slate-300 font-medium">
+                        Bienvenido, <span class="text-primary font-semibold">Admin</span>
+                    </span>
+                </header>
+
+                <!-- Contenido dinámico -->
+                <main class="flex-1 p-8 overflow-y-auto">
+                    <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
+                </main>
+
+                <!-- Footer -->
+                <footer class="text-center p-3 border-t border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark/50 text-sm text-placeholder-light dark:text-placeholder-dark">
+                    TP Cuatrimestral - Equipo 20B © 2025
+                </footer>
+            </div>
+        </div>
+
+    </form>
+</body>
+</html>
+
