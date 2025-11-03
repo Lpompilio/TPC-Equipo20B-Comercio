@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
+using Negocio;
 
 namespace TPC_Equipo20B
 {
@@ -11,28 +7,34 @@ namespace TPC_Equipo20B
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (!IsPostBack)
+                CargarGrid();
         }
 
-        private void CargarProductos()
+        private void CargarGrid()
         {
-            // Pendiente: Cargar gvProductos con lista de productos.
+            ProductoNegocio negocio = new ProductoNegocio();
+            gvProductos.DataSource = negocio.Listar();
+            gvProductos.DataBind();
         }
 
         protected void btnAgregarProducto_Click(object sender, EventArgs e)
         {
-            Response.Redirect("AgregarProducto.aspx");
+            Response.Redirect("ProductoEditar.aspx");
         }
 
-        protected void btnFiltrar_Click(object sender, EventArgs e)
+        protected void gvProductos_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
         {
-            // Pendiente: aplicar filtros según los valores seleccionados
-        }
+            int id = Convert.ToInt32(e.CommandArgument);
 
-        protected void gvProductos_RowCommand(object sender, GridViewCommandEventArgs e)
-        {
-            // Pendiente: lógica para editar o eliminar
+            if (e.CommandName == "Editar")
+                Response.Redirect("ProductoEditar.aspx?id=" + id);
+            else if (e.CommandName == "Eliminar")
+            {
+                ProductoNegocio negocio = new ProductoNegocio();
+                negocio.Eliminar(id);
+                CargarGrid();
+            }
         }
     }
-
 }

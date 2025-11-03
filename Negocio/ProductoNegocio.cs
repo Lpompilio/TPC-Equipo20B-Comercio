@@ -1,59 +1,107 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Dominio;
+using System.Data.SqlClient;
 
 namespace Negocio
 {
     public class ProductoNegocio
     {
-
         public List<Producto> Listar()
         {
+            List<Producto> lista = new List<Producto>();
             AccesoDatos datos = new AccesoDatos();
 
             try
             {
-                datos.setearConsulta("Select Id, CodigoSKU, Descripcion, StockMinimo, StockActual, PorcentajeGanancia, UrlImagen, Activo from Productos;");
+                datos.setearConsulta("SELECT Id, CodigoSKU, Descripcion, StockMinimo, StockActual, PorcentajeGanancia, UrlImagen, Activo FROM Productos");
                 datos.ejecutarLectura();
-
-                List<Producto> lista = new List<Producto>();
 
                 while (datos.Lector.Read())
                 {
-                    Producto aux = new Producto();
+                    Producto p = new Producto
+                    {
+                        Id = (int)datos.Lector["Id"],
+                        CodigoSKU = (string)datos.Lector["CodigoSKU"],
+                        Descripcion = (string)datos.Lector["Descripcion"],
+                        StockMinimo = (decimal)datos.Lector["StockMinimo"],
+                        StockActual = (decimal)datos.Lector["StockActual"],
+                        PorcentajeGanancia = (decimal)datos.Lector["PorcentajeGanancia"],
+                        UrlImagen = datos.Lector["UrlImagen"] is DBNull ? "" : (string)datos.Lector["UrlImagen"],
+                        Activo = datos.Lector["Activo"] is DBNull ? false : (bool)datos.Lector["Activo"]
+                    };
+                    lista.Add(p);
+                }
+                return lista;
+            }
+            finally { datos.CerrarConexion(); }
+        }
 
-                    aux.Id = (int)datos.Lector["Id"];
-                    aux.CodigoSKU = (string)datos.Lector["CodigoSKU"];
-                    aux.Descripcion = (string)datos.Lector["Descripcion"];
-                    aux.StockMinimo = (decimal)datos.Lector["StockMinimo"];
-                    aux.StockActual = (decimal)datos.Lector["StockActual"];
-                    aux.PorcentajeGanancia = (decimal)datos.Lector["PorcentajeGanancia"];
+        public Producto ObtenerPorId(int id)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.setearConsulta("SELECT * FROM Productos WHERE Id=@id");
+                datos.setearParametro("@id", id);
+                datos.ejecutarLectura();
 
-                    if (!(datos.Lector["UrlImagen"] is DBNull))
-                        aux.UrlImagen = (string)datos.Lector["UrlImagen"];
+                if (datos.Lector.Read())
+                {
+                    Producto p = new Producto
+                    {
+                        Id = (int)datos.Lector["Id"],
+                        CodigoSKU = (string)datos.Lector["CodigoSKU"],
+                        Descripcion = (string)datos.Lector["Descripcion"],
+                        StockMinimo = (decimal)datos.Lector["StockMinimo"],
+                        StockActual = (decimal)datos.Lector["StockActual"],
+                        PorcentajeGanancia = (decimal)datos.Lector["PorcentajeGanancia"],
+                        UrlImagen = datos.Lector["UrlImagen"] is DBNull ? "" : (string)datos.Lector["UrlImagen"],
+                        Activo = datos.Lector["Activo"] is DBNull ? false : (bool)datos.Lector["Activo"]
+                    };
+                    return p;
+                }
+                return null;
+            }
+            finally { datos.CerrarConexion(); }
+        }
 
-                    if (!(datos.Lector["Activo"] is DBNull))
-                        aux.Activo = (bool)datos.Lector["Activo"];
-
-                    aux.Marca = null;
-                    aux.Categoria = null;
-                    aux.Proveedor = null;
-
-                    lista.Add(aux);
+        public void Guardar(Producto p)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                if (p.Id == 0)
+                    datos.setearConsulta("INSERT INTO Productos (CodigoSKU, Descripcion, StockMinimo, StockActual, PorcentajeGanancia, UrlImagen, Activo) VALUES (@sku, @desc, @min, @act, @gan, @img, @actv)");
+                else
+                {
+                    datos.setearConsulta("UPDATE Productos SET CodigoSKU=@sku, Descripcion=@desc, StockMinimo=@min, StockActual=@act, PorcentajeGanancia=@gan, UrlImagen=@img, Activo=@actv WHERE Id=@id");
+                    datos.setearParametro("@id", p.Id);
                 }
 
+                datos.setearParametro("@sku", p.CodigoSKU);
+                datos.setearParametro("@desc", p.Descripcion);
+                datos.setearParametro("@min", p.StockMinimo);
+                datos.setearParametro("@act", p.StockActual);
+                datos.setearParametro("@gan", p.PorcentajeGanancia);
+                datos.setearParametro("@img", p.UrlImagen);
+                datos.setearParametro("@actv", p.Activo);
 
-                return lista;
-
+                datos.ejecutarAccion();
             }
+            finally { datos.CerrarConexion(); }
+        }
 
-            finally
+        public void Eliminar(int id)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
             {
-                datos.CerrarConexion();
+                datos.setearConsulta("DELETE FROM Productos WHERE Id=@id");
+                datos.setearParametro("@id", id);
+                datos.ejecutarAccion();
             }
+            finally { datos.CerrarConexion(); }
         }
     }
 }
