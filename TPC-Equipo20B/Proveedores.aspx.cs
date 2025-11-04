@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Dominio;
+using Negocio;
 
 namespace TPC_Equipo20B
 {
@@ -12,14 +14,14 @@ namespace TPC_Equipo20B
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
-            {
-                //CargarProveedores();
-            }
+                CargarGrid();
         }
 
-        private void CargarProveedores()
+        private void CargarGrid()
         {
-            // Pendiente: Cargar gvProveedores con lista de proveedores desde la base de datos.
+            ProveedorNegocio negocio = new ProveedorNegocio();
+            gvProveedores.DataSource = negocio.Listar();
+            gvProveedores.DataBind();
         }
 
         protected void btnAgregarProveedor_Click(object sender, EventArgs e)
@@ -27,9 +29,23 @@ namespace TPC_Equipo20B
             Response.Redirect("AgregarProveedor.aspx");
         }
 
-        protected void btnBuscarProveedor_Click(object sender, EventArgs e)
+        protected void gvProveedores_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            // Pendiente: Filtrar gvProveedores según el texto en txtBuscarProveedor.Text.
+            if (e.CommandArgument == null)
+                return;
+
+            int id = Convert.ToInt32(e.CommandArgument);
+
+            switch (e.CommandName)
+            {
+                case "Editar":
+                    Response.Redirect("AgregarProveedor.aspx?id=" + id);
+                    break;
+
+                case "Eliminar":
+                    Response.Redirect("ConfirmarEliminar.aspx?entidad=proveedor&id=" + id);
+                    break;
+            }
         }
     }
 }

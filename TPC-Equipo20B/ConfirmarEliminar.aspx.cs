@@ -52,6 +52,11 @@ namespace TPC_Equipo20B
                     Response.Redirect("Categorias.aspx");
                     break;
 
+                case "proveedor":
+                    new ProveedorNegocio().Eliminar(id);
+                    Response.Redirect("Proveedores.aspx");
+                    break;
+
                 default:
                     Response.Redirect("Dashboard.aspx");
                     break;
@@ -74,6 +79,10 @@ namespace TPC_Equipo20B
 
                 case "categoria":
                     Response.Redirect("Categorias.aspx");
+                    break;
+
+                case "proveedor":
+                    Response.Redirect("Proveedores.aspx");
                     break;
 
                 default:
