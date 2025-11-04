@@ -1,5 +1,6 @@
-﻿using System;
-using Negocio;
+﻿using Negocio;
+using System;
+using System.Web.UI.WebControls;
 
 namespace TPC_Equipo20B
 {
@@ -20,21 +21,27 @@ namespace TPC_Equipo20B
 
         protected void btnAgregarProducto_Click(object sender, EventArgs e)
         {
-            Response.Redirect("ProductoEditar.aspx");
+            Response.Redirect("AgregarProducto.aspx");
         }
 
-        protected void gvProductos_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
+        protected void gvProductos_RowCommand(object sender, GridViewCommandEventArgs e)
         {
+            if (e.CommandArgument == null)
+                return;
+
             int id = Convert.ToInt32(e.CommandArgument);
 
-            if (e.CommandName == "Editar")
-                Response.Redirect("ProductoEditar.aspx?id=" + id);
-            else if (e.CommandName == "Eliminar")
+            switch (e.CommandName)
             {
-                ProductoNegocio negocio = new ProductoNegocio();
-                negocio.Eliminar(id);
-                CargarGrid();
+                case "Editar":
+                    Response.Redirect("AgregarProducto.aspx?id=" + id);
+                    break;
+
+                case "Eliminar":
+                    Response.Redirect("ConfirmarEliminar.aspx?entidad=producto&id=" + id);
+                    break;
             }
         }
+
     }
 }

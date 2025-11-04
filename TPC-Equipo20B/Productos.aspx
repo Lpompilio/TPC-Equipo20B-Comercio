@@ -23,8 +23,10 @@
             <asp:TemplateField HeaderText="Acciones">
                 <ItemTemplate>
                     <asp:LinkButton ID="cmdEditar" runat="server" CommandName="Editar" CommandArgument='<%# Eval("Id") %>' CssClass="btn btn-sm btn-primary me-2">Editar</asp:LinkButton>
-                    <asp:LinkButton ID="cmdEliminar" runat="server" CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>'
-                        CssClass="btn btn-sm btn-danger" OnClientClick="return confirm('¿Eliminar producto?');">Eliminar</asp:LinkButton>
+                    <asp:LinkButton ID="cmdEliminar" runat="server"
+                        CssClass="btn btn-sm btn-danger"
+                        CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>'>Eliminar</asp:LinkButton>
+
                 </ItemTemplate>
             </asp:TemplateField>
         </Columns>

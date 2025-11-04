@@ -74,6 +74,7 @@
     <Content Include="AgregarProveedor.aspx" />
     <Content Include="Categorias.aspx" />
     <Content Include="Clientes.aspx" />
+    <Content Include="ConfirmarEliminar.aspx" />
     <Content Include="Dashboard.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="Global.asax" />
@@ -133,6 +134,13 @@
     </Compile>
     <Compile Include="Clientes.aspx.designer.cs">
       <DependentUpon>Clientes.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ConfirmarEliminar.aspx.cs">
+      <DependentUpon>ConfirmarEliminar.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ConfirmarEliminar.aspx.designer.cs">
+      <DependentUpon>ConfirmarEliminar.aspx</DependentUpon>
     </Compile>
     <Compile Include="Dashboard.aspx.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>

@@ -1,21 +1,22 @@
 ﻿// UI/Categorias.aspx.cs
-using System;
 using Negocio;
+using System;
+using System.Web.UI.WebControls;
 
 namespace TPC_Equipo20B
 {
     public partial class Categorias : System.Web.UI.Page
     {
-        private readonly CategoriaNegocio _negocio = new CategoriaNegocio();
-
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack) CargarGrid();
+            if (!IsPostBack)
+                CargarGrid();
         }
 
-        private void CargarGrid(string filtro = null)
+        private void CargarGrid()
         {
-            gvCategorias.DataSource = _negocio.Listar(filtro);
+            CategoriaNegocio negocio = new CategoriaNegocio();
+            gvCategorias.DataSource = negocio.Listar();
             gvCategorias.DataBind();
         }
 
@@ -24,10 +25,23 @@ namespace TPC_Equipo20B
             Response.Redirect("AgregarCategoria.aspx");
         }
 
-        
-        protected void txtBuscar_TextChanged(object sender, EventArgs e)
+        protected void gvCategorias_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            CargarGrid(txtBuscar.Text.Trim());
+            if (e.CommandArgument == null)
+                return;
+
+            int id = Convert.ToInt32(e.CommandArgument);
+
+            switch (e.CommandName)
+            {
+                case "Editar":
+                    Response.Redirect("AgregarCategoria.aspx?id=" + id);
+                    break;
+
+                case "Eliminar":
+                    Response.Redirect("ConfirmarEliminar.aspx?entidad=categoria&id=" + id);
+                    break;
+            }
         }
     }
 }

@@ -11,26 +11,17 @@ namespace TPC_Equipo20B
 {
 
 
-    public partial class AgregarCategoria
+    public partial class ConfirmarEliminar
     {
 
         /// <summary>
-        /// Control lblTitulo.
+        /// Control lblMensaje.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl lblTitulo;
-
-        /// <summary>
-        /// Control txtNombre.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtNombre;
+        protected global::System.Web.UI.WebControls.Label lblMensaje;
 
         /// <summary>
         /// Control btnCancelar.
@@ -42,12 +33,12 @@ namespace TPC_Equipo20B
         protected global::System.Web.UI.WebControls.Button btnCancelar;
 
         /// <summary>
-        /// Control btnGuardar.
+        /// Control btnConfirmar.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnGuardar;
+        protected global::System.Web.UI.WebControls.Button btnConfirmar;
     }
 }

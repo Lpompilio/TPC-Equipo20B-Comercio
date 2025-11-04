@@ -2,29 +2,52 @@
     AutoEventWireup="true" CodeBehind="Marcas.aspx.cs" Inherits="TPC_Equipo20B.Marcas" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-3xl font-bold text-slate-900 dark:text-white">Gestión de Marcas</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold">Gestión de Marcas</h2>
         <asp:Button ID="btnAgregarMarca" runat="server"
-            Text="Agregar Marca"
-            CssClass="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-background-dark font-semibold hover:bg-primary/90 transition"
+            Text="➕ Agregar Marca"
+            CssClass="btn btn-success"
             OnClick="btnAgregarMarca_Click" />
     </div>
 
-    <div class="flex flex-col md:flex-row gap-4 mb-6">
-        <div class="flex-grow">
-            <div class="relative">
-                <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-500 dark:text-slate-400">search</span>
-                <asp:TextBox ID="txtBuscar" runat="server" placeholder="Buscar marca..."
-                    CssClass="w-full pl-10 pr-4 py-2 border border-border-light dark:border-border-dark rounded-lg bg-white dark:bg-background-dark text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/50" />
-            </div>
+    <!-- Buscador -->
+    <div class="mb-3">
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="bi bi-search"></i>
+            </span>
+            <asp:TextBox ID="txtBuscar" runat="server" CssClass="form-control" placeholder="Buscar marca..." />
         </div>
     </div>
 
-    <asp:GridView ID="gvMarcas" runat="server" AutoGenerateColumns="False"
-        CssClass="w-full border border-border-light dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-background-dark">
+    <!-- Grilla -->
+    <asp:GridView ID="gvMarcas" runat="server"
+        AutoGenerateColumns="False"
+        CssClass="table table-hover align-middle"
+        DataKeyNames="Id"
+        OnRowCommand="gvMarcas_RowCommand">
+
         <Columns>
-            <asp:BoundField DataField="Id" HeaderText="ID" />
-            <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
+            <asp:BoundField DataField="Nombre" HeaderText="Marca" />
+
+            <asp:TemplateField HeaderText="Acciones">
+                <ItemTemplate>
+                    <asp:LinkButton ID="cmdEditar" runat="server"
+                        CommandName="Editar"
+                        CommandArgument='<%# Eval("Id") %>'
+                        CssClass="btn btn-sm btn-primary me-2">
+                        <i class="bi bi-pencil"></i> Editar
+                    </asp:LinkButton>
+
+                    <asp:LinkButton ID="cmdEliminar" runat="server"
+                        CommandName="Eliminar"
+                        CommandArgument='<%# Eval("Id") %>'
+                        CssClass="btn btn-sm btn-danger">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </asp:LinkButton>
+                </ItemTemplate>
+            </asp:TemplateField>
         </Columns>
     </asp:GridView>
 </asp:Content>
+
