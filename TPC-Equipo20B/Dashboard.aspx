@@ -3,13 +3,13 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
-    <!-- 🔹 Título principal -->
+    <!-- Título principal -->
     <div class="mb-4">
         <h2 class="fw-bold text-dark">Panel de Control</h2>
         <p class="text-success small mb-0">Resumen general del negocio</p>
     </div>
 
-    <!-- 🔸 Sección 1: Resumen general -->
+    <!-- Sección 1: Resumen general -->
     <div class="row mb-4">
         <div class="col-md-4 mb-3">
             <div class="card shadow-sm border-success">
@@ -42,7 +42,7 @@
         </div>
     </div>
 
-    <!-- 🔸 Sección 2: Productos con stock bajo -->
+    <!-- Sección 2: Productos con stock bajo -->
     <h4 class="fw-bold text-dark mb-3">Productos con Stock Bajo</h4>
     <div class="card shadow-sm mb-5">
         <div class="card-body p-0">
@@ -58,7 +58,7 @@
         </div>
     </div>
 
-    <!-- 🔸 Sección 3: Últimas ventas -->
+    <!-- Sección 3: Últimas ventas -->
     <h4 class="fw-bold text-dark mb-3">Últimas Ventas</h4>
     <div class="card shadow-sm">
         <div class="card-body p-0">

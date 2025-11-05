@@ -1,58 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using Dominio;
 using Negocio;
+using Dominio;
 
 namespace TPC_Equipo20B
 {
     public partial class AgregarProveedor : System.Web.UI.Page
     {
-        private int idProveedor = 0;
+        private readonly ProveedorNegocio _negocio = new ProveedorNegocio();
+        private int Id => int.TryParse(Request.QueryString["id"], out var x) ? x : 0;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
+            if (!IsPostBack && Id != 0)
             {
-                // Modo edición si hay id 
-                if (Request.QueryString["id"] != null)
+                var p = _negocio.BuscarPorId(Id);
+                if (p != null)
                 {
-                    idProveedor = int.Parse(Request.QueryString["id"]);
-                    CargarProveedor(idProveedor);
+                    txtNombre.Text = p.Nombre;
+                    txtRazonSocial.Text = p.RazonSocial;
+                    txtDocumento.Text = p.Documento;
+                    txtIVA.Text = p.CondicionIVA;
+                    txtEmail.Text = p.Email;
+                    txtTelefono.Text = p.Telefono;
+                    txtDireccion.Text = p.Direccion;
+                    txtLocalidad.Text = p.Localidad;
                     lblTitulo.InnerText = "Editar Proveedor";
-                    btnGuardar.Text = "Guardar Cambios";
                 }
-            }
-        }
-
-        private void CargarProveedor(int id)
-        {
-            ProveedorNegocio negocio = new ProveedorNegocio();
-            Proveedor prov = negocio.BuscarPorId(id);
-
-            if (prov != null)
-            {
-                txtNombre.Text = prov.Nombre;
-                txtRazonSocial.Text = prov.RazonSocial;
-                txtDocumento.Text = prov.Documento;
-                txtEmail.Text = prov.Email;
-                txtTelefono.Text = prov.Telefono;
-                txtDireccion.Text = prov.Direccion;
-                txtLocalidad.Text = prov.Localidad;
-                txtIVA.Text = prov.CondicionIVA;
-
-                ViewState["idProveedor"] = id;
             }
         }
 
         protected void btnGuardar_Click(object sender, EventArgs e)
         {
-            ProveedorNegocio negocio = new ProveedorNegocio();
-            Proveedor p = new Proveedor
+            var p = new Proveedor
             {
+                Id = Id,
                 Nombre = txtNombre.Text.Trim(),
                 RazonSocial = txtRazonSocial.Text.Trim(),
                 Documento = txtDocumento.Text.Trim(),
@@ -63,18 +44,10 @@ namespace TPC_Equipo20B
                 CondicionIVA = txtIVA.Text.Trim()
             };
 
-            // Si estamos editando
-            if (ViewState["idProveedor"] != null)
-                p.Id = (int)ViewState["idProveedor"];
-
-            negocio.Guardar(p);
-
-            Response.Redirect("Proveedores.aspx", false);
+            _negocio.Guardar(p);
+            Response.Redirect("Proveedores.aspx");
         }
 
-        protected void btnCancelar_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("Proveedores.aspx", false);
-        }
+        protected void btnCancelar_Click(object sender, EventArgs e) => Response.Redirect("Proveedores.aspx");
     }
 }

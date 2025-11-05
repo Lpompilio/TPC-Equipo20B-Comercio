@@ -11,7 +11,7 @@
     <div class="card shadow-sm">
         <div class="card-body">
 
-            <!-- 🧾 Información básica -->
+            <!-- Información básica -->
             <div class="row g-3 mb-3">
                 <div class="col-md-6">
                     <label for="txtDescripcion" class="form-label">Descripción</label>
@@ -41,7 +41,7 @@
                 </div>
             </div>
 
-            <!-- 📦 Detalles de stock -->
+            <!-- Detalles de stock -->
             <div class="row g-3 mb-3">
                 <div class="col-md-4">
                     <label for="txtStockMinimo" class="form-label">Stock Mínimo</label>
@@ -59,13 +59,13 @@
                 </div>
             </div>
 
-            <!-- 🖼️ Imagen -->
+            <!-- Imagen -->
             <div class="mb-3">
                 <label for="txtUrlImagen" class="form-label">URL de Imagen (opcional)</label>
                 <asp:TextBox ID="txtUrlImagen" runat="server" CssClass="form-control" placeholder="https://..." />
             </div>
 
-            <!-- ⚙️ Estado -->
+            <!-- Estado -->
             <div class="form-check form-switch mb-3">
                 <asp:CheckBox ID="chkActivo" runat="server" Checked="true" CssClass="form-check-input" />
                 <label class="form-check-label" for="chkActivo">Producto activo</label>

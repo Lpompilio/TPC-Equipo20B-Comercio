@@ -1,22 +1,23 @@
-﻿// UI/Categorias.aspx.cs
-using Negocio;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.UI.WebControls;
+using Negocio;
+using Dominio;
 
 namespace TPC_Equipo20B
 {
     public partial class Categorias : System.Web.UI.Page
     {
+        private readonly CategoriaNegocio _negocio = new CategoriaNegocio();
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-                CargarGrid();
+            if (!IsPostBack) BindGrid();
         }
 
-        private void CargarGrid()
+        private void BindGrid(string filtro = null)
         {
-            CategoriaNegocio negocio = new CategoriaNegocio();
-            gvCategorias.DataSource = negocio.Listar();
+            gvCategorias.DataSource = _negocio.Listar(filtro);
             gvCategorias.DataBind();
         }
 
@@ -27,20 +28,15 @@ namespace TPC_Equipo20B
 
         protected void gvCategorias_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            if (e.CommandArgument == null)
-                return;
-
             int id = Convert.ToInt32(e.CommandArgument);
-
-            switch (e.CommandName)
+            if (e.CommandName == "Editar")
             {
-                case "Editar":
-                    Response.Redirect("AgregarCategoria.aspx?id=" + id);
-                    break;
-
-                case "Eliminar":
-                    Response.Redirect("ConfirmarEliminar.aspx?entidad=categoria&id=" + id);
-                    break;
+                Response.Redirect("AgregarCategoria.aspx?id=" + id);
+            }
+            else if (e.CommandName == "Eliminar")
+            {
+                string msg = "¿Desea eliminar la categoría?";
+                Response.Redirect($"ConfirmarEliminar.aspx?entidad=categoria&id={id}&msg={Server.UrlEncode(msg)}");
             }
         }
     }

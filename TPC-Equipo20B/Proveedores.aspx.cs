@@ -1,26 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using Dominio;
 using Negocio;
 
 namespace TPC_Equipo20B
 {
     public partial class Proveedores : System.Web.UI.Page
     {
+        private readonly ProveedorNegocio _negocio = new ProveedorNegocio();
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-                CargarGrid();
+            if (!IsPostBack) BindGrid();
         }
 
-        private void CargarGrid()
+        private void BindGrid()
         {
-            ProveedorNegocio negocio = new ProveedorNegocio();
-            gvProveedores.DataSource = negocio.Listar();
+            gvProveedores.DataSource = _negocio.Listar();
             gvProveedores.DataBind();
         }
 
@@ -31,20 +26,15 @@ namespace TPC_Equipo20B
 
         protected void gvProveedores_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            if (e.CommandArgument == null)
-                return;
-
             int id = Convert.ToInt32(e.CommandArgument);
-
-            switch (e.CommandName)
+            if (e.CommandName == "Editar")
             {
-                case "Editar":
-                    Response.Redirect("AgregarProveedor.aspx?id=" + id);
-                    break;
-
-                case "Eliminar":
-                    Response.Redirect("ConfirmarEliminar.aspx?entidad=proveedor&id=" + id);
-                    break;
+                Response.Redirect("AgregarProveedor.aspx?id=" + id);
+            }
+            else if (e.CommandName == "Eliminar")
+            {
+                string msg = "¿Desea eliminar el proveedor?";
+                Response.Redirect($"ConfirmarEliminar.aspx?entidad=proveedor&id={id}&msg={Server.UrlEncode(msg)}");
             }
         }
     }

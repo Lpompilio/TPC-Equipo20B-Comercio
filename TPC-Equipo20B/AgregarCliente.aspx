@@ -3,13 +3,13 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
-    <!-- 🟢 Encabezado -->
+    <!-- Encabezado -->
     <div class="mb-8">
         <h2 class="text-3xl font-bold text-slate-900 dark:text-white">Agregar Nuevo Cliente</h2>
         <p class="text-sm text-primary mt-1">Complete los datos del cliente</p>
     </div>
 
-    <!-- 📋 Formulario -->
+    <!-- Formulario -->
     <div class="bg-white dark:bg-background-dark rounded-xl p-8 border border-border-light dark:border-border-dark shadow-sm">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
 
@@ -76,7 +76,7 @@
 
         </div>
 
-        <!-- 🔘 Botones -->
+        <!-- Botones -->
         <div class="flex justify-end gap-4 mt-8 border-t border-border-light dark:border-border-dark pt-6">
             <asp:Button ID="btnCancelar" runat="server"
                 Text="Cancelar"

@@ -1,24 +1,21 @@
-﻿using Negocio;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
+﻿using System;
 using System.Web.UI.WebControls;
+using Negocio;
 
 namespace TPC_Equipo20B
 {
     public partial class Marcas : System.Web.UI.Page
     {
+        private readonly MarcaNegocio _negocio = new MarcaNegocio();
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-                CargarMarcas();
+            if (!IsPostBack) BindGrid();
         }
-        private void CargarMarcas()
+
+        private void BindGrid()
         {
-            MarcaNegocio negocio = new MarcaNegocio();
-            gvMarcas.DataSource = negocio.Listar();
+            gvMarcas.DataSource = _negocio.Listar();
             gvMarcas.DataBind();
         }
 
@@ -26,22 +23,18 @@ namespace TPC_Equipo20B
         {
             Response.Redirect("AgregarMarca.aspx");
         }
+
         protected void gvMarcas_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            if (e.CommandArgument == null)
-                return;
-
             int id = Convert.ToInt32(e.CommandArgument);
-
-            switch (e.CommandName)
+            if (e.CommandName == "Editar")
             {
-                case "Editar":
-                    Response.Redirect("AgregarMarca.aspx?id=" + id);
-                    break;
-
-                case "Eliminar":
-                    Response.Redirect("ConfirmarEliminar.aspx?entidad=marca&id=" + id);
-                    break;
+                Response.Redirect("AgregarMarca.aspx?id=" + id);
+            }
+            else if (e.CommandName == "Eliminar")
+            {
+                string msg = "¿Desea eliminar la marca?";
+                Response.Redirect($"ConfirmarEliminar.aspx?entidad=marca&id={id}&msg={Server.UrlEncode(msg)}");
             }
         }
     }

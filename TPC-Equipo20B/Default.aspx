@@ -71,7 +71,7 @@
                     Bienvenido de nuevo. Por favor, ingrese sus credenciales.
                 </p>
 
-                <!-- ✅ reemplazamos el <form> normal por este -->
+                
                 <form id="form1" runat="server" class="mt-8 flex flex-col gap-6">
 
                     <div class="flex flex-col gap-2">
@@ -99,7 +99,7 @@
                         <a class="text-sm font-medium text-primary hover:underline" href="#">Olvidé mi contraseña</a>
                     </div>
 
-                    <!-- ✅ ahora este botón sí funciona -->
+                  
                     <asp:Button ID="btnLogin" runat="server"
                         Text="Iniciar Sesión"
                         CssClass="flex h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary text-base font-bold text-background-dark transition-colors hover:bg-primary/90"

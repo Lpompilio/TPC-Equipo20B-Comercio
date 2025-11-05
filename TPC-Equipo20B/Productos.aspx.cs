@@ -1,47 +1,50 @@
-﻿using Negocio;
-using System;
+﻿using System;
+using System.Linq;
 using System.Web.UI.WebControls;
+using Negocio;
+using Dominio;
+using System.Collections.Generic;
 
 namespace TPC_Equipo20B
 {
     public partial class Productos : System.Web.UI.Page
     {
+        private readonly ProductoNegocio _negocio = new ProductoNegocio();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
-                CargarGrid();
+                BindGrid();
         }
 
-        private void CargarGrid()
+        private void BindGrid()
         {
-            ProductoNegocio negocio = new ProductoNegocio();
-            gvProductos.DataSource = negocio.Listar();
+            List<Producto> lista = _negocio.Listar();
+            gvProductos.DataSource = lista;
             gvProductos.DataBind();
         }
 
         protected void btnAgregarProducto_Click(object sender, EventArgs e)
         {
-            Response.Redirect("AgregarProducto.aspx");
+            Response.Redirect("ProductoEditar.aspx");
         }
 
         protected void gvProductos_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            if (e.CommandArgument == null)
-                return;
-
-            int id = Convert.ToInt32(e.CommandArgument);
-
-            switch (e.CommandName)
+            if (e.CommandName == "Editar")
             {
-                case "Editar":
-                    Response.Redirect("AgregarProducto.aspx?id=" + id);
-                    break;
+                var id = Convert.ToInt32(e.CommandArgument);
+                Response.Redirect("ProductoEditar.aspx?id=" + id);
+                return;
+            }
 
-                case "Eliminar":
-                    Response.Redirect("ConfirmarEliminar.aspx?entidad=producto&id=" + id);
-                    break;
+            if (e.CommandName == "Eliminar")
+            {
+                var id = Convert.ToInt32(e.CommandArgument);
+               
+                string msg = "¿Desea eliminar el producto seleccionado?";
+                Response.Redirect($"ConfirmarEliminar.aspx?entidad=producto&id={id}&msg={Server.UrlEncode(msg)}");
             }
         }
-
     }
 }

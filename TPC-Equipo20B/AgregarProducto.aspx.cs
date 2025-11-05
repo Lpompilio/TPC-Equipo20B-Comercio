@@ -106,7 +106,7 @@ namespace TPC_Equipo20B
                 Categoria = new Categoria { Id = idCategoria }
             };
 
-            // 🔹 Asigna Id si está en modo edición
+            // Asigna Id si está en modo edición
             if (ViewState["idProducto"] != null)
                 p.Id = (int)ViewState["idProducto"];
 
