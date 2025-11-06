@@ -32,18 +32,40 @@
     <!-- Tabla -->
     <div class="card shadow-sm">
         <div class="table-responsive">
-            <asp:GridView ID="gvClientes" runat="server" AutoGenerateColumns="False"
-                CssClass="table table-hover align-middle mb-0" GridLines="None">
-                <HeaderStyle CssClass="table-light" />
-                <Columns>
-                    <asp:BoundField DataField="Id" HeaderText="ID" />
-                    <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
-                    <asp:BoundField DataField="Apellido" HeaderText="Apellido" />
-                    <asp:BoundField DataField="Documento" HeaderText="DNI / CUIT" />
-                    <asp:BoundField DataField="Telefono" HeaderText="Teléfono" />
-                    <asp:BoundField DataField="Email" HeaderText="Email" />
-                </Columns>
-            </asp:GridView>
+<asp:GridView ID="gvClientes" runat="server" AutoGenerateColumns="False"
+    CssClass="table table-hover align-middle mb-0"
+    GridLines="None" DataKeyNames="Id"
+    OnRowCommand="gvClientes_RowCommand">
+
+    <HeaderStyle CssClass="table-light" />
+
+    <Columns>
+        <asp:BoundField DataField="Id" HeaderText="ID" />
+        <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
+        <asp:BoundField DataField="Documento" HeaderText="DNI / CUIT" />
+        <asp:BoundField DataField="Telefono" HeaderText="Teléfono" />
+        <asp:BoundField DataField="Email" HeaderText="Email" />
+
+        <asp:TemplateField HeaderText="Acciones">
+            <ItemTemplate>
+                <asp:LinkButton ID="cmdEditar" runat="server"
+                    CommandName="Editar"
+                    CommandArgument='<%# Eval("Id") %>'
+                    CssClass="btn btn-sm btn-primary me-2">
+                    <i class="bi bi-pencil-square"></i> Editar
+                </asp:LinkButton>
+
+                <asp:LinkButton ID="cmdEliminar" runat="server"
+                    CommandName="Eliminar"
+                    CommandArgument='<%# Eval("Id") %>'
+                    CssClass="btn btn-sm btn-danger">
+                    <i class="bi bi-trash"></i> Eliminar
+                </asp:LinkButton>
+            </ItemTemplate>
+        </asp:TemplateField>
+    </Columns>
+</asp:GridView>
+
         </div>
     </div>
 
