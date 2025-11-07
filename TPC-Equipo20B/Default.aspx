@@ -111,7 +111,7 @@
 
         <footer class="w-full py-6 px-4">
             <div class="text-center text-sm text-placeholder-light dark:text-placeholder-dark">
-                <p>© 2024 AGIAPURR distribuidora. Todos los derechos reservados.</p>
+                <p>© 2025 AGIAPURR distribuidora. Todos los derechos reservados.</p>
             </div>
         </footer>
     </div>

@@ -24,9 +24,9 @@ namespace Negocio
                         Id = (int)datos.Lector["Id"],
                         CodigoSKU = (string)datos.Lector["CodigoSKU"],
                         Descripcion = (string)datos.Lector["Descripcion"],
-                        StockMinimo = (decimal)datos.Lector["StockMinimo"],
-                        StockActual = (decimal)datos.Lector["StockActual"],
-                        PorcentajeGanancia = (decimal)datos.Lector["PorcentajeGanancia"],
+                        StockMinimo = datos.Lector["StockMinimo"] is DBNull ? 0 : (decimal)datos.Lector["StockMinimo"],
+                        StockActual = datos.Lector["StockActual"] is DBNull ? 0 : (decimal)datos.Lector["StockActual"],
+                        PorcentajeGanancia = datos.Lector["PorcentajeGanancia"] is DBNull ? 0 : (decimal)datos.Lector["PorcentajeGanancia"],
                         UrlImagen = datos.Lector["UrlImagen"] is DBNull ? "" : (string)datos.Lector["UrlImagen"],
                         Activo = datos.Lector["Activo"] is DBNull ? false : (bool)datos.Lector["Activo"]
                     };
@@ -53,9 +53,9 @@ namespace Negocio
                         Id = (int)datos.Lector["Id"],
                         CodigoSKU = (string)datos.Lector["CodigoSKU"],
                         Descripcion = (string)datos.Lector["Descripcion"],
-                        StockMinimo = (decimal)datos.Lector["StockMinimo"],
-                        StockActual = (decimal)datos.Lector["StockActual"],
-                        PorcentajeGanancia = (decimal)datos.Lector["PorcentajeGanancia"],
+                        StockMinimo = datos.Lector["StockMinimo"] is DBNull ? 0 : (decimal)datos.Lector["StockMinimo"],
+                        StockActual = datos.Lector["StockActual"] is DBNull ? 0 : (decimal)datos.Lector["StockActual"],
+                        PorcentajeGanancia = datos.Lector["PorcentajeGanancia"] is DBNull ? 0 : (decimal)datos.Lector["PorcentajeGanancia"],
                         UrlImagen = datos.Lector["UrlImagen"] is DBNull ? "" : (string)datos.Lector["UrlImagen"],
                         Activo = datos.Lector["Activo"] is DBNull ? false : (bool)datos.Lector["Activo"]
                     };
