@@ -26,7 +26,7 @@ namespace TPC_Equipo20B
 
         protected void btnAgregarProducto_Click(object sender, EventArgs e)
         {
-            Response.Redirect("ProductoEditar.aspx");
+            Response.Redirect("AgregarProducto.aspx");
         }
 
         protected void gvProductos_RowCommand(object sender, GridViewCommandEventArgs e)
