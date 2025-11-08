@@ -93,6 +93,14 @@ namespace TPC_Equipo20B
             int idCategoria = 0;
             int.TryParse(ddlCategoria.SelectedValue, out idCategoria);
 
+            int.TryParse(ddlProveedor.SelectedValue, out int idProveedor);
+
+            if (idCategoria == 0)
+            {
+                
+                return;
+            }
+
             Producto p = new Producto
             {
                 Descripcion = txtDescripcion.Text.Trim(),
@@ -105,6 +113,12 @@ namespace TPC_Equipo20B
                 Marca = new Marca { Id = idMarca },
                 Categoria = new Categoria { Id = idCategoria }
             };
+
+            if (idMarca > 0)
+                p.Marca = new Marca { Id = idMarca };
+
+            if (idProveedor > 0)
+                p.Proveedor = new Proveedor { Id = idProveedor };
 
             // Asigna Id si está en modo edición
             if (ViewState["idProducto"] != null)
