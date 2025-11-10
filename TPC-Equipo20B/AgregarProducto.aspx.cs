@@ -30,7 +30,6 @@ namespace TPC_Equipo20B
                 }
             }
         }
-
         private void CargarCombos()
         {
             MarcaNegocio marcaNegocio = new MarcaNegocio();
@@ -40,11 +39,13 @@ namespace TPC_Equipo20B
             ddlMarca.DataTextField = "Nombre";
             ddlMarca.DataValueField = "Id";
             ddlMarca.DataBind();
+            ddlMarca.Items.Insert(0, new ListItem("Seleccione una marca...", "0"));
 
             ddlCategoria.DataSource = categoriaNegocio.Listar();
             ddlCategoria.DataTextField = "Nombre";
             ddlCategoria.DataValueField = "Id";
             ddlCategoria.DataBind();
+            ddlCategoria.Items.Insert(0, new ListItem("Seleccione una categoría...", "0"));
 
             ddlProveedor.Items.Clear();
             ddlProveedor.Items.Add(new System.Web.UI.WebControls.ListItem("Seleccione un proveedor...", "0"));

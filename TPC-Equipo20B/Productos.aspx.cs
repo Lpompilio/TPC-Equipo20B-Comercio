@@ -34,7 +34,7 @@ namespace TPC_Equipo20B
             if (e.CommandName == "Editar")
             {
                 var id = Convert.ToInt32(e.CommandArgument);
-                Response.Redirect("ProductoEditar.aspx?id=" + id);
+                Response.Redirect("AgregarProducto.aspx?id=" + id);
                 return;
             }
 

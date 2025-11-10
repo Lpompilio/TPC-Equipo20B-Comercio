@@ -50,6 +50,10 @@ namespace TPC_Equipo20B
 
         protected void btnGuardar_Click(object sender, EventArgs e)
         {
+            if (!Page.IsValid)
+            {
+                return;
+            }
             ClienteNegocio negocio = new ClienteNegocio();
             Cliente c = new Cliente
             {
@@ -63,7 +67,6 @@ namespace TPC_Equipo20B
                 Habilitado = chkHabilitado.Checked
             };
 
-            // Si es edición, guaro el id
             if (ViewState["idCliente"] != null)
                 c.Id = (int)ViewState["idCliente"];
 
