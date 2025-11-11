@@ -21,9 +21,12 @@ namespace TPC_Equipo20B
 
         protected void btnGuardar_Click(object sender, EventArgs e)
         {
-            var cat = new Categoria { Id = Id, Nombre = txtNombre.Text.Trim() };
-            if (cat.Id == 0) _negocio.Agregar(cat); else _negocio.Modificar(cat);
-            Response.Redirect("Categorias.aspx");
+            if (Page.IsValid)
+            {
+                var cat = new Categoria { Id = Id, Nombre = txtNombre.Text.Trim() };
+                if (cat.Id == 0) _negocio.Agregar(cat); else _negocio.Modificar(cat);
+                Response.Redirect("Categorias.aspx");
+            }
         }
 
         protected void btnCancelar_Click(object sender, EventArgs e) => Response.Redirect("Categorias.aspx");

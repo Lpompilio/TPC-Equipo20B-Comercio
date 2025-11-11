@@ -24,17 +24,11 @@
                     <asp:RequiredFieldValidator ErrorMessage="Agregar descripcion" CssClass="validator" ControlToValidate="txtDescripcion" runat="server" />
                 </div>
 
-                <div class="col-md-6">
-                    <label for="txtCodigo" class="form-label">Código SKU</label>
-                    <asp:TextBox ID="txtCodigo" runat="server" CssClass="form-control" placeholder="Ej: AGP-001" />
-                </div>
-            </div>
-
             <div class="row g-3 mb-3">
                 <div class="col-md-4">
                     <label for="ddlMarca" class="form-label">Marca</label>
                     <asp:DropDownList ID="ddlMarca" runat="server" CssClass="form-select"></asp:DropDownList>
-                    <asp:RequiredFieldValidator ErrorMessage="Agregar Marca" CssClass="validator" ControlToValidate="ddlMarca" runat="server" InitialValue="0" />
+                    <asp:RequiredFieldValidator ErrorMessage="Agregar Marca" CssClass="validator" ControlToValidate="ddlMarca" runat="server" InitialValue="0" Display="Dynamic" />
                 </div>
 
                 <div class="col-md-4">
@@ -45,7 +39,8 @@
                         CssClass="validator"
                         ControlToValidate="ddlCategoria"
                         InitialValue="0"
-                        runat="server" />
+                        runat="server"
+                        Display="Dynamic" />
                 </div>
 
                 <div class="col-md-4">
@@ -59,13 +54,13 @@
                 <div class="col-md-4">
                     <label for="txtStockMinimo" class="form-label">Stock Mínimo</label>
                     <asp:TextBox ID="txtStockMinimo" runat="server" CssClass="form-control" />
-                    <asp:RequiredFieldValidator ErrorMessage="Cargar el Stock Minimo" ControlToValidate="txtStockMinimo" runat="server" CssClass="validator" />
+                    <asp:RequiredFieldValidator ErrorMessage="Cargar el Stock Minimo" ControlToValidate="txtStockMinimo" runat="server" CssClass="validator" Display="Dynamic" />
                 </div>
 
                 <div class="col-md-4">
                     <label for="txtStockActual" class="form-label">Stock Actual</label>
                     <asp:TextBox ID="txtStockActual" runat="server" CssClass="form-control" />
-                    <asp:RequiredFieldValidator ErrorMessage="Cargar el Stock Actual" ControlToValidate="txtStockActual" runat="server" CssClass="validator" />
+                    <asp:RequiredFieldValidator ErrorMessage="Cargar el Stock Actual" ControlToValidate="txtStockActual" runat="server" CssClass="validator" Display="Dynamic" />
                 </div>
 
                 <div class="col-md-4">

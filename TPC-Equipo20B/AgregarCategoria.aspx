@@ -2,6 +2,12 @@
     AutoEventWireup="true" CodeBehind="AgregarCategoria.aspx.cs" Inherits="TPC_Equipo20B.AgregarCategoria" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+    <style>
+        .validator {
+            color: red;
+            font-size: 12px;
+        }
+    </style>
     <div class="mb-4">
         <h2 id="lblTitulo" runat="server" class="fw-bold">Agregar Nueva Categoría</h2>
         <p class="text-muted">Ingrese el nombre de la categoría</p>
@@ -12,6 +18,7 @@
             <div class="mb-3">
                 <label for="txtNombre" class="form-label">Nombre</label>
                 <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" />
+                <asp:RequiredFieldValidator ErrorMessage="Ingrese nombre de la categoría" ControlToValidate="txtNombre" runat="server" CssClass="validator" />
             </div>
         </div>
 

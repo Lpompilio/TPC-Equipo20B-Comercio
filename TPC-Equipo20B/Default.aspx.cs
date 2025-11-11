@@ -8,8 +8,11 @@ namespace TPC_Equipo20B
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            
-            Response.Redirect("Dashboard.aspx");
+            if (Page.IsValid)
+            {
+
+                Response.Redirect("Dashboard.aspx");
+            }
         }
     }
 }

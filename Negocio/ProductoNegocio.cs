@@ -167,39 +167,82 @@ namespace Negocio
             try
             {
                 if (p.Id == 0)
-                    datos.setearConsulta("INSERT INTO Productos (CodigoSKU, Descripcion, StockMinimo, StockActual, PorcentajeGanancia, UrlImagen, Activo, IdCategoria, IdMarca, IdProveedor) VALUES (@sku, @desc, @min, @act, @gan, @img, @actv, @idCat, @idMar, @idProv)");
+                {
+                    
+                    datos.setearConsulta(
+                        "INSERT INTO Productos (CodigoSKU, Descripcion, StockMinimo, StockActual, PorcentajeGanancia, UrlImagen, Activo, IdCategoria, IdMarca, IdProveedor) " +
+                        "VALUES (@sku, @desc, @min, @act, @gan, @img, @actv, @idCat, @idMar, @idProv); " +
+                        "SELECT SCOPE_IDENTITY();"
+                    );
+                    
+                    datos.setearParametro("@sku", "SKU_TEMP");
+                    datos.setearParametro("@desc", p.Descripcion);
+                    datos.setearParametro("@min", p.StockMinimo);
+                    datos.setearParametro("@act", p.StockActual);
+                    datos.setearParametro("@gan", p.PorcentajeGanancia);
+                    datos.setearParametro("@img", p.UrlImagen);
+                    datos.setearParametro("@actv", p.Activo);
+                    datos.setearParametro("@idCat", p.Categoria.Id);
+
+                    if (p.Marca != null && p.Marca.Id > 0)
+                        datos.setearParametro("@idMar", p.Marca.Id);
+                    else
+                        datos.setearParametro("@idMar", DBNull.Value);
+
+                    if (p.Proveedor != null && p.Proveedor.Id > 0)
+                        datos.setearParametro("@idProv", p.Proveedor.Id);
+                    else
+                        datos.setearParametro("@idProv", DBNull.Value);
+
+                    int nuevoId = Convert.ToInt32(datos.ejecutarScalar());
+                    p.Id = nuevoId;
+
+                    
+                    string nuevoSku = nuevoId.ToString();
+
+                    
+                    datos.setearConsulta("UPDATE Productos SET CodigoSKU = @sku WHERE Id = @id");
+                    datos.setearParametro("@sku", nuevoSku);
+                    datos.setearParametro("@id", p.Id);
+
+                    datos.ejecutarAccion();
+                }
                 else
                 {
+                    
+                    if (string.IsNullOrEmpty(p.CodigoSKU))
+                    {
+                        p.CodigoSKU = "SKU" + p.Id.ToString("D5");
+                    }
+
                     datos.setearConsulta("UPDATE Productos SET CodigoSKU=@sku, Descripcion=@desc, StockMinimo=@min, StockActual=@act, PorcentajeGanancia=@gan, UrlImagen=@img, Activo=@actv, IdCategoria=@idCat, IdMarca=@idMar, IdProveedor=@idProv WHERE Id=@id");
                     datos.setearParametro("@id", p.Id);
+                    datos.setearParametro("@sku", p.CodigoSKU);
+                    datos.setearParametro("@desc", p.Descripcion);
+                    datos.setearParametro("@min", p.StockMinimo);
+                    datos.setearParametro("@act", p.StockActual);
+                    datos.setearParametro("@gan", p.PorcentajeGanancia);
+                    datos.setearParametro("@img", p.UrlImagen);
+                    datos.setearParametro("@actv", p.Activo);
+                    datos.setearParametro("@idCat", p.Categoria.Id);
+
+                    if (p.Marca != null && p.Marca.Id > 0)
+                        datos.setearParametro("@idMar", p.Marca.Id);
+                    else
+                        datos.setearParametro("@idMar", DBNull.Value);
+
+                    if (p.Proveedor != null && p.Proveedor.Id > 0)
+                        datos.setearParametro("@idProv", p.Proveedor.Id);
+                    else
+                        datos.setearParametro("@idProv", DBNull.Value);
+
+                    datos.ejecutarAccion();
                 }
-
-                datos.setearParametro("@sku", p.CodigoSKU);
-                datos.setearParametro("@desc", p.Descripcion);
-                datos.setearParametro("@min", p.StockMinimo);
-                datos.setearParametro("@act", p.StockActual);
-                datos.setearParametro("@gan", p.PorcentajeGanancia);
-                datos.setearParametro("@img", p.UrlImagen);
-                datos.setearParametro("@actv", p.Activo);
-                datos.setearParametro("@idCat", p.Categoria.Id);
-
-                if (p.Marca != null && p.Marca.Id > 0)
-                    datos.setearParametro("@idMar", p.Marca.Id);
-                else
-                    datos.setearParametro("@idMar", DBNull.Value);
-
-                if (p.Proveedor != null && p.Proveedor.Id > 0)
-                    datos.setearParametro("@idProv", p.Proveedor.Id);
-                else
-                    datos.setearParametro("@idProv", DBNull.Value);
-
-                datos.ejecutarAccion();
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-            finally { datos.CerrarConexion(); }
         }
 
         public void Eliminar(int id)

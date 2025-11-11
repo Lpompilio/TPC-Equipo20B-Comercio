@@ -51,6 +51,24 @@ namespace TPC_Equipo20B
         protected global::System.Web.UI.WebControls.TextBox txtDocumento;
 
         /// <summary>
+        /// Control valReqDocumento.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator valReqDocumento;
+
+        /// <summary>
+        /// Control valRegexDocumento.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator valRegexDocumento;
+
+        /// <summary>
         /// Control txtIVA.
         /// </summary>
         /// <remarks>
@@ -69,6 +87,24 @@ namespace TPC_Equipo20B
         protected global::System.Web.UI.WebControls.TextBox txtEmail;
 
         /// <summary>
+        /// Control vflEmail.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator vflEmail;
+
+        /// <summary>
+        /// Control revEmail.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revEmail;
+
+        /// <summary>
         /// Control txtTelefono.
         /// </summary>
         /// <remarks>
@@ -76,6 +112,24 @@ namespace TPC_Equipo20B
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtTelefono;
+
+        /// <summary>
+        /// Control vflTelefono.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator vflTelefono;
+
+        /// <summary>
+        /// Control revTelefono.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revTelefono;
 
         /// <summary>
         /// Control txtDireccion.

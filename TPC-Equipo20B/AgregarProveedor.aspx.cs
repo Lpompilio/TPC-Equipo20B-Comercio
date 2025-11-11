@@ -31,7 +31,9 @@ namespace TPC_Equipo20B
 
         protected void btnGuardar_Click(object sender, EventArgs e)
         {
-            var p = new Proveedor
+            if (Page.IsValid)
+            {
+                var p = new Proveedor
             {
                 Id = Id,
                 Nombre = txtNombre.Text.Trim(),
@@ -46,6 +48,7 @@ namespace TPC_Equipo20B
 
             _negocio.Guardar(p);
             Response.Redirect("Proveedores.aspx");
+        }
         }
 
         protected void btnCancelar_Click(object sender, EventArgs e) => Response.Redirect("Proveedores.aspx");

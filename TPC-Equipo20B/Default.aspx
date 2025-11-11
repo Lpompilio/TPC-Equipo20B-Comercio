@@ -1,119 +1,190 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="TPC_Equipo20B.Default" %>
 
 <!DOCTYPE html>
-<html class="light" lang="es"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Inicio de Sesión - AGIAPURR distribuidora</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            "primary": "#11d452",
-            "background-light": "#f6f8f6",
-            "background-dark": "#102216",
-            "text-light": "#111813",
-            "text-dark": "#f0f4f2",
-            "border-light": "#dbe6df",
-            "border-dark": "#344a3b",
-            "card-light": "#ffffff",
-            "card-dark": "#182c1e",
-            "placeholder-light": "#61896f",
-            "placeholder-dark": "#8a9e91"
-          },
-          fontFamily: {
-            "display": ["Manrope", "sans-serif"]
-          },
-          borderRadius: {
-            "DEFAULT": "0.25rem",
-            "lg": "0.5rem",
-            "xl": "0.75rem",
-            "full": "9999px"
-          },
-        },
-      },
-    }
-  </script>
-<style>
-    .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    }
-  </style>
-</head>
-<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
-    <div class="relative flex min-h-screen w-full flex-col items-center justify-between">
+<html lang="es">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Inicio de Sesión - AGIAPURR distribuidora</title>
 
-        <header class="w-full border-b border-solid border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark/50">
-            <div class="mx-auto flex max-w-7xl items-center justify-between whitespace-nowrap px-6 py-4">
-                <div class="flex items-center gap-4 text-text-light dark:text-text-dark">
-                    <div class="size-6 text-primary">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #f6f8f6; 
+            color: #111813;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            user-select: none;
+        }
+        .validator {
+            color: #dc3545;
+            font-size: 0.875em;
+            display: block;
+            margin-top: 0.25rem;
+        }
+        .btn-primary {
+            background-color: #11d452;
+            border-color: #11d452;
+            color: #102216;
+            font-weight: 700;
+        }
+
+            .btn-primary:hover {
+                background-color: #0fbc48;
+                border-color: #0fbc48;
+                color: #102216;
+            }
+
+            .form-control:focus, .btn-primary:focus {
+                border-color: #11d452;
+                box-shadow: 0 0 0 0.25rem rgba(17, 212, 82, 0.25);
+            }
+        .link-primary {
+            color: #11d452 !important;
+            text-decoration: none;
+        }
+
+            .link-primary:hover {
+                text-decoration: underline !important;
+            }
+        .card-custom {
+            background-color: #ffffff;
+            border-color: #dbe6df;
+        }
+
+        .header-custom {
+            background-color: #ffffff;
+            border-bottom: 1px solid #dbe6df;
+        }
+        .form-control::placeholder {
+            color: #61896f;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <form id="form1" runat="server" class="d-flex flex-column flex-grow-1">
+
+        <header class="w-100 header-custom shadow-sm">
+            <div class="container py-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-primary" style="width: 24px; height: 24px;">
                         <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                             <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
                         </svg>
                     </div>
-                    <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">AGIAPURR distribuidora</h2>
+                    <h2 class="h5 mb-0 fw-bold">AGIAPURR distribuidora</h2>
                 </div>
             </div>
         </header>
 
-        <main class="flex w-full flex-1 items-center justify-center p-4">
-            <div class="flex w-full max-w-md flex-col rounded-xl border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark p-8 shadow-sm">
+        <main class="d-flex flex-grow-1 align-items-center justify-content-center p-4">
 
-                <h1 class="text-center text-3xl font-bold tracking-tight text-text-light dark:text-text-dark">Inicio de Sesión</h1>
-                <p class="mt-2 text-center text-sm text-placeholder-light dark:text-placeholder-dark">
-                    Bienvenido de nuevo. Por favor, ingrese sus credenciales.
-                </p>
+            <div class="col-12 col-md-10 col-lg-8 col-xl-6 col-xxl-5">
+                <div class="card card-custom p-4 p-sm-5 rounded-4 shadow-sm">
+                    <div class="card-body">
 
-                
-                <form id="form1" runat="server" class="mt-8 flex flex-col gap-6">
+                        <h1 class="text-center h3 fw-bold">Inicio de Sesión</h1>
+                        <p class="mt-2 text-center text-muted">
+                            Bienvenido de nuevo. Por favor, ingrese sus credenciales.
+                        </p>
 
-                    <div class="flex flex-col gap-2">
-                        <label class="text-sm font-medium" for="username">Nombre de Usuario</label>
-                        <div class="relative flex w-full items-center">
-                            <span class="material-symbols-outlined absolute left-4 text-xl text-placeholder-light dark:text-placeholder-dark">person</span>
-                            <input class="h-14 w-full rounded-lg border border-border-light bg-background-light p-4 pl-12 text-base text-text-light placeholder:text-placeholder-light focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-border-dark dark:bg-background-dark dark:text-text-dark dark:placeholder:text-placeholder-dark dark:focus:border-primary"
-                                id="username" placeholder="Ingrese su nombre de usuario" type="text" />
+                        <div class="mt-4">
+                            <div class="mb-3">
+                                <asp:Label ID="lblUsername" runat="server" AssociatedControlID="txtUsername" Text="Nombre de Usuario" CssClass="form-label fw-medium" />
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bg-light" style="border-right: 0;">
+                                        <span class="material-symbols-outlined text-muted">person</span>
+                                    </span>
+                                    <asp:TextBox ID="txtUsername" runat="server"
+                                        placeholder="Ingrese su nombre de usuario"
+                                        CssClass="form-control" Style="border-left: 0;" />
+                                </div>
+                                <asp:RequiredFieldValidator ID="valUsername" runat="server"
+                                    ControlToValidate="txtUsername"
+                                    ErrorMessage="El nombre de usuario es requerido"
+                                    Display="Dynamic"
+                                    CssClass="validator"
+                                    ValidationGroup="Login" />
+                            </div>
+
+                            <div class="mb-3">
+                                <asp:Label ID="lblPassword" runat="server" AssociatedControlID="txtPassword" Text="Contraseña" CssClass="form-label fw-medium" />
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bg-light" style="border-right: 0;">
+                                        <span class="material-symbols-outlined text-muted">lock</span>
+                                    </span>
+                                    <asp:TextBox ID="txtPassword" runat="server"
+                                        TextMode="Password"
+                                        placeholder="Ingrese su contraseña"
+                                        CssClass="form-control" Style="border-left: 0; border-right: 0;" />
+                                    <button type="button" id="togglePassword" class="input-group-text bg-light" style="border-left: 0; cursor: pointer;">
+                                        <span class="material-symbols-outlined text-muted">visibility</span>
+                                    </button>
+                                </div>
+                                <asp:RequiredFieldValidator ID="valPassword" runat="server"
+                                    ControlToValidate="txtPassword"
+                                    ErrorMessage="La contraseña es requerida"
+                                    Display="Dynamic"
+                                    CssClass="validator"
+                                    ValidationGroup="Login" />
+                            </div>
+
+                            <div class="mb-3 text-end">
+                                <a class="link-primary small" href="#">Olvidé mi contraseña</a>
+                            </div>
+
+                            <asp:Label ID="lblError" runat="server" CssClass="validator text-center mb-3" EnableViewState="false" />
+
+                            <asp:Button ID="btnLogin" runat="server"
+                                Text="Iniciar Sesión"
+                                CssClass="btn btn-primary w-100 btn-lg"
+                                OnClick="btnLogin_Click"
+                                ValidationGroup="Login" />
+
                         </div>
                     </div>
-
-                    <div class="flex flex-col gap-2">
-                        <label class="text-sm font-medium" for="password">Contraseña</label>
-                        <div class="relative flex w-full items-center">
-                            <span class="material-symbols-outlined absolute left-4 text-xl text-placeholder-light dark:text-placeholder-dark">lock</span>
-                            <input class="h-14 w-full rounded-lg border border-border-light bg-background-light p-4 px-12 text-base text-text-light placeholder:text-placeholder-light focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-border-dark dark:bg-background-dark dark:text-text-dark dark:placeholder:text-placeholder-dark dark:focus:border-primary"
-                                id="password" placeholder="Ingrese su contraseña" type="password" />
-                            <button class="absolute right-4 text-placeholder-light dark:text-placeholder-dark" type="button">
-                                <span class="material-symbols-outlined">visibility</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-end">
-                        <a class="text-sm font-medium text-primary hover:underline" href="#">Olvidé mi contraseña</a>
-                    </div>
-
-                  
-                    <asp:Button ID="btnLogin" runat="server"
-                        Text="Iniciar Sesión"
-                        CssClass="flex h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary text-base font-bold text-background-dark transition-colors hover:bg-primary/90"
-                        OnClick="btnLogin_Click" />
-
-                </form>
+                </div>
             </div>
         </main>
 
-        <footer class="w-full py-6 px-4">
-            <div class="text-center text-sm text-placeholder-light dark:text-placeholder-dark">
-                <p>© 2025 AGIAPURR distribuidora. Todos los derechos reservados.</p>
+        <footer class="w-100 py-4 px-4">
+            <div class="text-center text-muted small">
+                <p class="mb-0">© 2025 AGIAPURR distribuidora. Todos los derechos reservados.</p>
             </div>
         </footer>
-    </div>
+
+    </form>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- Script para el botón de 'ver contraseña' -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleButton = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('<%= txtPassword.ClientID %>');
+            const icon = toggleButton.querySelector('.material-symbols-outlined');
+
+            if (toggleButton && passwordInput) {
+                toggleButton.addEventListener('click', function () {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+
+                    icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+                });
+            }
+        });
+    </script>
 </body>
 </html>

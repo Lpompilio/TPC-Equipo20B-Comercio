@@ -59,7 +59,7 @@ namespace TPC_Equipo20B
             if (producto != null)
             {
                 txtDescripcion.Text = producto.Descripcion;
-                txtCodigo.Text = producto.CodigoSKU;
+                //txtCodigo.Text = producto.CodigoSKU;
                 txtStockMinimo.Text = producto.StockMinimo.ToString();
                 txtStockActual.Text = producto.StockActual.ToString();
                 txtGanancia.Text = producto.PorcentajeGanancia.ToString();
@@ -105,7 +105,6 @@ namespace TPC_Equipo20B
             Producto p = new Producto
             {
                 Descripcion = txtDescripcion.Text.Trim(),
-                CodigoSKU = txtCodigo.Text.Trim(),
                 StockMinimo = stockMin,
                 StockActual = stockAct,
                 PorcentajeGanancia = ganancia,

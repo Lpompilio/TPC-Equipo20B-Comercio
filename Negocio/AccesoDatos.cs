@@ -60,6 +60,25 @@ namespace Negocio
                 conexion.Close();
             }
         }
+        public object ejecutarScalar()
+        {
+            comando.Connection = conexion;
+            object resultado = null;
+            try
+            {
+                conexion.Open();
+                resultado = comando.ExecuteScalar();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conexion.Close();
+            }
+            return resultado;
+        }
 
         public void CerrarConexion()
         {
