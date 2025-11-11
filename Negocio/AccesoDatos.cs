@@ -85,5 +85,7 @@ namespace Negocio
             if (lector != null) lector.Close();
             conexion.Close();
         }
+
+
     }
 }

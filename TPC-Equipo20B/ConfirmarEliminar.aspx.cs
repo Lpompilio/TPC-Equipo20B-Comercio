@@ -52,6 +52,11 @@ namespace TPC_Equipo20B
                     Response.Redirect("Clientes.aspx");
                     return;
 
+                case "compra":
+                    new CompraNegocio().Eliminar(Id);
+                    Response.Redirect("Compras.aspx");
+                    return;
+
                 default:
                     Volver();
                     return;

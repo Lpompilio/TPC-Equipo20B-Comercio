@@ -22,5 +22,20 @@ namespace Dominio
 
         public List<PrecioCompra> PreciosCompra { get; set; } = new List<PrecioCompra>();
 
+        public decimal PrecioVenta
+        {
+            get
+            {
+                if (PreciosCompra == null || PreciosCompra.Count == 0)
+                    return 0;
+
+                var ultimoPrecio = PreciosCompra
+                    .OrderByDescending(p => p.Fecha)
+                    .FirstOrDefault();
+
+                return ultimoPrecio.PrecioUnitario * (1 + (PorcentajeGanancia / 100));
+            }
+        }
+
     }
 }
