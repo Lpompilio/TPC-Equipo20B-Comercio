@@ -71,24 +71,26 @@ namespace Negocio
             try
             {
                 datos.setearConsulta(@"
-                    SELECT 
-                        P.Id, P.CodigoSKU, P.Descripcion, P.StockMinimo, P.StockActual, P.PorcentajeGanancia, 
-                        P.UrlImagen, P.Activo,
-                        C.Id AS IdCategoria, C.Nombre AS NombreCategoria,
-                        M.Id AS IdMarca, M.Nombre AS NombreMarca,
-                        PR.Id AS IdProveedor, PR.Nombre AS NombreProveedor
-                    FROM PRODUCTOS P
-                    INNER JOIN CATEGORIAS C ON P.IdCategoria = C.Id
-                    LEFT JOIN MARCAS M ON P.IdMarca = M.Id
-                    LEFT JOIN PROVEEDORES PR ON P.IdProveedor = PR.Id
-                    WHERE P.Id = @id
-                ");
+            SELECT 
+                P.Id, P.CodigoSKU, P.Descripcion, P.StockMinimo, P.StockActual, P.PorcentajeGanancia, 
+                P.UrlImagen, P.Activo,
+                C.Id AS IdCategoria, C.Nombre AS NombreCategoria,
+                M.Id AS IdMarca, M.Nombre AS NombreMarca,
+                PR.Id AS IdProveedor, PR.Nombre AS NombreProveedor
+            FROM PRODUCTOS P
+            INNER JOIN CATEGORIAS C ON P.IdCategoria = C.Id
+            LEFT JOIN MARCAS M ON P.IdMarca = M.Id
+            LEFT JOIN PROVEEDORES PR ON P.IdProveedor = PR.Id
+            WHERE P.Id = @id
+        ");
                 datos.setearParametro("@id", id);
                 datos.ejecutarLectura();
 
+                Producto p = null;
+
                 if (datos.Lector.Read())
                 {
-                    var p = new Producto
+                    p = new Producto
                     {
                         Id = (int)datos.Lector["Id"],
                         CodigoSKU = datos.Lector["CodigoSKU"] is DBNull ? "" : (string)datos.Lector["CodigoSKU"],
@@ -102,12 +104,41 @@ namespace Negocio
                         Marca = datos.Lector["IdMarca"] is DBNull ? null : new Marca { Id = (int)datos.Lector["IdMarca"], Nombre = (string)datos.Lector["NombreMarca"] },
                         Proveedor = datos.Lector["IdProveedor"] is DBNull ? null : new Proveedor { Id = (int)datos.Lector["IdProveedor"], Nombre = (string)datos.Lector["NombreProveedor"] }
                     };
-                    return p;
                 }
-                return null;
+
+                datos.CerrarConexion();
+
+                // cargar los precios de compra
+                if (p != null)
+                {
+                    var datosPrecios = new AccesoDatos();
+                    datosPrecios.setearConsulta("SELECT Precio, Fecha FROM PRECIOS_COMPRA WHERE IdProducto = @id");
+                    datosPrecios.setearParametro("@id", id);
+                    datosPrecios.ejecutarLectura();
+
+                    while (datosPrecios.Lector.Read())
+                    {
+                        PrecioCompra precio = new PrecioCompra
+                        {
+                            ProductoId = id,
+                            PrecioUnitario = (decimal)datosPrecios.Lector["Precio"],
+                            Fecha = (DateTime)datosPrecios.Lector["Fecha"]
+                        };
+
+                        p.PreciosCompra.Add(precio);
+                    }
+
+                    datosPrecios.CerrarConexion();
+                }
+
+                return p;
             }
-            finally { datos.CerrarConexion(); }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
+
 
         public void Guardar(Producto p)
         {

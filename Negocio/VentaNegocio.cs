@@ -118,7 +118,7 @@ namespace Negocio
                 datos.setearConsulta(@"
                     SELECT VL.Id, VL.Cantidad, VL.PrecioUnitario,
                            P.Id AS IdProducto, P.Descripcion AS NombreProducto
-                    FROM VentaLinea VL
+                    FROM DETALLE_VENTA VL
                     INNER JOIN Productos P ON VL.IdProducto = P.Id
                     WHERE VL.IdVenta = @idVenta
                 ");
@@ -143,6 +143,55 @@ namespace Negocio
                 return lineas;
             }
             finally { datos.CerrarConexion(); }
+        }
+
+        public void Registrar(Venta venta)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                decimal total = 0;
+                foreach (var linea in venta.Lineas)
+                    total += linea.Subtotal;
+
+                // Insertar la venta principal
+                datos.setearConsulta(@"
+                    INSERT INTO Ventas (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
+                    OUTPUT INSERTED.Id
+                    VALUES (@usuario, @cliente, @fecha, @factura, @metodo, @total)");
+                datos.setearParametro("@usuario", venta.Usuario.Id);
+                datos.setearParametro("@cliente", venta.Cliente.Id);
+                datos.setearParametro("@fecha", venta.Fecha);
+                datos.setearParametro("@factura", venta.NumeroFactura ?? "");
+                datos.setearParametro("@metodo", venta.MetodoPago ?? "");
+                datos.setearParametro("@total", total);
+
+                int idVenta = Convert.ToInt32(datos.ejecutarScalar());
+
+                // Insertar las líneas de la venta
+                foreach (var linea in venta.Lineas)
+                {
+                    datos.setearConsulta(@"
+                        INSERT INTO Detalle_Venta (IdVenta, IdProducto, Cantidad, PrecioUnitario)
+                        VALUES (@idVenta, @idProd, @cant, @precio)");
+                    datos.setearParametro("@idVenta", idVenta);
+                    datos.setearParametro("@idProd", linea.Producto.Id);
+                    datos.setearParametro("@cant", linea.Cantidad);
+                    datos.setearParametro("@precio", linea.PrecioUnitario);
+                    datos.ejecutarAccion();
+
+                    // Actualizar stock (restar)
+                    datos.setearConsulta("UPDATE Productos SET StockActual = StockActual - @cant WHERE Id = @idProd");
+                    datos.setearParametro("@cant", linea.Cantidad);
+                    datos.setearParametro("@idProd", linea.Producto.Id);
+                    datos.ejecutarAccion();
+                }
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
     }
 }

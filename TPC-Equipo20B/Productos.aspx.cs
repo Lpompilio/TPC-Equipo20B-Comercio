@@ -32,7 +32,7 @@ namespace TPC_Equipo20B
         protected void gvProductos_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
         {
             if (e.CommandName == "Editar")
-                Response.Redirect("ProductoEditar.aspx?id=" + e.CommandArgument);
+                Response.Redirect("AgregarProducto.aspx?id=" + e.CommandArgument);
             if (e.CommandName == "Eliminar")
                 Response.Redirect("ConfirmarEliminar.aspx?tipo=producto&id=" + e.CommandArgument);
         }
