@@ -1,40 +1,54 @@
 ﻿using System;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Web.UI.WebControls;
-using Negocio;
 
 namespace TPC_Equipo20B
 {
     public partial class Proveedores : System.Web.UI.Page
     {
-        private readonly ProveedorNegocio _negocio = new ProveedorNegocio();
+        private string cn => ConfigurationManager.ConnectionStrings["COMERCIO_DB"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack) BindGrid();
+            if (!IsPostBack) BindGrid("");
         }
 
-        private void BindGrid()
+        protected void btnBuscar_Click(object sender, EventArgs e)
         {
-            gvProveedores.DataSource = _negocio.Listar();
-            gvProveedores.DataBind();
+            BindGrid(txtBuscar.Text.Trim());
         }
 
-        protected void btnAgregarProveedor_Click(object sender, EventArgs e)
+        protected void gvProveedores_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            Response.Redirect("AgregarProveedor.aspx");
+            gvProveedores.PageIndex = e.NewPageIndex;
+            BindGrid(txtBuscar.Text.Trim());
         }
 
-        protected void gvProveedores_RowCommand(object sender, GridViewCommandEventArgs e)
+        private void BindGrid(string q)
         {
-            int id = Convert.ToInt32(e.CommandArgument);
-            if (e.CommandName == "Editar")
+            using (var con = new SqlConnection(cn))
+            using (var cmd = new SqlCommand(@"
+                SELECT 
+                    Id,
+                    UPPER(COALESCE(Nombre, RazonSocial)) AS Nombre,
+                    COALESCE(Documento,'') AS Documento,
+                    COALESCE(Telefono,'')  AS Telefono
+                FROM dbo.PROVEEDORES
+                WHERE (
+                    @q = '' OR
+                    COALESCE(Nombre, RazonSocial, '') LIKE '%'+@q+'%' OR
+                    COALESCE(Documento,'') LIKE '%'+@q+'%'
+                )
+                ORDER BY UPPER(COALESCE(Nombre, RazonSocial));", con))
             {
-                Response.Redirect("AgregarProveedor.aspx?id=" + id);
-            }
-            else if (e.CommandName == "Eliminar")
-            {
-                string msg = "¿Desea eliminar el proveedor?";
-                Response.Redirect($"ConfirmarEliminar.aspx?entidad=proveedor&id={id}&msg={Server.UrlEncode(msg)}");
+                cmd.Parameters.Add("@q", SqlDbType.VarChar, 100).Value = q ?? "";
+                var da = new SqlDataAdapter(cmd);
+                var dt = new DataTable();
+                da.Fill(dt);
+                gvProveedores.DataSource = dt;
+                gvProveedores.DataBind();
             }
         }
     }

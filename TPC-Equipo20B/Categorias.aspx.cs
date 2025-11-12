@@ -1,42 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Web.UI.WebControls;
-using Negocio;
-using Dominio;
 
 namespace TPC_Equipo20B
 {
     public partial class Categorias : System.Web.UI.Page
     {
-        private readonly CategoriaNegocio _negocio = new CategoriaNegocio();
+        private string cn => ConfigurationManager.ConnectionStrings["COMERCIO_DB"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack) BindGrid();
+            if (!IsPostBack) BindGrid("");
         }
 
-        private void BindGrid(string filtro = null)
+        protected void btnBuscar_Click(object sender, EventArgs e)
         {
-            gvCategorias.DataSource = _negocio.Listar(filtro);
-            gvCategorias.DataBind();
+            BindGrid(txtBuscar.Text.Trim());
         }
 
-        protected void btnAgregarCategoria_Click(object sender, EventArgs e)
+        protected void gvCategorias_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            Response.Redirect("AgregarCategoria.aspx");
+            gvCategorias.PageIndex = e.NewPageIndex;
+            BindGrid(txtBuscar.Text.Trim());
         }
 
-        protected void gvCategorias_RowCommand(object sender, GridViewCommandEventArgs e)
+        private void BindGrid(string q)
         {
-            int id = Convert.ToInt32(e.CommandArgument);
-            if (e.CommandName == "Editar")
+            using (var con = new SqlConnection(cn))
+            using (var cmd = new SqlCommand(@"
+        SELECT Id, UPPER(Nombre) AS Nombre
+        FROM CATEGORIAS
+        WHERE (@q = '' OR Nombre LIKE '%'+@q+'%')
+        ORDER BY Nombre;", con))
             {
-                Response.Redirect("AgregarCategoria.aspx?id=" + id);
-            }
-            else if (e.CommandName == "Eliminar")
-            {
-                string msg = "¿Desea eliminar la categoría?";
-                Response.Redirect($"ConfirmarEliminar.aspx?entidad=categoria&id={id}&msg={Server.UrlEncode(msg)}");
+                cmd.Parameters.Add("@q", SqlDbType.VarChar, 100).Value = q ?? "";
+                var da = new SqlDataAdapter(cmd);
+                var dt = new DataTable();
+                da.Fill(dt);
+                gvCategorias.DataSource = dt;
+                gvCategorias.DataBind();
             }
         }
     }

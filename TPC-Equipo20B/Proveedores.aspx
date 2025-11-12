@@ -1,56 +1,43 @@
-﻿<%@ Page Title="Proveedores" Language="C#" MasterPageFile="~/Site.Master"
-    AutoEventWireup="true" CodeBehind="Proveedores.aspx.cs" Inherits="TPC_Equipo20B.Proveedores" %>
+﻿<%@ Page Title="Gestión de Proveedores"
+    Language="C#"
+    MasterPageFile="~/Site.Master"
+    AutoEventWireup="true"
+    CodeBehind="Proveedores.aspx.cs"
+    Inherits="TPC_Equipo20B.Proveedores" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <!-- Encabezado -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="fw-bold">Gestión de Proveedores</h2>
-        <asp:Button ID="btnAgregarProveedor" runat="server"
-            Text="➕ Agregar Proveedor"
-            CssClass="btn btn-success"
-            OnClick="btnAgregarProveedor_Click" />
-    </div>
+<asp:Content ID="MainContentProveedores" ContentPlaceHolderID="MainContent" runat="server">
 
-    <!-- Buscador -->
-    <div class="mb-3">
-        <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-search"></i></span>
-            <asp:TextBox ID="txtBuscar" runat="server" CssClass="form-control" placeholder="Buscar proveedor..." />
-        </div>
-    </div>
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="page-title m-0">Gestión de Proveedores</h2>
+    <asp:HyperLink ID="lnkAgregar" runat="server" NavigateUrl="~/AgregarProveedor.aspx"
+      CssClass="btn btn-brand">+ Agregar Proveedor</asp:HyperLink>
+  </div>
 
-    <!-- Grilla -->
-    <asp:GridView ID="gvProveedores" runat="server" AutoGenerateColumns="False"
-        CssClass="table table-hover align-middle"
-        DataKeyNames="Id"
-        OnRowCommand="gvProveedores_RowCommand">
-        <Columns>
-            <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
-            <asp:BoundField DataField="RazonSocial" HeaderText="Razón Social" />
-            <asp:BoundField DataField="Documento" HeaderText="CUIT / Documento" />
-            <asp:BoundField DataField="Email" HeaderText="Email" />
-            <asp:BoundField DataField="Telefono" HeaderText="Teléfono" />
-            <asp:BoundField DataField="Localidad" HeaderText="Localidad" />
+  <div class="toolbar d-flex gap-2 mb-3">
+    <asp:TextBox ID="txtBuscar" runat="server" CssClass="form-control" placeholder="Buscar…" />
+    <asp:Button ID="btnBuscar" runat="server" CssClass="btn btn-primary"
+      Text="Buscar" OnClick="btnBuscar_Click" UseSubmitBehavior="false" />
+  </div>
 
-            <asp:TemplateField HeaderText="Acciones">
-                <ItemTemplate>
-                    <asp:LinkButton ID="cmdEditar" runat="server"
-                        CommandName="Editar"
-                        CommandArgument='<%# Eval("Id") %>'
-                        CssClass="btn btn-sm btn-primary me-2">
-                        <i class="bi bi-pencil"></i> Editar
-                    </asp:LinkButton>
+  <asp:GridView ID="gvProveedores" runat="server"
+      CssClass="table table-hover align-middle"
+      AutoGenerateColumns="False"
+      AllowPaging="true" PageSize="12"
+      OnPageIndexChanging="gvProveedores_PageIndexChanging">
+    <Columns>
+      <asp:BoundField DataField="Nombre" HeaderText="Nombre / Razón Social" />
+      <asp:BoundField DataField="Documento" HeaderText="Documento" />
+      <asp:BoundField DataField="Telefono" HeaderText="Teléfono" />
+      <asp:TemplateField HeaderText="Acciones">
+        <ItemStyle CssClass="action-col text-center" />
+        <ItemTemplate>
+          <asp:HyperLink runat="server" CssClass="btn btn-primary btn-action-sm me-1"
+            NavigateUrl='<%# Eval("Id", "~/AgregarProveedor.aspx?id={0}") %>'>Editar</asp:HyperLink>
+          <asp:HyperLink runat="server" CssClass="btn btn-danger btn-action-sm"
+            NavigateUrl='<%# Eval("Id", "~/ConfirmarEliminar.aspx?tipo=Proveedor&id={0}") %>'>Eliminar</asp:HyperLink>
+        </ItemTemplate>
+      </asp:TemplateField>
+    </Columns>
+  </asp:GridView>
 
-                    <asp:LinkButton ID="cmdEliminar" runat="server"
-                        CommandName="Eliminar"
-                        CommandArgument='<%# Eval("Id") %>'
-                        CssClass="btn btn-sm btn-danger">
-                        <i class="bi bi-trash"></i> Eliminar
-                    </asp:LinkButton>
-                </ItemTemplate>
-            </asp:TemplateField>
-        </Columns>
-    </asp:GridView>
 </asp:Content>
-
-

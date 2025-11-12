@@ -1,68 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Web.UI.WebControls;
-using Negocio;
 
 namespace TPC_Equipo20B
 {
     public partial class Clientes : System.Web.UI.Page
     {
-        private ClienteNegocio negocio = new ClienteNegocio();
+        private string cn => ConfigurationManager.ConnectionStrings["COMERCIO_DB"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-                CargarGrid();
+            if (!IsPostBack) BindGrid("");
         }
 
-        private void CargarGrid(string filtro = "")
+        protected void btnBuscar_Click(object sender, EventArgs e)
         {
-            var lista = negocio.Listar();
+            BindGrid(txtBuscar.Text.Trim());
+        }
 
-            // Si hay texto de búsqueda, filtro por nombre o documento
-            if (!string.IsNullOrWhiteSpace(filtro))
+        protected void gvClientes_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            gvClientes.PageIndex = e.NewPageIndex;
+            BindGrid(txtBuscar.Text.Trim());
+        }
+
+        private void BindGrid(string q)
+        {
+            using (var con = new SqlConnection(cn))
+            using (var cmd = new SqlCommand(@"
+        SELECT Id, UPPER(Nombre) AS Nombre, Documento, Telefono
+        FROM CLIENTES
+        WHERE (@q='' OR Nombre LIKE '%'+@q+'%' OR Documento LIKE '%'+@q+'%')
+        ORDER BY Nombre;", con))
             {
-                filtro = filtro.ToLower();
-                lista = lista.Where(c =>
-                    (c.Nombre != null && c.Nombre.ToLower().Contains(filtro)) ||
-                    (c.Documento != null && c.Documento.ToLower().Contains(filtro))
-                ).ToList();
-            }
-
-            gvClientes.DataSource = lista;
-            gvClientes.DataBind();
-        }
-
-        protected void btnAgregarCliente_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("AgregarCliente.aspx");
-        }
-
-        protected void btnBuscarCliente_Click(object sender, EventArgs e)
-        {
-            string filtro = txtBuscarCliente.Text.Trim();
-            CargarGrid(filtro);
-        }
-
-        protected void gvClientes_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
-        {
-            if (e.CommandArgument == null)
-                return;
-
-            int id = Convert.ToInt32(e.CommandArgument);
-
-            switch (e.CommandName)
-            {
-                case "Editar":
-                    Response.Redirect("AgregarCliente.aspx?id=" + id);
-                    break;
-
-                case "Eliminar":
-                    Response.Redirect("ConfirmarEliminar.aspx?entidad=cliente&id=" + id);
-                    break;
+                cmd.Parameters.Add("@q", SqlDbType.VarChar, 100).Value = q ?? "";
+                var da = new SqlDataAdapter(cmd);
+                var dt = new DataTable();
+                da.Fill(dt);
+                gvClientes.DataSource = dt;
+                gvClientes.DataBind();
             }
         }
     }

@@ -1,40 +1,46 @@
 ﻿using System;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Web.UI.WebControls;
-using Negocio;
 
 namespace TPC_Equipo20B
 {
     public partial class Marcas : System.Web.UI.Page
     {
-        private readonly MarcaNegocio _negocio = new MarcaNegocio();
+        private string cn => ConfigurationManager.ConnectionStrings["COMERCIO_DB"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack) BindGrid();
+            if (!IsPostBack) BindGrid("");
         }
 
-        private void BindGrid()
+        protected void btnBuscar_Click(object sender, EventArgs e)
         {
-            gvMarcas.DataSource = _negocio.Listar();
-            gvMarcas.DataBind();
+            BindGrid(txtBuscar.Text.Trim());
         }
 
-        protected void btnAgregarMarca_Click(object sender, EventArgs e)
+        protected void gvMarcas_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            Response.Redirect("AgregarMarca.aspx");
+            gvMarcas.PageIndex = e.NewPageIndex;
+            BindGrid(txtBuscar.Text.Trim());
         }
 
-        protected void gvMarcas_RowCommand(object sender, GridViewCommandEventArgs e)
+        private void BindGrid(string q)
         {
-            int id = Convert.ToInt32(e.CommandArgument);
-            if (e.CommandName == "Editar")
+            using (var con = new SqlConnection(cn))
+            using (var cmd = new SqlCommand(@"
+        SELECT Id, UPPER(Nombre) AS Nombre
+        FROM MARCAS
+        WHERE (@q = '' OR Nombre LIKE '%'+@q+'%')
+        ORDER BY Nombre;", con))
             {
-                Response.Redirect("AgregarMarca.aspx?id=" + id);
-            }
-            else if (e.CommandName == "Eliminar")
-            {
-                string msg = "¿Desea eliminar la marca?";
-                Response.Redirect($"ConfirmarEliminar.aspx?entidad=marca&id={id}&msg={Server.UrlEncode(msg)}");
+                cmd.Parameters.Add("@q", SqlDbType.VarChar, 100).Value = q ?? "";
+                var da = new SqlDataAdapter(cmd);
+                var dt = new DataTable();
+                da.Fill(dt);
+                gvMarcas.DataSource = dt;
+                gvMarcas.DataBind();
             }
         }
     }

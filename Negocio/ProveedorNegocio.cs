@@ -1,28 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Dominio;
-
 
 namespace Negocio
 {
     public class ProveedorNegocio
     {
-        public List<Proveedor> Listar()
+        public List<Proveedor> Listar(string q = null)
         {
-            List<Proveedor> lista = new List<Proveedor>();
-            AccesoDatos datos = new AccesoDatos();
-
+            var lista = new List<Proveedor>();
+            var datos = new AccesoDatos();
             try
             {
-                datos.setearConsulta("SELECT Id, Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA FROM Proveedores");
-                datos.ejecutarLectura();
+                if (string.IsNullOrWhiteSpace(q))
+                {
+                    datos.setearConsulta("SELECT Id, Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA FROM Proveedores");
+                }
+                else
+                {
+                    datos.setearConsulta(@"
+                        SELECT Id, Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA
+                        FROM Proveedores
+                        WHERE Nombre LIKE @q OR RazonSocial LIKE @q OR Documento LIKE @q OR Email LIKE @q OR Telefono LIKE @q OR Localidad LIKE @q
+                    ");
+                    datos.setearParametro("@q", "%" + q + "%");
+                }
 
+                datos.ejecutarLectura();
                 while (datos.Lector.Read())
                 {
-                    Proveedor p = new Proveedor
+                    var p = new Proveedor
                     {
                         Id = (int)datos.Lector["Id"],
                         Nombre = datos.Lector["Nombre"].ToString(),
@@ -34,21 +41,16 @@ namespace Negocio
                         Localidad = datos.Lector["Localidad"] != DBNull.Value ? datos.Lector["Localidad"].ToString() : "",
                         CondicionIVA = datos.Lector["CondicionIVA"] != DBNull.Value ? datos.Lector["CondicionIVA"].ToString() : ""
                     };
-
                     lista.Add(p);
                 }
-
                 return lista;
             }
-            finally
-            {
-                datos.CerrarConexion();
-            }
+            finally { datos.CerrarConexion(); }
         }
 
         public Proveedor BuscarPorId(int id)
         {
-            AccesoDatos datos = new AccesoDatos();
+            var datos = new AccesoDatos();
             try
             {
                 datos.setearConsulta("SELECT Id, Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA FROM Proveedores WHERE Id = @id");
@@ -70,36 +72,30 @@ namespace Negocio
                         CondicionIVA = datos.Lector["CondicionIVA"] != DBNull.Value ? datos.Lector["CondicionIVA"].ToString() : ""
                     };
                 }
-
                 return null;
             }
-            finally
-            {
-                datos.CerrarConexion();
-            }
+            finally { datos.CerrarConexion(); }
         }
 
         public void Guardar(Proveedor p)
         {
-            AccesoDatos datos = new AccesoDatos();
+            var datos = new AccesoDatos();
             try
             {
                 if (p.Id == 0)
-                    datos.setearConsulta(@"INSERT INTO Proveedores 
-                        (Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA)
-                        VALUES (@nombre, @razon, @doc, @email, @tel, @dir, @loc, @iva)");
+                {
+                    datos.setearConsulta(@"
+                        INSERT INTO Proveedores (Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA)
+                        VALUES (@nombre, @razon, @doc, @email, @tel, @dir, @loc, @iva)
+                    ");
+                }
                 else
                 {
-                    datos.setearConsulta(@"UPDATE Proveedores SET 
-                        Nombre = @nombre, 
-                        RazonSocial = @razon,
-                        Documento = @doc,
-                        Email = @email,
-                        Telefono = @tel,
-                        Direccion = @dir,
-                        Localidad = @loc,
-                        CondicionIVA = @iva
-                        WHERE Id = @id");
+                    datos.setearConsulta(@"
+                        UPDATE Proveedores SET
+                        Nombre=@nombre, RazonSocial=@razon, Documento=@doc, Email=@email, Telefono=@tel, Direccion=@dir, Localidad=@loc, CondicionIVA=@iva
+                        WHERE Id=@id
+                    ");
                     datos.setearParametro("@id", p.Id);
                 }
 
@@ -111,29 +107,21 @@ namespace Negocio
                 datos.setearParametro("@dir", p.Direccion);
                 datos.setearParametro("@loc", p.Localidad);
                 datos.setearParametro("@iva", p.CondicionIVA);
-
                 datos.ejecutarAccion();
             }
-            finally
-            {
-                datos.CerrarConexion();
-            }
+            finally { datos.CerrarConexion(); }
         }
 
         public void Eliminar(int id)
         {
-            AccesoDatos datos = new AccesoDatos();
+            var datos = new AccesoDatos();
             try
             {
                 datos.setearConsulta("DELETE FROM Proveedores WHERE Id = @id");
                 datos.setearParametro("@id", id);
                 datos.ejecutarAccion();
             }
-            finally
-            {
-                datos.CerrarConexion();
-            }
+            finally { datos.CerrarConexion(); }
         }
     }
 }
-

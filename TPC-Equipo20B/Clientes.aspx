@@ -1,72 +1,42 @@
-﻿<%@ Page Title="Clientes" Language="C#" MasterPageFile="~/Site.Master"
+﻿<%@ Page Title="Gestión de Clientes" Language="C#" MasterPageFile="~/Site.Master"
     AutoEventWireup="true" CodeBehind="Clientes.aspx.cs" Inherits="TPC_Equipo20B.Clientes" %>
 
-<asp:Content ID="c1" ContentPlaceHolderID="MainContent" runat="server">
+<asp:Content ID="HeadContentCli" ContentPlaceHolderID="HeadContent" runat="server" />
+<asp:Content ID="MainContentCli" ContentPlaceHolderID="MainContent" runat="server">
 
-    <!-- Encabezado -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="fw-bold mb-0">Gestión de Clientes</h2>
-        <asp:Button ID="btnAgregarCliente" runat="server" Text="Agregar Cliente"
-            CssClass="btn btn-success" OnClick="btnAgregarCliente_Click" />
-    </div>
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="page-title m-0">Gestión de Clientes</h2>
+    <asp:HyperLink ID="lnkAgregar" runat="server" NavigateUrl="~/AgregarCliente.aspx"
+      CssClass="btn btn-brand">+ Agregar Cliente</asp:HyperLink>
+  </div>
 
-    <!-- Buscador -->
-    <div class="card mb-4 shadow-sm">
-        <div class="card-body">
-            <div class="row g-2">
-                <div class="col-12 col-md-10">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-search"></i></span>
-                        <asp:TextBox ID="txtBuscarCliente" runat="server"
-                            CssClass="form-control" placeholder="Buscar cliente por nombre o documento..." />
-                    </div>
-                </div>
-                <div class="col-12 col-md-2 d-grid">
-                    <asp:Button ID="btnBuscarCliente" runat="server" Text="Buscar"
-                        CssClass="btn btn-primary" OnClick="btnBuscarCliente_Click" />
-                </div>
-            </div>
-        </div>
-    </div>
+  <div class="toolbar d-flex gap-2 mb-3">
+    <asp:TextBox ID="txtBuscar" runat="server" CssClass="form-control" placeholder="Buscar cliente por nombre o documento…" />
+    <asp:Button ID="btnBuscar" runat="server" CssClass="btn btn-primary" Text="Buscar"
+      OnClick="btnBuscar_Click" UseSubmitBehavior="false" />
+  </div>
 
-    <!-- Tabla -->
-    <div class="card shadow-sm">
-        <div class="table-responsive">
-<asp:GridView ID="gvClientes" runat="server" AutoGenerateColumns="False"
-    CssClass="table table-hover align-middle mb-0"
-    GridLines="None" DataKeyNames="Id"
-    OnRowCommand="gvClientes_RowCommand">
-
-    <HeaderStyle CssClass="table-light" />
-
-    <Columns>
-        <asp:BoundField DataField="Id" HeaderText="ID" />
-        <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
-        <asp:BoundField DataField="Documento" HeaderText="DNI / CUIT" />
+  <div class="grid">
+    <asp:GridView ID="gvClientes" runat="server"
+      CssClass="table table-hover align-middle"
+      AutoGenerateColumns="False"
+      AllowPaging="true" PageSize="12"
+      OnPageIndexChanging="gvClientes_PageIndexChanging">
+      <Columns>
+        <asp:BoundField DataField="Nombre" HeaderText="Cliente" />
+        <asp:BoundField DataField="Documento" HeaderText="Documento" />
         <asp:BoundField DataField="Telefono" HeaderText="Teléfono" />
-        <asp:BoundField DataField="Email" HeaderText="Email" />
-
         <asp:TemplateField HeaderText="Acciones">
-            <ItemTemplate>
-                <asp:LinkButton ID="cmdEditar" runat="server"
-                    CommandName="Editar"
-                    CommandArgument='<%# Eval("Id") %>'
-                    CssClass="btn btn-sm btn-primary me-2">
-                    <i class="bi bi-pencil-square"></i> Editar
-                </asp:LinkButton>
-
-                <asp:LinkButton ID="cmdEliminar" runat="server"
-                    CommandName="Eliminar"
-                    CommandArgument='<%# Eval("Id") %>'
-                    CssClass="btn btn-sm btn-danger">
-                    <i class="bi bi-trash"></i> Eliminar
-                </asp:LinkButton>
-            </ItemTemplate>
+          <ItemStyle CssClass="action-col text-center" />
+          <ItemTemplate>
+            <asp:HyperLink runat="server" CssClass="btn btn-primary btn-action-sm me-1"
+              NavigateUrl='<%# Eval("Id", "~/AgregarCliente.aspx?id={0}") %>'>Editar</asp:HyperLink>
+            <asp:HyperLink runat="server" CssClass="btn btn-danger btn-action-sm"
+              NavigateUrl='<%# Eval("Id", "~/ConfirmarEliminar.aspx?tipo=Cliente&id={0}") %>'>Eliminar</asp:HyperLink>
+          </ItemTemplate>
         </asp:TemplateField>
-    </Columns>
-</asp:GridView>
-
-        </div>
-    </div>
+      </Columns>
+    </asp:GridView>
+  </div>
 
 </asp:Content>

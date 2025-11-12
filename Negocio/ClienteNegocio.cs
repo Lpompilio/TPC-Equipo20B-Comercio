@@ -1,27 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Dominio;
 
 namespace Negocio
 {
     public class ClienteNegocio
     {
-        public List<Cliente> Listar()
+        public List<Cliente> Listar(string q = null)
         {
-            List<Cliente> lista = new List<Cliente>();
-            AccesoDatos datos = new AccesoDatos();
-
+            var lista = new List<Cliente>();
+            var datos = new AccesoDatos();
             try
             {
-                datos.setearConsulta("SELECT Id, Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Habilitado FROM Clientes");
-                datos.ejecutarLectura();
+                if (string.IsNullOrWhiteSpace(q))
+                {
+                    datos.setearConsulta("SELECT Id, Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Habilitado FROM Clientes");
+                }
+                else
+                {
+                    datos.setearConsulta(@"
+                        SELECT Id, Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Habilitado
+                        FROM Clientes
+                        WHERE Nombre LIKE @q OR Documento LIKE @q OR Email LIKE @q OR Telefono LIKE @q OR Localidad LIKE @q
+                    ");
+                    datos.setearParametro("@q", "%" + q + "%");
+                }
 
+                datos.ejecutarLectura();
                 while (datos.Lector.Read())
                 {
-                    Cliente c = new Cliente
+                    var c = new Cliente
                     {
                         Id = (int)datos.Lector["Id"],
                         Nombre = datos.Lector["Nombre"].ToString(),
@@ -33,10 +41,8 @@ namespace Negocio
                         CondicionIVA = datos.Lector["CondicionIVA"].ToString(),
                         Habilitado = (bool)datos.Lector["Habilitado"]
                     };
-
                     lista.Add(c);
                 }
-
                 return lista;
             }
             finally { datos.CerrarConexion(); }
@@ -44,8 +50,7 @@ namespace Negocio
 
         public Cliente BuscarPorId(int id)
         {
-            AccesoDatos datos = new AccesoDatos();
-
+            var datos = new AccesoDatos();
             try
             {
                 datos.setearConsulta("SELECT Id, Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Habilitado FROM Clientes WHERE Id = @id");
@@ -67,7 +72,6 @@ namespace Negocio
                         Habilitado = (bool)datos.Lector["Habilitado"]
                     };
                 }
-
                 return null;
             }
             finally { datos.CerrarConexion(); }
@@ -75,23 +79,23 @@ namespace Negocio
 
         public void Guardar(Cliente c)
         {
-            AccesoDatos datos = new AccesoDatos();
-
+            var datos = new AccesoDatos();
             try
             {
                 if (c.Id == 0)
                 {
-                    datos.setearConsulta(@"INSERT INTO Clientes 
-                        (Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Habilitado) 
-                        VALUES (@nom, @doc, @email, @tel, @dir, @loc, @iva, @hab)");
+                    datos.setearConsulta(@"
+                        INSERT INTO Clientes (Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Habilitado)
+                        VALUES (@nom, @doc, @email, @tel, @dir, @loc, @iva, @hab)
+                    ");
                 }
                 else
                 {
-                    datos.setearConsulta(@"UPDATE Clientes SET 
-                        Nombre = @nom, Documento = @doc, Email = @email, 
-                        Telefono = @tel, Direccion = @dir, Localidad = @loc, 
-                        CondicionIVA = @iva, Habilitado = @hab
-                        WHERE Id = @id");
+                    datos.setearConsulta(@"
+                        UPDATE Clientes SET
+                        Nombre=@nom, Documento=@doc, Email=@email, Telefono=@tel, Direccion=@dir, Localidad=@loc, CondicionIVA=@iva, Habilitado=@hab
+                        WHERE Id=@id
+                    ");
                     datos.setearParametro("@id", c.Id);
                 }
 
@@ -103,7 +107,6 @@ namespace Negocio
                 datos.setearParametro("@loc", c.Localidad);
                 datos.setearParametro("@iva", c.CondicionIVA);
                 datos.setearParametro("@hab", c.Habilitado);
-
                 datos.ejecutarAccion();
             }
             finally { datos.CerrarConexion(); }
@@ -111,8 +114,7 @@ namespace Negocio
 
         public void Eliminar(int id)
         {
-            AccesoDatos datos = new AccesoDatos();
-
+            var datos = new AccesoDatos();
             try
             {
                 datos.setearConsulta("DELETE FROM Clientes WHERE Id = @id");
@@ -123,4 +125,3 @@ namespace Negocio
         }
     }
 }
-
