@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Data;
-using System.IO;
-using System.Text;
-using System.Web;
 using System.Collections.Generic;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 using Negocio;
 using Dominio;
 
 namespace TPC_Equipo20B
 {
-    public partial class Ventas : System.Web.UI.Page
+    public partial class Ventas : Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -17,15 +15,16 @@ namespace TPC_Equipo20B
                 CargarGrid();
         }
 
-        private void CargarGrid()
+        // Ahora admite filtro opcional
+        private void CargarGrid(string q = null)
         {
-            VentaNegocio negocio = new VentaNegocio();
-            List<Venta> lista = negocio.Listar();
+            var negocio = new VentaNegocio();
+            List<Venta> lista = negocio.Listar(q);
             gvVentas.DataSource = lista;
             gvVentas.DataBind();
         }
 
-        protected void gvVentas_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
+        protected void gvVentas_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandArgument == null)
                 return;
@@ -39,6 +38,12 @@ namespace TPC_Equipo20B
         protected void btnNuevaVenta_Click(object sender, EventArgs e)
         {
             Response.Redirect("AgregarVenta.aspx");
+        }
+
+        protected void btnBuscarVenta_Click(object sender, EventArgs e)
+        {
+            var q = txtBuscarVenta.Text ?? string.Empty;
+            CargarGrid(q.Trim());
         }
     }
 }

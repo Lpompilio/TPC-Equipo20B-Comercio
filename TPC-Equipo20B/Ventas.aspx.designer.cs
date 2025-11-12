@@ -24,6 +24,33 @@ namespace TPC_Equipo20B
         protected global::System.Web.UI.WebControls.Button btnNuevaVenta;
 
         /// <summary>
+        /// Control pnlBuscarVenta.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlBuscarVenta;
+
+        /// <summary>
+        /// Control txtBuscarVenta.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtBuscarVenta;
+
+        /// <summary>
+        /// Control btnBuscarVenta.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnBuscarVenta;
+
+        /// <summary>
         /// Control gvVentas.
         /// </summary>
         /// <remarks>

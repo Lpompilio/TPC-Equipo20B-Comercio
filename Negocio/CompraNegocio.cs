@@ -1,9 +1,6 @@
 ﻿using Dominio;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Negocio
 {
@@ -17,10 +14,12 @@ namespace Negocio
             {
                 // Insertar la compra
                 datos.setearConsulta(
-                    "INSERT INTO Compras (IdProveedor, Fecha, IdUsuario) OUTPUT INSERTED.Id VALUES (@prov, @fecha, @usuario)");
+                    "INSERT INTO Compras (IdProveedor, Fecha, IdUsuario, Observaciones) " +
+                    "OUTPUT INSERTED.Id VALUES (@prov, @fecha, @usuario, @obs)");
                 datos.setearParametro("@prov", compra.Proveedor.Id);
                 datos.setearParametro("@fecha", compra.Fecha);
                 datos.setearParametro("@usuario", compra.Usuario.Id);
+                datos.setearParametro("@obs", (object)(compra.Observaciones ?? string.Empty));
 
                 int idCompra = Convert.ToInt32(datos.ejecutarScalar());
 
@@ -59,51 +58,73 @@ namespace Negocio
             }
         }
 
-        public List<Compra> Listar()
+        // 🟢 Listar con búsqueda opcional
+        public List<Compra> Listar(string q = null)
         {
             List<Compra> lista = new List<Compra>();
             AccesoDatos datos = new AccesoDatos();
 
             try
             {
-                datos.setearConsulta(@"
-                    SELECT 
-                        C.Id,
-                        C.Fecha,
-                        C.IdProveedor,
-                        P.Nombre AS NombreProveedor,
-                        C.IdUsuario,
-                        U.Nombre AS NombreUsuario,
-                        C.Observaciones
-                            FROM COMPRAS AS C
+                if (string.IsNullOrWhiteSpace(q))
+                {
+                    datos.setearConsulta(@"
+                        SELECT 
+                            C.Id,
+                            C.Fecha,
+                            C.IdProveedor,
+                            P.Nombre AS NombreProveedor,
+                            C.IdUsuario,
+                            U.Nombre AS NombreUsuario,
+                            C.Observaciones
+                        FROM COMPRAS AS C
                         INNER JOIN PROVEEDORES AS P ON C.IdProveedor = P.Id
                         INNER JOIN USUARIOS AS U ON C.IdUsuario = U.Id
                         ORDER BY C.Fecha DESC;");
+                }
+                else
+                {
+                    datos.setearConsulta(@"
+                        SELECT 
+                            C.Id,
+                            C.Fecha,
+                            C.IdProveedor,
+                            P.Nombre AS NombreProveedor,
+                            C.IdUsuario,
+                            U.Nombre AS NombreUsuario,
+                            C.Observaciones
+                        FROM COMPRAS AS C
+                        INNER JOIN PROVEEDORES AS P ON C.IdProveedor = P.Id
+                        INNER JOIN USUARIOS AS U ON C.IdUsuario = U.Id
+                        WHERE 
+                            P.Nombre LIKE @q
+                            OR U.Nombre LIKE @q
+                            OR C.Observaciones LIKE @q
+                        ORDER BY C.Fecha DESC;");
+                    datos.setearParametro("@q", "%" + q + "%");
+                }
 
                 datos.ejecutarLectura();
 
                 while (datos.Lector.Read())
                 {
-                    Compra compra = new Compra();
-
-                    compra.Id = (int)datos.Lector["Id"];
-                    compra.Fecha = (DateTime)datos.Lector["Fecha"];
-                    compra.Observaciones = datos.Lector["Observaciones"] != DBNull.Value
-                        ? (string)datos.Lector["Observaciones"]
-                        : string.Empty;
-
-                    // Proveedor
-                    compra.Proveedor = new Proveedor
+                    Compra compra = new Compra
                     {
-                        Id = (int)datos.Lector["IdProveedor"],
-                        Nombre = (string)datos.Lector["NombreProveedor"]
-                    };
-
-                    // Usuario (quien cargó la compra)
-                    compra.Usuario = new Usuario
-                    {
-                        Id = (int)datos.Lector["IdUsuario"],
-                        Nombre = (string)datos.Lector["NombreUsuario"]
+                        Id = (int)datos.Lector["Id"],
+                        Fecha = (DateTime)datos.Lector["Fecha"],
+                        Observaciones = datos.Lector["Observaciones"] != DBNull.Value
+                            ? (string)datos.Lector["Observaciones"]
+                            : string.Empty,
+                        Proveedor = new Proveedor
+                        {
+                            Id = (int)datos.Lector["IdProveedor"],
+                            Nombre = (string)datos.Lector["NombreProveedor"]
+                        },
+                        Usuario = new Usuario
+                        {
+                            Id = (int)datos.Lector["IdUsuario"],
+                            Nombre = (string)datos.Lector["NombreUsuario"]
+                        }
                     };
 
                     lista.Add(compra);
@@ -141,4 +162,3 @@ namespace Negocio
         }
     }
 }
-

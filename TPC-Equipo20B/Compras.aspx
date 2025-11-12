@@ -10,41 +10,52 @@
             OnClick="btnNuevaCompra_Click" />
     </div>
 
-<asp:GridView ID="gvCompras" runat="server" AutoGenerateColumns="False"
-    CssClass="table table-hover align-middle" DataKeyNames="Id"
-    OnRowCommand="gvCompras_RowCommand">
-    <Columns>
-        <asp:BoundField DataField="Id" HeaderText="N° Compra" />
-        <asp:BoundField DataField="Fecha" HeaderText="Fecha" DataFormatString="{0:dd/MM/yyyy}" />
+    <!-- 🔎 Toolbar de búsqueda -->
+    <div class="toolbar d-flex gap-2 mb-3">
+        <asp:TextBox ID="txtBuscarCompra" runat="server"
+            CssClass="form-control"
+            placeholder="Buscar por proveedor, usuario u observaciones…" />
+        <asp:Button ID="btnBuscarCompra" runat="server"
+            CssClass="btn btn-primary"
+            Text="Buscar"
+            OnClick="btnBuscarCompra_Click"
+            UseSubmitBehavior="false" />
+    </div>
 
-        <asp:TemplateField HeaderText="Proveedor">
-            <ItemTemplate><%# Eval("Proveedor.Nombre") %></ItemTemplate>
-        </asp:TemplateField>
+    <asp:GridView ID="gvCompras" runat="server" AutoGenerateColumns="False"
+        CssClass="table table-hover align-middle" DataKeyNames="Id"
+        OnRowCommand="gvCompras_RowCommand">
+        <Columns>
+            <asp:BoundField DataField="Id" HeaderText="N° Compra" />
+            <asp:BoundField DataField="Fecha" HeaderText="Fecha" DataFormatString="{0:dd/MM/yyyy}" />
 
-        <asp:BoundField DataField="Observaciones" HeaderText="Observaciones" />
+            <asp:TemplateField HeaderText="Proveedor">
+                <ItemTemplate><%# Eval("Proveedor.Nombre") %></ItemTemplate>
+            </asp:TemplateField>
 
-        <asp:TemplateField HeaderText="Usuario">
-            <ItemTemplate><%# Eval("Usuario.Nombre") %></ItemTemplate>
-        </asp:TemplateField>
+            <asp:BoundField DataField="Observaciones" HeaderText="Observaciones" />
 
-        <asp:TemplateField HeaderText="Acciones">
-            <ItemTemplate>
-                <asp:LinkButton ID="cmdDetalle" runat="server"
-                    CommandName="Detalle"
-                    CommandArgument='<%# Eval("Id") %>'
-                    CssClass="btn btn-sm btn-info me-2">
-                    <i class="bi bi-eye"></i> Ver Detalle
-                </asp:LinkButton>
-                 <asp:LinkButton ID="cmdEliminar" runat="server"
-                    CommandName="Eliminar"
-                    CommandArgument='<%# Eval("Id") %>'
-                    CssClass="btn btn-sm btn-danger">
-            <i class="bi bi-trash"></i> Eliminar
-        </asp:LinkButton>
-            </ItemTemplate>
-        </asp:TemplateField>
-    </Columns>
-</asp:GridView>
+            <asp:TemplateField HeaderText="Usuario">
+                <ItemTemplate><%# Eval("Usuario.Nombre") %></ItemTemplate>
+            </asp:TemplateField>
+
+            <asp:TemplateField HeaderText="Acciones">
+                <ItemTemplate>
+                    <asp:LinkButton ID="cmdDetalle" runat="server"
+                        CommandName="Detalle"
+                        CommandArgument='<%# Eval("Id") %>'
+                        CssClass="btn btn-sm btn-info me-2">
+                        <i class="bi bi-eye"></i> Ver Detalle
+                    </asp:LinkButton>
+                    <asp:LinkButton ID="cmdEliminar" runat="server"
+                        CommandName="Eliminar"
+                        CommandArgument='<%# Eval("Id") %>'
+                        CssClass="btn btn-sm btn-danger">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </asp:LinkButton>
+                </ItemTemplate>
+            </asp:TemplateField>
+        </Columns>
+    </asp:GridView>
 
 </asp:Content>
-

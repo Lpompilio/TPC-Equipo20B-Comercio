@@ -20,19 +20,20 @@ namespace TPC_Equipo20B
 
         protected void btnAgregarProducto_Click(object sender, EventArgs e)
         {
-            Response.Redirect("ProductoEditar.aspx");
+            Response.Redirect("AgregarProducto.aspx");
         }
 
         protected void btnBuscarProducto_Click(object sender, EventArgs e)
         {
-            var q = Request.Form["txtBuscarProducto"];
-            Bind((q ?? "").Trim());
+            var q = txtBuscarProducto.Text.Trim();
+            Bind(q);
         }
 
         protected void gvProductos_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
         {
             if (e.CommandName == "Editar")
                 Response.Redirect("AgregarProducto.aspx?id=" + e.CommandArgument);
+
             if (e.CommandName == "Eliminar")
                 Response.Redirect("ConfirmarEliminar.aspx?tipo=producto&id=" + e.CommandArgument);
         }

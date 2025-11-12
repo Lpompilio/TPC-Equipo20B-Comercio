@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SqlClient;
 using Dominio;
 
@@ -10,26 +7,53 @@ namespace Negocio
 {
     public class VentaNegocio
     {
-        public List<Venta> Listar()
+        // Ahora soporta búsqueda opcional
+        public List<Venta> Listar(string q = null)
         {
             List<Venta> lista = new List<Venta>();
             AccesoDatos datos = new AccesoDatos();
 
             try
             {
-                datos.setearConsulta(@"
-            SELECT 
-                V.Id,
-                V.Fecha,
-                V.NumeroFactura,
-                V.MetodoPago,
-                V.Total,
-                C.Id AS IdCliente,
-                C.Nombre AS NombreCliente
-            FROM Ventas V
-            INNER JOIN Clientes C ON V.IdCliente = C.Id
-            ORDER BY V.Fecha DESC
-        ");
+                if (string.IsNullOrWhiteSpace(q))
+                {
+                    datos.setearConsulta(@"
+                        SELECT 
+                            V.Id,
+                            V.Fecha,
+                            V.NumeroFactura,
+                            V.MetodoPago,
+                            V.Total,
+                            C.Id AS IdCliente,
+                            C.Nombre AS NombreCliente
+                        FROM Ventas V
+                        INNER JOIN Clientes C ON V.IdCliente = C.Id
+                        ORDER BY V.Fecha DESC
+                    ");
+                }
+                else
+                {
+                    datos.setearConsulta(@"
+                        SELECT 
+                            V.Id,
+                            V.Fecha,
+                            V.NumeroFactura,
+                            V.MetodoPago,
+                            V.Total,
+                            C.Id AS IdCliente,
+                            C.Nombre AS NombreCliente
+                        FROM Ventas V
+                        INNER JOIN Clientes C ON V.IdCliente = C.Id
+                        WHERE 
+                            C.Nombre LIKE @q
+                            OR V.NumeroFactura LIKE @q
+                            OR V.MetodoPago LIKE @q
+                            OR CONVERT(VARCHAR(10), V.Id) LIKE @q
+                        ORDER BY V.Fecha DESC
+                    ");
+                    datos.setearParametro("@q", "%" + q + "%");
+                }
+
                 datos.ejecutarLectura();
 
                 while (datos.Lector.Read())
@@ -38,14 +62,20 @@ namespace Negocio
                     {
                         Id = (int)datos.Lector["Id"],
                         Fecha = (DateTime)datos.Lector["Fecha"],
-                        NumeroFactura = datos.Lector["NumeroFactura"] != DBNull.Value ? datos.Lector["NumeroFactura"].ToString() : "",
-                        MetodoPago = datos.Lector["MetodoPago"] != DBNull.Value ? datos.Lector["MetodoPago"].ToString() : "",
+                        NumeroFactura = datos.Lector["NumeroFactura"] != DBNull.Value
+                            ? datos.Lector["NumeroFactura"].ToString()
+                            : "",
+                        MetodoPago = datos.Lector["MetodoPago"] != DBNull.Value
+                            ? datos.Lector["MetodoPago"].ToString()
+                            : "",
                         Cliente = new Cliente
                         {
                             Id = (int)datos.Lector["IdCliente"],
                             Nombre = datos.Lector["NombreCliente"].ToString()
                         },
-                        TotalBD = datos.Lector["Total"] != DBNull.Value ? Convert.ToDecimal(datos.Lector["Total"]) : 0
+                        TotalBD = datos.Lector["Total"] != DBNull.Value
+                            ? Convert.ToDecimal(datos.Lector["Total"])
+                            : 0
                     };
 
                     lista.Add(v);
@@ -58,7 +88,6 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
-
 
         public Venta ObtenerPorId(int id)
         {
@@ -195,5 +224,3 @@ namespace Negocio
         }
     }
 }
-
-
