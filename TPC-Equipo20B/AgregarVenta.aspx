@@ -69,6 +69,7 @@
                 </div>
 
                 <div class="col-md-2 d-grid">
+                    <asp:Label ID="lblErrorStock" runat="server" CssClass="text-danger fw-bold" />
                     <asp:Button ID="btnAgregarLinea" runat="server"
                         Text="Agregar"
                         CssClass="btn btn-success"

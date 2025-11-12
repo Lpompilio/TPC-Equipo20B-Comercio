@@ -70,16 +70,34 @@ namespace TPC_Equipo20B
 
         protected void btnAgregarLinea_Click(object sender, EventArgs e)
         {
+            lblErrorStock.Text = ""; // Limpia el mensaje previo
+
             if (ddlProducto.SelectedValue == "0" || string.IsNullOrEmpty(txtCantidad.Text) || string.IsNullOrEmpty(txtPrecio.Text))
                 return;
 
             ProductoNegocio productoNeg = new ProductoNegocio();
             Producto prod = productoNeg.Listar().FirstOrDefault(p => p.Id == int.Parse(ddlProducto.SelectedValue));
 
+            if (prod == null)
+            {
+                lblErrorStock.Text = "❌ Error: producto no encontrado.";
+                return;
+            }
+
+            int cantidad = int.Parse(txtCantidad.Text);
+
+            // no permitir vender más que el stock disponible
+            if (cantidad > prod.StockActual)
+            {
+                lblErrorStock.Text = $"Stock insuficiente. Solo hay {prod.StockActual} unidades disponibles de \"{prod.Descripcion}\".";
+                return;
+            }
+
+            // Si hay stock, agregamos la línea
             VentaLinea nueva = new VentaLinea
             {
                 Producto = prod,
-                Cantidad = int.Parse(txtCantidad.Text),
+                Cantidad = cantidad,
                 PrecioUnitario = decimal.Parse(txtPrecio.Text)
             };
 
@@ -87,7 +105,13 @@ namespace TPC_Equipo20B
             gvLineas.DataSource = Lineas;
             gvLineas.DataBind();
             ActualizarTotal();
+
+            // Limpieza de campos
+            txtCantidad.Text = "";
+            ddlProducto.SelectedIndex = 0;
+            txtPrecio.Text = "";
         }
+
 
         protected void gvLineas_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
         {
