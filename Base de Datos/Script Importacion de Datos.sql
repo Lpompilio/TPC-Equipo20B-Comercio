@@ -1,4 +1,3 @@
--- 1. IMPORTACIÓN DE MARCAS
 SET IDENTITY_INSERT MARCAS ON;
 INSERT INTO MARCAS (Id, Nombre) VALUES
 (1, 'Coop Apícola  AMUYEN'),(2, 'CAUQUEVA'),(3, 'CEREALCOOP'),(4, 'FECOAPI'),(5, 'FLOR DE JARDIN'),
@@ -10,8 +9,7 @@ INSERT INTO MARCAS (Id, Nombre) VALUES
 SET IDENTITY_INSERT MARCAS OFF;
 GO
 
--- 2. IMPORTACIÓN DE CATEGORÍAS
-SET IDENTITY_INSERT CATEGORIAS ON;
+SET IDENTITY_INSERT CATEGORias ON;
 INSERT INTO CATEGORIAS (Id, Nombre) VALUES
 (1, 'MIEL'),(2, 'PANADERÍA'),(3, 'ALMACEN'),(4, 'TOMATE'),(5, 'MERMELADAS'),(6, 'ENCURTIDOS'),
 (7, 'HARINAS'),(8, 'YERBA MATE'),(9, 'ALMIBARES'),(10, 'BEBIDAS'),(11, 'DULCE'),(12, 'COOPERATIVA'),
@@ -20,36 +18,35 @@ INSERT INTO CATEGORIAS (Id, Nombre) VALUES
 SET IDENTITY_INSERT CATEGORIAS OFF;
 GO
 
--- 3. IMPORTACIÓN DE PRODUCTOS (Actualizado con productosNomalizados.csv)
 INSERT INTO PRODUCTOS (CodigoSKU, Descripcion, IdMarca, IdCategoria, Activo) VALUES
 ('1', 'MIEL X 1 KILO', 1, 1, 1),
-('2', 'MIEL X 1/2 KG', 1, 1, 1),
+('2', 'MIEL X 1/2 kg ', 1, 1, 1),
 ('3', 'FIDEOS DE MAIZ AMARILLO CRIOLLO', 2, 2, 1),
-('4', 'FIDEOS DE MAIZ CAPIA', 2, 2, 1),
+('4', 'FIDEOS DE MAIZ CAPIA ', 2, 2, 1),
 ('5', 'FIDEOS DE MAIZ CAPIA CON PIMENTON', 2, 2, 1),
 ('6', 'FIDEOS DE MAIZ CAPIA SABOR CEBOLLA,APIO Y PUERRO', 2, 2, 1),
 ('7', 'FIDEOS DE MAIZ CAPIA C/ALBAHACA', 2, 2, 1),
 ('8', 'FIDEOS DE MAIZ MORADO', 2, 2, 1),
 ('9', 'FIDEOS DE MAIZ MORADO Y QUINOA', 2, 2, 1),
-('10', 'FIDEOS DE MAIZ AMARIILO Y ESPINACA', 2, 2, 1),
-('11', 'QUINOA LAVADA CAUQUEVA X 200 GRS', 2, 3, 1),
+('10', 'FIDEOS DE MAIZ AMARIILO Y ESPINACA ', 2, 2, 1),
+('11', 'QUINOA LAVADA CAUQUEVA X 200 GRS ', 2, 3, 1),
 ('12', 'AVENA ARROLLADA INSTANTANEA X 350 GRS', 3, 3, 1),
 ('13', 'AVENA ARROLLADA TRADICIONAL X 400 GRS', 3, 3, 1),
 ('14', 'AVENA ARROLLADA TRADICIONAL EXTRAFINA X 400 GRS', 3, 3, 1),
-('15', 'SALVADO DE AVENA X 350 GRS', 3, 3, 1),
-('16', 'CEREALES CHOCO POP X 130 GRS', 3, 3, 1),
-('17', 'CEREALES MIEL POP X 130 GRS', 3, 3, 1),
+('15', 'SALVADO DE AVENA  X 350 GRS', 3, 3, 1),
+('16', 'CEREALES CHOCO POP X 130GR', 3, 3, 1),
+('17', 'CEREALES MIEL POP X 130GR', 3, 3, 1),
 ('18', 'TRITURADO DE TOMATE X 960 GRS.', 4, 4, 1),
-('19', 'MERMELADA DE CIRUELA X 450 GRSS', 5, 5, 1),
-('20', 'MERMELADA DE DAMASCO X 450 GRSS', 5, 5, 1),
-('21', 'MERMELADA DE DURAZNO X 450 GRSS', 5, 5, 1),
-('22', 'MERMELADA DE HIGO X 450 GRSS', 5, 5, 1),
-('23', 'MERMELADA DE KINOTOS X 450 GRSS', 5, 5, 1),
-('24', 'MERMELADA DE NARANJA X 450 GRSS', 5, 5, 1),
-('25', 'MERMELADA DE PERA X 450 GRSS', 5, 5, 1),
-('26', 'MERMELADA DE TOMATE X 450 GRSS', 5, 5, 1),
-('27', 'MERMELADA DE UVA X 450 GRSS', 5, 5, 1),
-('28', 'MERMELADA DE ZAPALLO X 450 GRSS', 5, 5, 1),
+('19', 'MERMELADA DE CIRUELA X 450GRS', 5, 5, 1),
+('20', 'MERMELADA DE DAMASCO X 450GRS', 5, 5, 1),
+('21', 'MERMELADA DE DURAZNO X 450GRS', 5, 5, 1),
+('22', 'MERMELADA DE HIGO X 450GRS', 5, 5, 1),
+('23', 'MERMELADA DE KINOTOS X 450GRS', 5, 5, 1),
+('24', 'MERMELADA DE NARANJA X 450GRS', 5, 5, 1),
+('25', 'MERMELADA DE PERA X 450GRS', 5, 5, 1),
+('26', 'MERMELADA DE TOMATE X 450GRS', 5, 5, 1),
+('27', 'MERMELADA DE UVA X 450GRS', 5, 5, 1),
+('28', 'MERMELADA DE ZAPALLO X 450GRS', 5, 5, 1),
 ('29', 'MERMELADA DE CIRUELA X 220 GRS', 5, 5, 1),
 ('30', 'MERMELADA DE DAMASCO X 220 GRS', 5, 5, 1),
 ('31', 'MERMELADA DE DURAZNO X 220 GRS', 5, 5, 1),
@@ -80,31 +77,45 @@ INSERT INTO PRODUCTOS (CodigoSKU, Descripcion, IdMarca, IdCategoria, Activo) VAL
 ('56', 'YERBA MATE ELABORADA X 250 GRS', 7, 8, 1),
 ('57', 'YERBA MATE ELABORADA ORGANICA X 500 GRS', 7, 8, 1),
 ('58', 'YERBA MATE BARBACUA X 500 GRS', 7, 8, 1),
+('59', 'YERBA MATE CANCHADA X 500 GRS', 8, 8, 1),
+('60', 'YERBA MATE ELABORADA X 1 KILO', 8, 8, 1),
+('61', 'YERBA MATE ELABORADA X 500 GRS', 8, 8, 1),
+('62', 'YERBA MATE ELABORADA X 250 GRS', 8, 8, 1),
 ('63', 'YERBA MATE ORGANICA X 500 GRS', 8, 8, 1),
 ('64', 'YERBA MATE ORGANICA X 1 KILO', 8, 8, 1),
 ('65', 'YERBA MATE COMPUESTA X 500 GRS', 9, 8, 1),
+('66', 'YERBA MATE ELABORADA X 1 KILO', 9, 8, 1),
+('67', 'YERBA MATE ELABORADA X 500 GRS', 9, 8, 1),
+('68', 'YERBA MATE ELABORADA X 250 GRS', 9, 8, 1),
 ('69', 'MAMON EN ALMIBAR X 450 GRS', 10, 9, 1),
 ('70', 'MAMON EN ALMIBAR X 800 GRS', 10, 9, 1),
 ('71', 'MAMON EN ALMIBAR X 3 KG', 10, 9, 1),
-('75', 'LICOR DE ANANA X 500 CC', 12, 10, 1),
-('76', 'LICOR DE CAFE AL COGNAC X 500 CC', 12, 10, 1),
-('77', 'LICOR DE CHOCOLATE X 500 CC', 12, 10, 1),
-('78', 'LICOR DE DULCE DE LECHE X 500 CC', 12, 10, 1),
-('79', 'LICOR DE NARANJA X 500 CC', 12, 10, 1),
-('80', 'LICOR DE ROSAS X 500 CC', 12, 10, 1),
+('72', 'MAMON EN ALMIBAR X 450 GRS', 11, 9, 1),
+('73', 'MAMON EN ALMIBAR X 800 GRS', 11, 9, 1),
+('74', 'MAMON EN ALMIBAR X 3 KG', 11, 9, 1),
+('75', 'LICOR DE ANANA X 500CC', 12, 10, 1),
+('76', 'LICOR DE CAFE AL COGNAC X 500CC', 12, 10, 1),
+('77', 'LICOR DE CHOCOLATE X 500CC', 12, 10, 1),
+('78', 'LICOR DE DULCE DE LECHE X 500CC', 12, 10, 1),
+('79', 'LICOR DE NARANJA X 500CC', 12, 10, 1),
+('80', 'LICOR DE ROSAS X 500CC', 12, 10, 1),
+('81', 'YERBA MATE CANCHADA X 500 GRS', 13, 8, 1),
+('82', 'YERBA MATE ELABORADA X 1 KILO', 13, 8, 1),
+('83', 'YERBA MATE ELABORADA X 500 GRS', 13, 8, 1),
+('84', 'YERBA MATE ELABORADA X 250 GRS', 13, 8, 1),
 ('85', 'DULCE DE LECHE X 440 GRS', 14, 11, 1),
 ('86', 'DULCE DE LECHE X 860 GRS', 14, 11, 1),
 ('87', 'DULCE DE LECHE REPOSTERO X 10 KGS', 14, 11, 1),
 ('88', 'DULCE DE LECHE REPOSTERO X 4,8 KGS', 14, 11, 1),
 ('89', 'DULCE DE LECHE REPOSTERO X 980 GRS', 14, 11, 1),
 ('90', 'PRODUCTOS DE COOPERATIVAS', 15, 12, 1),
-('91', 'STEVIOSIDO LIQUIDO X 100 CC', 16, 13, 1),
-('92', 'STEVIOSIDO LIQUIDO X 250 CC', 16, 13, 1),
+('91', 'STEVIOSIDO LIQUIDO X 100CC', 16, 13, 1),
+('92', 'STEVIOSIDO LIQUIDO X 250CC', 16, 13, 1),
 ('93', 'STEVIOSIDO EN POLVO X 50 GRS', 16, 13, 1),
-('94', 'ACEITE DE OLIVA EXTRA VIRGEN X 1 LTT', 17, 14, 1),
-('95', 'ACEITE DE OLIVA EXTRA VIRGEN X 500 CC', 17, 14, 1),
-('96', 'ACEITE DE OLIVA EXTRA VIRGEN X 250 CC', 17, 14, 1),
-('97', 'ACEITE DE OLIVA EXTRA VIRGEN X 5 LTS', 17, 14, 1),
+('94', 'ACEITE DE OLIVA EXTRA VIRGEN X 1L', 17, 14, 1),
+('95', 'ACEITE DE OLIVA EXTRA VIRGEN X 500CC', 17, 14, 1),
+('96', 'ACEITE DE OLIVA EXTRA VIRGEN X 250CC', 17, 14, 1),
+('97', 'ACEITE DE OLIVA EXTRA VIRGEN X 5L', 17, 14, 1),
 ('98', 'ACEITUNAS NEGRAS EN SALMUERA X 360 GRS', 17, 6, 1),
 ('99', 'ACEITUNAS NEGRAS EN SALMUERA X 2 KG', 17, 6, 1),
 ('100', 'ACEITUNAS VERDES EN SALMUERA X 360 GRS', 17, 6, 1),
@@ -182,17 +193,27 @@ INSERT INTO PRODUCTOS (CodigoSKU, Descripcion, IdMarca, IdCategoria, Activo) VAL
 ('172', 'PIMIENTA NEGRA MOLIDA X 250 GRS', 19, 16, 1),
 ('173', 'PIMIENTA NEGRA MOLIDA X 500 GRS', 19, 16, 1),
 ('174', 'PIMIENTA NEGRA MOLIDA X 1 KG', 19, 16, 1),
+('175', 'ACEITE DE OLIVA EXTRA VIRGEN X 250 CC', 20, 14, 1),
+('176', 'ACEITE DE OLIVA EXTRA VIRGEN X 500 CC', 20, 14, 1),
+('177', 'ACEITE DE OLIVA EXTRA VIRGEN X 1 LT', 20, 14, 1),
 ('178', 'ACEITE DE OLIVA EXTRA VIRGEN X 2 LTS', 20, 14, 1),
+('179', 'ACEITE DE OLIVA EXTRA VIRGEN X 5 LTS', 20, 14, 1),
 ('180', 'ACEITUNAS NEGRAS CON CAROZO X 360 GRS', 20, 6, 1),
 ('181', 'ACEITUNAS NEGRAS DESCAROZADAS X 360 GRS', 20, 6, 1),
 ('182', 'ACEITUNAS VERDES CON CAROZO X 360 GRS', 20, 6, 1),
 ('183', 'ACEITUNAS VERDES DESCAROZADAS X 360 GRS', 20, 6, 1),
 ('184', 'ACEITUNAS VERDES RELLENAS CON MORRON X 360 GRS', 20, 6, 1),
+('185', 'ACEITE DE OLIVA EXTRA VIRGEN X 250 CC', 21, 14, 1),
+('186', 'ACEITE DE OLIVA EXTRA VIRGEN X 500 CC', 21, 14, 1),
+('187', 'ACEITE DE OLIVA EXTRA VIRGEN X 1 LT', 21, 14, 1),
+('188', 'ACEITE DE OLIVA EXTRA VIRGEN X 2 LTS', 21, 14, 1),
+('189', 'ACEITE DE OLIVA EXTRA VIRGEN X 5 LTS', 21, 14, 1),
 ('190', 'TOMATE TRITURADO X 960 GRS', 22, 4, 1),
 ('191', 'TE EN HEBRAS NEGRO X 50 GRS', 23, 17, 1),
 ('192', 'TE EN HEBRAS VERDE X 50 GRS', 23, 17, 1),
-('193', 'TE EN HEBRAS NEGRO SABORIZADO X 50 GRS (CITRUS, FRUTOS ROJOS, VAINILLA Y CANELA)', 23, 17, 1),
-('194', 'TE EN HEBRAS VERDE SABORIZADO X 50 GRS (MARACUYA Y NARANJA, FRUTOS ROJOS, TROPICAL)', 23, 17, 1),
+('193', 'TE EN HEBRAS NEGRO SABORIZADO X 50 GRS (Citrus, Frutos Rojos, Vainilla y Canela)', 23, 17, 1),
+('194', 'TE EN HEBRAS VERDE SABORIZADO X 50 GRS (Maracuya y Naranja, Frutos Rojos, Tropical)', 23, 17, 1),
+('195', 'YERBA MATE ORGANICA X 500 GRS', 24, 8, 1),
 ('196', 'ARROZ BLANCO X 1 KG', 25, 3, 1),
 ('197', 'ARROZ BLANCO X 500 GRS', 25, 3, 1),
 ('198', 'ARROZ INTEGRAL X 1 KG', 25, 3, 1),
@@ -273,13 +294,11 @@ INSERT INTO PRODUCTOS (CodigoSKU, Descripcion, IdMarca, IdCategoria, Activo) VAL
 ('273', 'PISTACHO TOSTADO Y SALADO X 1/2 KG', 17, 18, 1),
 ('274', 'PISTACHO TOSTADO Y SALADO X 1/4', 17, 18, 1),
 ('275', 'ARROZ YAMANI X 1 KG', 26, 20, 1),
-('276', 'ARROZ YAMANI X 1/2 KG', 26, 20, 1),
-('277', 'AZUCAR MASCABO X 1 KG', 26, 21, 0),
-('278', 'AZUCAR MASCABO X 1/2 KG', 26, 21, 0),
-('SKU02004', 'ACETO DE UVA', 4, 14, 0);
+('276', 'ARROZ YAMani X 1/2 KG', 26, 20, 1),
+('277', 'AZUCAR MASCABO X 1 KG', 26, 21, 1),
+('278', 'AZUCAR MASCABO X 1/2 KG', 26, 21, 1);
 GO
 
--- 4. IMPORTACIÓN DE PRECIOS (Depende de Productos)
 ;WITH PreciosCTE AS (
     SELECT * FROM (
         VALUES
@@ -343,34 +362,4 @@ JOIN
     PreciosCTE CTE ON P.CodigoSKU = CTE.CodigoSKU
 WHERE
     CTE.Precio IS NOT NULL AND CTE.Precio > 0;
-GO
-
--- 5. IMPORTACIÓN DE CLIENTES
-INSERT INTO CLIENTES (Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Habilitado)
-VALUES 
-('Juan Pérez', '28123456', 'juan.perez@email.com', '1145678901', 'Av. Corrientes 1234', 'CABA', 'Consumidor Final', 1),
-('María García', '25987654', 'maria.garcia@email.com', '1134567890', 'Calle Falsa 123', 'Avellaneda', 'Consumidor Final', 1),
-('Kiosco "El Sol"', '30112233445', 'kioscoelsol@email.com', '03414556677', 'San Martín 500', 'Rosario', 'Responsable Inscripto', 1),
-('Carlos López', '31001002', 'carlos.lopez@email.com', '1160102030', 'Av. Santa Fe 3000', 'CABA', 'Consumidor Final', 1),
-('Supermercado "La Estrella"', '30887766554', 'superlaestrella@email.com', '02214809010', 'Calle 7 Nro 800', 'La Plata', 'Responsable Inscripto', 1),
-('Ana Martínez', '33500600', 'ana.martinez@email.com', '1155012345', 'Rivadavia 10500', 'Liniers', 'Consumidor Final', 1),
-('Distribuidora "El Trébol" SRL', '33901234567', 'compras@trebolsrl.com', '03514607080', 'Av. Colón 2010', 'Córdoba', 'Responsable Inscripto', 1),
-('Pedro Ramirez', '23000111', 'pedro.ramirez@email.com', '1165432109', 'Defensa 900', 'San Telmo', 'Consumidor Final', 1),
-('Laura Sanchez', '35123123', 'laura.sanchez@email.com', '02234510022', 'Av. Luro 3050', 'Mar del Plata', 'Consumidor Final', 1),
-('Almacén "Don Manolo"', '20223334449', 'donmanolo@email.com', '1143009080', 'Alte. Brown 600', 'La Boca', 'Responsable Inscripto', 1);
-GO
-
--- 6. IMPORTACIÓN DE PROVEEDORES
-INSERT INTO PROVEEDORES (Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Activo)
-VALUES 
-('Carlos Gutiérrez', 'Molinos Río de la Plata S.A.', '30-50000000-1', 'c.gutierrez@molinos.com.ar', '1143219876', 'Av. Callao 123', 'CABA', 'Responsable Inscripto', 1),
-('Ana López', 'Arcor S.A.I.C.', '30-50123456-7', 'compras@arcor.com', '03514201234', 'Av. Fulvio Pagani 487', 'Arroyito, Córdoba', 'Responsable Inscripto', 1),
-(NULL, 'La Serenísima S.A.', '30-50111222-3', 'proveedores@laserenisima.com.ar', '02374801111', 'Almirante Brown 957', 'General Rodríguez, BsAs', 'Responsable Inscripto', 1),
-('Marcos Velez', 'Unilever de Argentina S.A.', '30-50000111-2', 'marcos.velez@unilever.com', '1141112222', 'Gdor. Ugarte 3561', 'Munro, BsAs', 'Responsable Inscripto', 1),
-('Julieta Díaz', 'Cervecería y Maltería Quilmes S.A.', '30-50000222-4', 'compras.quilmes@abinbev.com', '1143415000', 'Av. 12 de Octubre y Gran Canaria', 'Quilmes, BsAs', 'Responsable Inscripto', 1),
-(NULL, 'Coca-Cola FEMSA de Argentina S.A.', '30-68241312-3', 'atencion.proveedores@kof.com.mx', '1144005000', 'Av. Amancio Alcorta 3400', 'CABA', 'Responsable Inscripto', 1),
-('Ricardo Pérez', 'Procter & Gamble Argentina S.R.L.', '30-66431234-5', 'perez.r@pg.com', '1147003000', 'Gobernador Ugarte 3561', 'Olivos, BsAs', 'Responsable Inscripto', 1),
-(NULL, 'Nestlé Argentina S.A.', '30-50003111-4', 'servicio.proveedores@ar.nestle.com', '1148002000', 'Av. del Libertador 1855', 'Vicente López, BsAs', 'Responsable Inscripto', 1),
-('Laura Giménez', 'S.C. Johnson & Son de Argentina S.A.', '30-50000333-5', 'lgimenez@scj.com', '1147001000', 'Av. Márquez 123', 'San Isidro, BsAs', 'Responsable Inscripto', 1),
-(NULL, 'Papelera del Plata S.A.', '30-50111333-4', 'compras@papeleradelplata.com.ar', '02304400500', 'Av. Frondizi 201', 'Pilar, BsAs', 'Responsable Inscripto', 1);
 GO
