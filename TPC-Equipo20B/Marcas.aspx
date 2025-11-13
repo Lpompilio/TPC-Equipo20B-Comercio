@@ -21,6 +21,7 @@
       CssClass="table table-hover align-middle"
       AutoGenerateColumns="False"
       AllowPaging="true" PageSize="12"
+      DataKeyNames="Id"
       OnPageIndexChanging="gvMarcas_PageIndexChanging">
       <Columns>
         <asp:BoundField DataField="Nombre" HeaderText="Marca" />

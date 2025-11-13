@@ -5,7 +5,7 @@ namespace TPC_Equipo20B
 {
     public partial class ConfirmarEliminar : System.Web.UI.Page
     {
-        private string Entidad => (Request.QueryString["entidad"] ?? "").ToLowerInvariant();
+        private string Entidad => (Request.QueryString["tipo"] ?? "").ToLowerInvariant();
         private int Id => int.TryParse(Request.QueryString["id"], out var x) ? x : 0;
 
         protected void Page_Load(object sender, EventArgs e)
