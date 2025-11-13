@@ -14,15 +14,33 @@ namespace Negocio
             {
                 if (string.IsNullOrWhiteSpace(q))
                 {
-                    datos.setearConsulta("SELECT Id, Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA FROM Proveedores");
+                    datos.setearConsulta(@"
+                SELECT Id, 
+                       CASE 
+                           WHEN Nombre IS NULL OR Nombre = '' THEN RazonSocial 
+                           ELSE Nombre + ' (' + RazonSocial + ')' 
+                       END AS Nombre, 
+                       RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA 
+                FROM Proveedores 
+                WHERE Activo = 1
+            ");
                 }
                 else
                 {
                     datos.setearConsulta(@"
-                        SELECT Id, Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA
-                        FROM Proveedores
-                        WHERE Nombre LIKE @q OR RazonSocial LIKE @q OR Documento LIKE @q OR Email LIKE @q OR Telefono LIKE @q OR Localidad LIKE @q
-                    ");
+                SELECT Id, 
+                       CASE 
+                           WHEN Nombre IS NULL OR Nombre = '' THEN RazonSocial 
+                           ELSE Nombre + ' (' + RazonSocial + ')' 
+                       END AS Nombre, 
+                       RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA
+                FROM Proveedores
+                WHERE Activo = 1 AND (
+                    Nombre LIKE @q OR 
+                    RazonSocial LIKE @q OR 
+                    Documento LIKE @q
+                )
+            ");
                     datos.setearParametro("@q", "%" + q + "%");
                 }
 
@@ -122,7 +140,7 @@ namespace Negocio
                 datos.setearConsulta("SELECT COUNT(*) FROM COMPRAS WHERE IdProveedor = @id");
                 datos.setearParametro("@id", id);
 
-                int cantidad = Convert.ToInt32(datos.ejecutarScalar());
+                int cantidad = Convert.ToInt32(datos.EjecutarScalar());
 
                 if (cantidad > 0)
                 {
@@ -133,7 +151,7 @@ namespace Negocio
                 datos.setearConsulta("SELECT COUNT(*) FROM PRODUCTOS WHERE IdProveedor = @id AND Activo = 1");
                 datos.setearParametro("@id", id);
 
-                int productos = Convert.ToInt32(datos.ejecutarScalar());
+                int productos = Convert.ToInt32(datos.EjecutarScalar());
 
                 if (productos > 0)
                 {

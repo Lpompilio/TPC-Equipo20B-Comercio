@@ -66,7 +66,7 @@
                         CssClass="validator"
                         Display="Dynamic"
                         SetFocusOnError="true"
-                        ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" />
+                        ValidationExpression="^[\p{L}0-9_.'+-]+@[\p{L}0-9.-]+\.[\p{L}]{2,}$" />
                 </div>
 
                 <div class="col-md-6">
@@ -93,7 +93,7 @@
                 <div class="col-md-6">
                     <label class="form-label">Localidad</label>
                     <asp:TextBox ID="txtLocalidad" runat="server" CssClass="form-control" placeholder="Ej: CABA" />
-                    <asp:RequiredFieldValidator ErrorMessage="Ingresar Localidad del proveedor" ControlToValidate="txtLocalidad" runat="server" CssClass="validator" Display="Dynamic"/>
+                    <asp:RequiredFieldValidator ErrorMessage="Ingresar Localidad del proveedor" ControlToValidate="txtLocalidad" runat="server" CssClass="validator" Display="Dynamic" />
                 </div>
             </div>
         </div>

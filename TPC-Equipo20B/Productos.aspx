@@ -46,7 +46,7 @@
             </ItemTemplate>
           </asp:TemplateField>
 
-          <asp:TemplateField HeaderText="Acciones">
+          <asp:TemplateField HeaderText="Acciones" HeaderStyle-CssClass="text-center">
             <ItemStyle CssClass="action-col text-center" />
             <ItemTemplate>
               <asp:LinkButton ID="cmdEditar" runat="server"

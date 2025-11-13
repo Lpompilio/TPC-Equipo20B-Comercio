@@ -25,10 +25,10 @@
       AllowPaging="true" PageSize="12"
       OnPageIndexChanging="gvProveedores_PageIndexChanging">
     <Columns>
-      <asp:BoundField DataField="Nombre" HeaderText="Nombre / Razón Social" />
+      <asp:BoundField DataField="NombreCompleto" HeaderText="Nombre / Razón Social" />
       <asp:BoundField DataField="Documento" HeaderText="Documento" />
       <asp:BoundField DataField="Telefono" HeaderText="Teléfono" />
-      <asp:TemplateField HeaderText="Acciones">
+      <asp:TemplateField HeaderText="Acciones" HeaderStyle-CssClass="text-center">
         <ItemStyle CssClass="action-col text-center" />
         <ItemTemplate>
           <asp:HyperLink runat="server" CssClass="btn btn-primary btn-action-sm me-1"

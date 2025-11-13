@@ -67,7 +67,7 @@ namespace Negocio
                 datos.setearConsulta("SELECT COUNT(*) FROM PRODUCTOS WHERE IdMarca = @id AND Activo = 1");
                 datos.setearParametro("@id", id);
 
-                int cantidad = Convert.ToInt32(datos.ejecutarScalar());
+                int cantidad = Convert.ToInt32(datos.EjecutarScalar());
 
                 if (cantidad > 0)
                 {

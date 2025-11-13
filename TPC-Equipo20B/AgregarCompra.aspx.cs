@@ -53,6 +53,7 @@ namespace TPC_Equipo20B
 
         protected void btnAgregarLinea_Click(object sender, EventArgs e)
         {
+
             if (ddlProducto.SelectedValue == "0" || string.IsNullOrEmpty(txtCantidad.Text) || string.IsNullOrEmpty(txtPrecio.Text))
                 return;
 

@@ -122,7 +122,7 @@ namespace Negocio
                 datos.setearConsulta("SELECT COUNT(*) FROM VENTAS WHERE IdCliente = @id");
                 datos.setearParametro("@id", id);
 
-                int cantidad = Convert.ToInt32(datos.ejecutarScalar());
+                int cantidad = Convert.ToInt32(datos.EjecutarScalar());
 
                 if (cantidad > 0)
                 {

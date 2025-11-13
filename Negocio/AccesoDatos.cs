@@ -60,7 +60,7 @@ namespace Negocio
                 conexion.Close();
             }
         }
-        public object ejecutarScalar()
+        public object EjecutarScalar()
         {
             comando.Connection = conexion;
             object resultado = null;

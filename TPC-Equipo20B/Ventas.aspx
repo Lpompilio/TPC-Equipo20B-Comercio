@@ -41,7 +41,7 @@
             <asp:BoundField DataField="TotalBD" HeaderText="Total" DataFormatString="{0:C}"
                 ItemStyle-HorizontalAlign="Right" />
 
-            <asp:TemplateField HeaderText="Acciones">
+            <asp:TemplateField HeaderText="Acciones" HeaderStyle-CssClass="text-center">
                 <ItemTemplate>
                     <asp:LinkButton ID="cmdDetalle" runat="server"
                         CommandName="Detalle"

@@ -21,7 +21,7 @@ namespace Negocio
                 datos.setearParametro("@usuario", compra.Usuario.Id);
                 datos.setearParametro("@obs", (object)(compra.Observaciones ?? string.Empty));
 
-                int idCompra = Convert.ToInt32(datos.ejecutarScalar());
+                int idCompra = Convert.ToInt32(datos.EjecutarScalar());
 
                 // Insertar las líneas de la compra
                 foreach (var linea in compra.Lineas)

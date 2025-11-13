@@ -170,7 +170,7 @@ namespace Negocio
                     datos.setearParametro("@idCat", p.Categoria.Id);
                     datos.setearParametro("@idMar", p.Marca != null && p.Marca.Id > 0 ? (object)p.Marca.Id : DBNull.Value);
                     datos.setearParametro("@idProv", p.Proveedor != null && p.Proveedor.Id > 0 ? (object)p.Proveedor.Id : DBNull.Value);
-                    var nuevoId = Convert.ToInt32(datos.ejecutarScalar());
+                    var nuevoId = Convert.ToInt32(datos.EjecutarScalar());
                     p.Id = nuevoId;
                     var nuevoSku = nuevoId.ToString();
                     datos.setearConsulta("UPDATE Productos SET CodigoSKU=@sku WHERE Id=@id");

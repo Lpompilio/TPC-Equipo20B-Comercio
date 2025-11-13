@@ -196,7 +196,7 @@ namespace Negocio
                 datos.setearParametro("@metodo", venta.MetodoPago ?? "");
                 datos.setearParametro("@total", total);
 
-                int idVenta = Convert.ToInt32(datos.ejecutarScalar());
+                int idVenta = Convert.ToInt32(datos.EjecutarScalar());
 
                 // Insertar las líneas de la venta
                 foreach (var linea in venta.Lineas)

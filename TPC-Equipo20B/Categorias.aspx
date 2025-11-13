@@ -24,7 +24,7 @@
       OnPageIndexChanging="gvCategorias_PageIndexChanging">
       <Columns>
         <asp:BoundField DataField="Nombre" HeaderText="Categoría" />
-        <asp:TemplateField HeaderText="Acciones">
+        <asp:TemplateField HeaderText="Acciones" HeaderStyle-CssClass="text-center">
           <ItemStyle CssClass="action-col text-center" />
           <ItemTemplate>
             <asp:HyperLink runat="server" CssClass="btn btn-primary btn-action-sm me-1"

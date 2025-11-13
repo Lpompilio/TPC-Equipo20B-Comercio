@@ -31,7 +31,7 @@
 
                 <div class="col-md-3">
                     <label for="txtFecha" class="form-label">Fecha</label>
-                    <asp:TextBox ID="txtFecha" runat="server" CssClass="form-control" ReadOnly="true" />
+                    <asp:TextBox ID="txtFecha" runat="server" CssClass="form-control" onkeydown="return false;" onpaste="return false;" />
                 </div>
             </div>
 
@@ -91,7 +91,8 @@
 
             <!-- Total -->
             <div class="text-end mt-3">
-                <h5>Total: <asp:Label ID="lblTotal" runat="server" CssClass="fw-bold text-success" Text="$0.00"></asp:Label></h5>
+                <h5>Total:
+                    <asp:Label ID="lblTotal" runat="server" CssClass="fw-bold text-success" Text="$0.00"></asp:Label></h5>
             </div>
 
         </div>
