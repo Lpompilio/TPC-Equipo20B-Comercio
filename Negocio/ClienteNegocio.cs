@@ -114,14 +114,31 @@ namespace Negocio
 
         public void Eliminar(int id)
         {
-            var datos = new AccesoDatos();
+            AccesoDatos datos = new AccesoDatos();
+
             try
             {
-                datos.setearConsulta("DELETE FROM Clientes WHERE Id = @id");
+                // Verificar si el cliente tiene ventas asociadas
+                datos.setearConsulta("SELECT COUNT(*) FROM VENTAS WHERE IdCliente = @id");
+                datos.setearParametro("@id", id);
+
+                int cantidad = Convert.ToInt32(datos.ejecutarScalar());
+
+                if (cantidad > 0)
+                {
+                    throw new Exception("No se puede eliminar el cliente porque tiene ventas asociadas.");
+                }
+
+                // Si no tiene ventas, eliminar
+                datos.setearConsulta("DELETE FROM CLIENTES WHERE Id = @id");
                 datos.setearParametro("@id", id);
                 datos.ejecutarAccion();
             }
-            finally { datos.CerrarConexion(); }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
+
     }
 }

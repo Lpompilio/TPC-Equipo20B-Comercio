@@ -12,6 +12,7 @@ namespace TPC_Equipo20B
         {
             if (!IsPostBack)
             {
+                Session["VolverA"] = Request.UrlReferrer?.ToString();
                 lblMensaje.Text = Server.UrlDecode(Request.QueryString["msg"] ?? "¿Confirmar eliminación?");
             }
         }
@@ -25,7 +26,10 @@ namespace TPC_Equipo20B
         {
             if (Id == 0) { Volver(); return; }
 
-            switch (Entidad)
+            try
+            {
+
+                switch (Entidad)
             {
                 case "producto":
                     new ProductoNegocio().Eliminar(Id);
@@ -61,11 +65,22 @@ namespace TPC_Equipo20B
                     Volver();
                     return;
             }
+          }
+
+            catch (Exception ex)
+            {
+                lblMensaje.Text = ex.Message;
+            }
         }
 
         private void Volver()
         {
-            Response.Redirect(Request.UrlReferrer != null ? Request.UrlReferrer.ToString() : "Dashboard.aspx");
+            var url = Session["VolverA"] as string;
+
+            if (!string.IsNullOrEmpty(url))
+                Response.Redirect(url);
+            else
+                Response.Redirect("Dashboard.aspx");
         }
     }
 }

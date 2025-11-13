@@ -59,14 +59,31 @@ namespace Negocio
 
         public void Eliminar(int id)
         {
-            var datos = new AccesoDatos();
+            AccesoDatos datos = new AccesoDatos();
+
             try
             {
-                datos.setearConsulta("DELETE FROM Marcas WHERE Id=@id");
+                // Verificar si tiene productos asociados
+                datos.setearConsulta("SELECT COUNT(*) FROM PRODUCTOS WHERE IdMarca = @id AND Activo = 1");
+                datos.setearParametro("@id", id);
+
+                int cantidad = Convert.ToInt32(datos.ejecutarScalar());
+
+                if (cantidad > 0)
+                {
+                    throw new Exception("No se puede eliminar la marca porque tiene productos asociados.");
+                }
+
+                // Si no tiene productos, eliminar
+                datos.setearConsulta("DELETE FROM MARCAS WHERE Id = @id");
                 datos.setearParametro("@id", id);
                 datos.ejecutarAccion();
             }
-            finally { datos.CerrarConexion(); }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
+
     }
 }

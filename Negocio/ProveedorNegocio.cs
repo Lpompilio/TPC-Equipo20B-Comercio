@@ -114,14 +114,42 @@ namespace Negocio
 
         public void Eliminar(int id)
         {
-            var datos = new AccesoDatos();
+            AccesoDatos datos = new AccesoDatos();
+
             try
             {
-                datos.setearConsulta("DELETE FROM Proveedores WHERE Id = @id");
+                // 1Verificar si el proveedor tiene compras asociadas
+                datos.setearConsulta("SELECT COUNT(*) FROM COMPRAS WHERE IdProveedor = @id");
+                datos.setearParametro("@id", id);
+
+                int cantidad = Convert.ToInt32(datos.ejecutarScalar());
+
+                if (cantidad > 0)
+                {
+                    throw new Exception("No se puede eliminar el proveedor porque tiene compras asociadas.");
+                }
+
+                // 2Verificar si tiene productos asociados (se usa IdProveedor en productos)
+                datos.setearConsulta("SELECT COUNT(*) FROM PRODUCTOS WHERE IdProveedor = @id AND Activo = 1");
+                datos.setearParametro("@id", id);
+
+                int productos = Convert.ToInt32(datos.ejecutarScalar());
+
+                if (productos > 0)
+                {
+                    throw new Exception("No se puede eliminar el proveedor porque tiene productos asociados.");
+                }
+
+                // 3Si no tiene vínculos, eliminar
+                datos.setearConsulta("DELETE FROM PROVEEDORES WHERE Id = @id");
                 datos.setearParametro("@id", id);
                 datos.ejecutarAccion();
             }
-            finally { datos.CerrarConexion(); }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
+
     }
 }

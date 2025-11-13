@@ -12,58 +12,67 @@ namespace Negocio
             var datos = new AccesoDatos();
             try
             {
-                if (string.IsNullOrWhiteSpace(q))
+                string query = @"
+            SELECT 
+                P.Id, P.CodigoSKU, P.Descripcion, P.StockMinimo, P.StockActual,
+                P.PorcentajeGanancia, P.UrlImagen, P.Activo,
+                C.Id AS IdCategoria, C.Nombre AS NombreCategoria,
+                M.Id AS IdMarca, M.Nombre AS NombreMarca,
+                PR.Id AS IdProveedor, PR.Nombre AS NombreProveedor
+            FROM PRODUCTOS P
+            INNER JOIN CATEGORIAS C ON P.IdCategoria = C.Id
+            LEFT JOIN MARCAS M ON P.IdMarca = M.Id
+            LEFT JOIN PROVEEDORES PR ON P.IdProveedor = PR.Id
+            WHERE P.Activo = 1";
+
+                if (!string.IsNullOrWhiteSpace(q))
                 {
-                    datos.setearConsulta(@"
-                        SELECT P.Id, P.CodigoSKU, P.Descripcion, P.StockMinimo, P.StockActual, P.PorcentajeGanancia,
-                               P.UrlImagen, P.Activo,
-                               C.Id AS IdCategoria, C.Nombre AS NombreCategoria,
-                               M.Id AS IdMarca, M.Nombre AS NombreMarca
-                        FROM PRODUCTOS P
-                        INNER JOIN CATEGORIAS C ON P.IdCategoria = C.Id
-                        LEFT JOIN MARCAS M ON P.IdMarca = M.Id
-                        WHERE P.Activo = 1
-                        ORDER BY P.Descripcion
-                    ");
-                }
-                else
-                {
-                    datos.setearConsulta(@"
-                        SELECT P.Id, P.CodigoSKU, P.Descripcion, P.StockMinimo, P.StockActual, P.PorcentajeGanancia,
-                               P.UrlImagen, P.Activo,
-                               C.Id AS IdCategoria, C.Nombre AS NombreCategoria,
-                               M.Id AS IdMarca, M.Nombre AS NombreMarca
-                        FROM PRODUCTOS P
-                        INNER JOIN CATEGORIAS C ON P.IdCategoria = C.Id
-                        LEFT JOIN MARCAS M ON P.IdMarca = M.Id
-                        WHERE (P.Descripcion LIKE @q OR P.CodigoSKU LIKE @q OR C.Nombre LIKE @q OR M.Nombre LIKE @q) AND P.Activo = 1
-                        ORDER BY P.Descripcion
-                    ");
-                    datos.setearParametro("@q", "%" + q + "%");
+                    query += " AND (P.Descripcion LIKE @q OR P.CodigoSKU LIKE @q OR C.Nombre LIKE @q OR M.Nombre LIKE @q OR PR.Nombre LIKE @q)";
                 }
 
+                query += " ORDER BY P.Descripcion";
+
+                datos.setearConsulta(query);
+
+                if (!string.IsNullOrWhiteSpace(q))
+                    datos.setearParametro("@q", "%" + q + "%");
+
                 datos.ejecutarLectura();
+
                 while (datos.Lector.Read())
                 {
                     var p = new Producto
                     {
                         Id = (int)datos.Lector["Id"],
-                        CodigoSKU = datos.Lector["CodigoSKU"] is DBNull ? "" : (string)datos.Lector["CodigoSKU"],
-                        Descripcion = (string)datos.Lector["Descripcion"],
+                        CodigoSKU = datos.Lector["CodigoSKU"] as string ?? "",
+                        Descripcion = datos.Lector["Descripcion"].ToString(),
                         StockMinimo = datos.Lector["StockMinimo"] is DBNull ? 0 : (decimal)datos.Lector["StockMinimo"],
                         StockActual = datos.Lector["StockActual"] is DBNull ? 0 : (decimal)datos.Lector["StockActual"],
                         PorcentajeGanancia = datos.Lector["PorcentajeGanancia"] is DBNull ? 0 : (decimal)datos.Lector["PorcentajeGanancia"],
-                        UrlImagen = datos.Lector["UrlImagen"] is DBNull ? "" : (string)datos.Lector["UrlImagen"],
+                        UrlImagen = datos.Lector["UrlImagen"] as string ?? "",
                         Activo = (bool)datos.Lector["Activo"],
-                        Categoria = new Categoria { Id = (int)datos.Lector["IdCategoria"], Nombre = (string)datos.Lector["NombreCategoria"] },
-                        Marca = datos.Lector["IdMarca"] is DBNull ? null : new Marca { Id = (int)datos.Lector["IdMarca"], Nombre = (string)datos.Lector["NombreMarca"] }
+                        Categoria = new Categoria
+                        {
+                            Id = (int)datos.Lector["IdCategoria"],
+                            Nombre = (string)datos.Lector["NombreCategoria"]
+                        },
+                        Marca = datos.Lector["IdMarca"] is DBNull ? null :
+                                new Marca { Id = (int)datos.Lector["IdMarca"], Nombre = (string)datos.Lector["NombreMarca"] },
+                        Proveedor = datos.Lector["IdProveedor"] is DBNull ? null :
+                                    new Proveedor { Id = (int)datos.Lector["IdProveedor"], Nombre = (string)datos.Lector["NombreProveedor"] }
                     };
+
                     lista.Add(p);
                 }
+
                 return lista;
             }
-            finally { datos.CerrarConexion(); }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
+
 
         public Producto ObtenerPorId(int id)
         {
@@ -199,14 +208,19 @@ namespace Negocio
 
         public void Eliminar(int id)
         {
-            var datos = new AccesoDatos();
+            AccesoDatos datos = new AccesoDatos();
+
             try
             {
+                // Baja lógica
                 datos.setearConsulta("UPDATE PRODUCTOS SET Activo = 0 WHERE Id = @id");
                 datos.setearParametro("@id", id);
                 datos.ejecutarAccion();
             }
-            finally { datos.CerrarConexion(); }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
     }
 }
