@@ -35,6 +35,14 @@
 
             <asp:BoundField DataField="Observaciones" HeaderText="Observaciones" />
 
+            <asp:TemplateField HeaderText="Estado">
+                <ItemTemplate>
+                    <%# (bool)Eval("Cancelada") 
+                     ? "<span class='badge bg-danger'>Cancelada</span>" 
+                        : "<span class='badge bg-success'>Activa</span>" %>
+                 </ItemTemplate>
+                </asp:TemplateField>
+
             <asp:TemplateField HeaderText="Usuario">
                 <ItemTemplate><%# Eval("Usuario.Nombre") %></ItemTemplate>
             </asp:TemplateField>
@@ -51,7 +59,7 @@
                         CommandName="Eliminar"
                         CommandArgument='<%# Eval("Id") %>'
                         CssClass="btn btn-sm btn-danger">
-                        <i class="bi bi-trash"></i> Eliminar
+                        <i class="bi bi-x-circle"></i> Cancelar
                     </asp:LinkButton>
                 </ItemTemplate>
             </asp:TemplateField>

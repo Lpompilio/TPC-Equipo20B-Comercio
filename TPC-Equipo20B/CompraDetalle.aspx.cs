@@ -23,8 +23,10 @@ namespace TPC_Equipo20B
             }
         }
 
+
         private void CargarDetalle(int idCompra)
         {
+
             CompraNegocio negocio = new CompraNegocio();
             List<Compra> compras = negocio.Listar();
 
@@ -48,6 +50,20 @@ namespace TPC_Equipo20B
             gvLineas.DataBind();
 
             lblTotal.Text = lineas.Sum(l => l.Subtotal).ToString("C");
+
+
+            if (compra.Cancelada)
+            {
+                panelCancelada.Visible = true;
+                lblMotivo.Text = compra.MotivoCancelacion;
+                lblFechaCanc.Text = compra.FechaCancelacion?.ToString("dd/MM/yyyy HH:mm");
+                lblUsuarioCanc.Text = compra.UsuarioCancelacion?.Nombre ?? "-";
+            }
+            else
+            {
+                panelCancelada.Visible = false;
+            }
+
         }
 
         protected void btnCerrar_Click(object sender, EventArgs e)

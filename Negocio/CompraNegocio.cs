@@ -66,43 +66,46 @@ namespace Negocio
 
             try
             {
-                if (string.IsNullOrWhiteSpace(q))
+                string consulta = @"
+            SELECT 
+                C.Id,
+                C.Fecha,
+                C.IdProveedor,
+                P.Nombre AS NombreProveedor,
+                C.IdUsuario,
+                U.Nombre AS NombreUsuario,
+                C.Observaciones,
+
+                -- 🔥 CAMPOS DE CANCELACIÓN
+                C.Cancelada,
+                C.MotivoCancelacion,
+                C.FechaCancelacion,
+                C.IdUsuarioCancelacion,
+                U2.Nombre AS NombreUsuarioCancelacion
+
+            FROM COMPRAS C
+            INNER JOIN PROVEEDORES P ON C.IdProveedor = P.Id
+            INNER JOIN USUARIOS U ON C.IdUsuario = U.Id
+            LEFT JOIN USUARIOS U2 ON C.IdUsuarioCancelacion = U2.Id
+        ";
+
+                if (!string.IsNullOrWhiteSpace(q))
                 {
-                    datos.setearConsulta(@"
-                        SELECT 
-                            C.Id,
-                            C.Fecha,
-                            C.IdProveedor,
-                            P.Nombre AS NombreProveedor,
-                            C.IdUsuario,
-                            U.Nombre AS NombreUsuario,
-                            C.Observaciones
-                        FROM COMPRAS AS C
-                        INNER JOIN PROVEEDORES AS P ON C.IdProveedor = P.Id
-                        INNER JOIN USUARIOS AS U ON C.IdUsuario = U.Id
-                        ORDER BY C.Fecha DESC;");
+                    consulta += @"
+                WHERE 
+                    P.Nombre LIKE @q OR
+                    U.Nombre LIKE @q OR
+                    C.Observaciones LIKE @q OR
+                    C.MotivoCancelacion LIKE @q
+            ";
                 }
-                else
-                {
-                    datos.setearConsulta(@"
-                        SELECT 
-                            C.Id,
-                            C.Fecha,
-                            C.IdProveedor,
-                            P.Nombre AS NombreProveedor,
-                            C.IdUsuario,
-                            U.Nombre AS NombreUsuario,
-                            C.Observaciones
-                        FROM COMPRAS AS C
-                        INNER JOIN PROVEEDORES AS P ON C.IdProveedor = P.Id
-                        INNER JOIN USUARIOS AS U ON C.IdUsuario = U.Id
-                        WHERE 
-                            P.Nombre LIKE @q
-                            OR U.Nombre LIKE @q
-                            OR C.Observaciones LIKE @q
-                        ORDER BY C.Fecha DESC;");
+
+                consulta += " ORDER BY C.Fecha DESC;";
+
+                datos.setearConsulta(consulta);
+
+                if (!string.IsNullOrWhiteSpace(q))
                     datos.setearParametro("@q", "%" + q + "%");
-                }
 
                 datos.ejecutarLectura();
 
@@ -112,19 +115,38 @@ namespace Negocio
                     {
                         Id = (int)datos.Lector["Id"],
                         Fecha = (DateTime)datos.Lector["Fecha"],
-                        Observaciones = datos.Lector["Observaciones"] != DBNull.Value
-                            ? (string)datos.Lector["Observaciones"]
-                            : string.Empty,
+
+                        Observaciones = datos.Lector["Observaciones"] as string ?? "",
+
                         Proveedor = new Proveedor
                         {
                             Id = (int)datos.Lector["IdProveedor"],
-                            Nombre = (string)datos.Lector["NombreProveedor"]
+                            Nombre = datos.Lector["NombreProveedor"].ToString()
                         },
+
                         Usuario = new Usuario
                         {
                             Id = (int)datos.Lector["IdUsuario"],
-                            Nombre = (string)datos.Lector["NombreUsuario"]
-                        }
+                            Nombre = datos.Lector["NombreUsuario"].ToString()
+                        },
+
+                        Cancelada = datos.Lector["Cancelada"] != DBNull.Value
+                                    && (bool)datos.Lector["Cancelada"],
+
+                        MotivoCancelacion = datos.Lector["MotivoCancelacion"] as string ?? "",
+
+                        FechaCancelacion = datos.Lector["FechaCancelacion"] is DBNull
+                                            ? null
+                                            : (DateTime?)datos.Lector["FechaCancelacion"],
+
+                        UsuarioCancelacion =
+                            datos.Lector["IdUsuarioCancelacion"] == DBNull.Value
+                            ? null
+                            : new Usuario
+                            {
+                                Id = (int)datos.Lector["IdUsuarioCancelacion"],
+                                Nombre = datos.Lector["NombreUsuarioCancelacion"].ToString()
+                            }
                     };
 
                     lista.Add(compra);
@@ -132,15 +154,13 @@ namespace Negocio
 
                 return lista;
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
             finally
             {
                 datos.CerrarConexion();
             }
         }
+
+
 
         public void Eliminar(int id)
         {
@@ -160,5 +180,60 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
+        public void Cancelar(int idCompra, string motivo, int idUsuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta("SELECT IdProducto, Cantidad FROM COMPRA_LINEAS WHERE IdCompra = @id");
+                datos.setearParametro("@id", idCompra);
+                datos.ejecutarLectura();
+
+                List<(int idProd, int cant)> lineas = new List<(int, int)>();
+
+                while (datos.Lector.Read())
+                {
+                    lineas.Add(((int)datos.Lector["IdProducto"], (int)datos.Lector["Cantidad"]));
+                }
+
+                datos.CerrarConexion();
+
+                // Revertir stock
+                foreach (var item in lineas)
+                {
+                    AccesoDatos upd = new AccesoDatos();
+                    upd.setearConsulta("UPDATE Productos SET StockActual = StockActual - @cant WHERE Id = @idProd");
+                    upd.setearParametro("@cant", item.cant);
+                    upd.setearParametro("@idProd", item.idProd);
+                    upd.ejecutarAccion();
+                    upd.CerrarConexion();
+                }
+
+                // Marcar como cancelada
+                AccesoDatos updCompra = new AccesoDatos();
+                updCompra.setearConsulta(@"
+            UPDATE Compras 
+            SET Cancelada = 1,
+                MotivoCancelacion = @motivo,
+                FechaCancelacion = GETDATE(),
+                IdUsuarioCancelacion = @idUsuario
+            WHERE Id = @idCompra
+        ");
+
+                updCompra.setearParametro("@motivo", motivo);
+                updCompra.setearParametro("@idUsuario", idUsuario);
+                updCompra.setearParametro("@idCompra", idCompra);
+                updCompra.ejecutarAccion();
+                updCompra.CerrarConexion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+
     }
 }

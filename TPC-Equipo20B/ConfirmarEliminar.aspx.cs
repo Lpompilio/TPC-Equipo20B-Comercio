@@ -1,5 +1,6 @@
-﻿using System;
+﻿using Dominio;
 using Negocio;
+using System;
 
 namespace TPC_Equipo20B
 {
@@ -14,6 +15,9 @@ namespace TPC_Equipo20B
             {
                 Session["VolverA"] = Request.UrlReferrer?.ToString();
                 lblMensaje.Text = Server.UrlDecode(Request.QueryString["msg"] ?? "¿Confirmar eliminación?");
+
+                if (Entidad == "compra")
+                    panelMotivo.Visible = true;
             }
         }
 
@@ -57,13 +61,23 @@ namespace TPC_Equipo20B
                     return;
 
                 case "compra":
-                    new CompraNegocio().Eliminar(Id);
-                    Response.Redirect("Compras.aspx");
-                    return;
 
-                default:
-                    Volver();
-                    return;
+                     // Motivo ingresado
+                     string motivo = txtMotivo.Text.Trim();
+
+                     // Usuario actual (provisorio hasta que haya login real)
+                     var usuario = (Usuario)Session["usuario"];
+                     int idUsuario = usuario != null ? usuario.Id : 1;
+
+                     // Cancelar la compra
+                     new CompraNegocio().Cancelar(Id, motivo, idUsuario);
+
+                     Response.Redirect("Compras.aspx");
+                     return;
+
+                 default:
+                 Volver();
+                 return;
             }
           }
 

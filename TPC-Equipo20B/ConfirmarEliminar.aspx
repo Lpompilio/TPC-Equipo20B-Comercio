@@ -14,6 +14,12 @@
                     Esta acción no se puede deshacer. ¿Deseas continuar?
                 </p>
 
+                <div class="mb-3" id="panelMotivo" runat="server" visible="false">
+                <label class="form-label fw-bold">Motivo de cancelación</label>
+                <asp:TextBox ID="txtMotivo" runat="server" CssClass="form-control"></asp:TextBox>
+                </div>
+
+
                 <div class="d-flex justify-content-center gap-3">
                     <asp:Button ID="btnCancelar" runat="server" Text="Cancelar"
                         CssClass="btn btn-outline-secondary px-4"

@@ -13,7 +13,11 @@ namespace Dominio
         public DateTime Fecha { get; set; }
         public Usuario Usuario { get; set; }
         public string Observaciones { get; set; }
-
         public List<CompraLinea> Lineas { get; set; } = new List<CompraLinea>();
+        public bool Cancelada { get; set; }
+        public string MotivoCancelacion { get; set; } = "";
+        public DateTime? FechaCancelacion { get; set; }
+        public Usuario UsuarioCancelacion { get; set; }
+
     }
 }

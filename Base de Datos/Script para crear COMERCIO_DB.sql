@@ -162,13 +162,21 @@ GO
 CREATE TABLE COMPRAS (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     IdProveedor INT NOT NULL,
-    IdUsuario INT NOT NULL,
+    IdUsuario INT NOT NULL,           
     Fecha DATETIME NOT NULL DEFAULT GETDATE(),
     Observaciones NVARCHAR(500),
+
+    Cancelada BIT NOT NULL DEFAULT 0,
+    MotivoCancelacion NVARCHAR(500) NULL,
+    FechaCancelacion DATETIME NULL,
+    IdUsuarioCancelacion INT NULL,
+
     FOREIGN KEY (IdProveedor) REFERENCES PROVEEDORES(Id),
-    FOREIGN KEY (IdUsuario) REFERENCES USUARIOS(Id)
+    FOREIGN KEY (IdUsuario) REFERENCES USUARIOS(Id),
+    FOREIGN KEY (IdUsuarioCancelacion) REFERENCES USUARIOS(Id)
 );
 GO
+
 
 CREATE TABLE COMPRA_LINEAS (
     Id INT IDENTITY(1,1) PRIMARY KEY,

@@ -59,7 +59,7 @@ namespace TPC_Equipo20B
             {
                 string msg = Server.UrlEncode(
                     $"¿Desea eliminar la compra N° {id}? Esta acción no se puede deshacer.");
-                Response.Redirect($"ConfirmarEliminar.aspx?entidad=compra&id={id}&msg={msg}");
+                Response.Redirect($"ConfirmarEliminar.aspx?tipo=compra&id={id}&msg={msg}");
             }
         }
     }

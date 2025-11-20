@@ -11,6 +11,16 @@
                     OnClick="btnCerrar_Click" />
             </div>
 
+            <div runat="server" id="panelCancelada" visible="false"
+                    class="alert alert-danger fw-bold">
+                    <i class="bi bi-x-circle"></i>
+                    Esta compra está cancelada.<br />
+                Motivo: <asp:Label ID="lblMotivo" runat="server" /><br />
+                Fecha: <asp:Label ID="lblFechaCanc" runat="server" /><br />
+                    Usuario: <asp:Label ID="lblUsuarioCanc" runat="server" />
+                        </div>
+
+
             <div class="card-body">
                 <div class="mb-3">
                     <strong>Proveedor:</strong> <asp:Label ID="lblProveedor" runat="server" CssClass="ms-1" />
