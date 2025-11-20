@@ -222,5 +222,47 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
+        public List<int> ObtenerProveedoresPorProducto(int idProducto)
+        {
+            List<int> lista = new List<int>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta("SELECT IdProveedor FROM PRODUCTO_PROVEEDOR WHERE IdProducto = @id");
+                datos.setearParametro("@id", idProducto);
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                    lista.Add((int)datos.Lector["IdProveedor"]);
+
+                return lista;
+            }
+            finally { datos.CerrarConexion(); }
+        }
+
+        public void ActualizarProveedoresProducto(int idProducto, List<int> proveedores)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta("DELETE FROM PRODUCTO_PROVEEDOR WHERE IdProducto = @id");
+                datos.setearParametro("@id", idProducto);
+                datos.ejecutarAccion();
+
+                foreach (int idProv in proveedores)
+                {
+                    datos.setearConsulta("INSERT INTO PRODUCTO_PROVEEDOR (IdProducto, IdProveedor) VALUES (@p, @prov)");
+                    datos.setearParametro("@p", idProducto);
+                    datos.setearParametro("@prov", idProv);
+                    datos.ejecutarAccion();
+                }
+            }
+            finally { datos.CerrarConexion(); }
+        }
+
+
     }
 }

@@ -10,61 +10,70 @@ namespace Negocio
         {
             var lista = new List<Proveedor>();
             var datos = new AccesoDatos();
+
             try
             {
+                string consultaBase = @"
+            SELECT 
+                Id,
+                CASE 
+                    WHEN (Nombre IS NULL OR Nombre = '') 
+                        THEN RazonSocial
+                    ELSE Nombre + ' (' + RazonSocial + ')'
+                END AS Nombre,
+                RazonSocial,
+                Documento,
+                Email,
+                Telefono,
+                Direccion,
+                Localidad,
+                CondicionIVA
+            FROM Proveedores
+            WHERE Activo = 1";
+
                 if (string.IsNullOrWhiteSpace(q))
                 {
-                    datos.setearConsulta(@"
-                SELECT Id, 
-                       CASE 
-                           WHEN Nombre IS NULL OR Nombre = '' THEN RazonSocial 
-                           ELSE Nombre + ' (' + RazonSocial + ')' 
-                       END AS Nombre, 
-                       RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA 
-                FROM Proveedores 
-                WHERE Activo = 1
-            ");
+                    datos.setearConsulta(consultaBase + " ORDER BY Nombre");
                 }
                 else
                 {
-                    datos.setearConsulta(@"
-                SELECT Id, 
-                       CASE 
-                           WHEN Nombre IS NULL OR Nombre = '' THEN RazonSocial 
-                           ELSE Nombre + ' (' + RazonSocial + ')' 
-                       END AS Nombre, 
-                       RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA
-                FROM Proveedores
-                WHERE Activo = 1 AND (
-                    Nombre LIKE @q OR 
-                    RazonSocial LIKE @q OR 
-                    Documento LIKE @q
-                )
-            ");
+                    datos.setearConsulta(consultaBase + @"
+                AND (Nombre LIKE @q 
+                    OR RazonSocial LIKE @q 
+                    OR Documento LIKE @q
+                    OR Localidad LIKE @q
+                    OR Email LIKE @q)
+                ORDER BY Nombre");
+
                     datos.setearParametro("@q", "%" + q + "%");
                 }
 
                 datos.ejecutarLectura();
+
                 while (datos.Lector.Read())
                 {
-                    var p = new Proveedor
+                    lista.Add(new Proveedor
                     {
                         Id = (int)datos.Lector["Id"],
-                        Nombre = datos.Lector["Nombre"].ToString(),
-                        RazonSocial = datos.Lector["RazonSocial"] != DBNull.Value ? datos.Lector["RazonSocial"].ToString() : "",
-                        Documento = datos.Lector["Documento"] != DBNull.Value ? datos.Lector["Documento"].ToString() : "",
-                        Email = datos.Lector["Email"] != DBNull.Value ? datos.Lector["Email"].ToString() : "",
-                        Telefono = datos.Lector["Telefono"] != DBNull.Value ? datos.Lector["Telefono"].ToString() : "",
-                        Direccion = datos.Lector["Direccion"] != DBNull.Value ? datos.Lector["Direccion"].ToString() : "",
-                        Localidad = datos.Lector["Localidad"] != DBNull.Value ? datos.Lector["Localidad"].ToString() : "",
-                        CondicionIVA = datos.Lector["CondicionIVA"] != DBNull.Value ? datos.Lector["CondicionIVA"].ToString() : ""
-                    };
-                    lista.Add(p);
+                        Nombre = datos.Lector["Nombre"]?.ToString() ?? "",
+                        RazonSocial = datos.Lector["RazonSocial"]?.ToString() ?? "",
+                        Documento = datos.Lector["Documento"]?.ToString() ?? "",
+                        Email = datos.Lector["Email"]?.ToString() ?? "",
+                        Telefono = datos.Lector["Telefono"]?.ToString() ?? "",
+                        Direccion = datos.Lector["Direccion"]?.ToString() ?? "",
+                        Localidad = datos.Lector["Localidad"]?.ToString() ?? "",
+                        CondicionIVA = datos.Lector["CondicionIVA"]?.ToString() ?? ""
+                    });
                 }
+
                 return lista;
             }
-            finally { datos.CerrarConexion(); }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
+
 
         public Proveedor BuscarPorId(int id)
         {
@@ -133,33 +142,9 @@ namespace Negocio
         public void Eliminar(int id)
         {
             AccesoDatos datos = new AccesoDatos();
-
             try
             {
-                // 1Verificar si el proveedor tiene compras asociadas
-                datos.setearConsulta("SELECT COUNT(*) FROM COMPRAS WHERE IdProveedor = @id");
-                datos.setearParametro("@id", id);
-
-                int cantidad = Convert.ToInt32(datos.EjecutarScalar());
-
-                if (cantidad > 0)
-                {
-                    throw new Exception("No se puede eliminar el proveedor porque tiene compras asociadas.");
-                }
-
-                // 2Verificar si tiene productos asociados (se usa IdProveedor en productos)
-                datos.setearConsulta("SELECT COUNT(*) FROM PRODUCTOS WHERE IdProveedor = @id AND Activo = 1");
-                datos.setearParametro("@id", id);
-
-                int productos = Convert.ToInt32(datos.EjecutarScalar());
-
-                if (productos > 0)
-                {
-                    throw new Exception("No se puede eliminar el proveedor porque tiene productos asociados.");
-                }
-
-                // 3Si no tiene vínculos, eliminar
-                datos.setearConsulta("DELETE FROM PROVEEDORES WHERE Id = @id");
+                datos.setearConsulta("UPDATE PROVEEDORES SET Activo = 0 WHERE Id = @id");
                 datos.setearParametro("@id", id);
                 datos.ejecutarAccion();
             }
@@ -168,6 +153,7 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
 
     }
 }

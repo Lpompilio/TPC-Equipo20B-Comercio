@@ -14,15 +14,25 @@ namespace Negocio
             {
                 if (string.IsNullOrWhiteSpace(q))
                 {
-                    datos.setearConsulta("SELECT Id, Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Habilitado FROM Clientes");
+                    datos.setearConsulta(@"
+                SELECT Id, Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Habilitado
+                FROM Clientes
+                WHERE Habilitado = 1
+                ORDER BY Nombre");
                 }
                 else
                 {
                     datos.setearConsulta(@"
-                        SELECT Id, Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Habilitado
-                        FROM Clientes
-                        WHERE Nombre LIKE @q OR Documento LIKE @q OR Email LIKE @q OR Telefono LIKE @q OR Localidad LIKE @q
-                    ");
+                SELECT Id, Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Habilitado
+                FROM Clientes
+                WHERE Habilitado = 1
+                  AND (Nombre LIKE @q 
+                       OR Documento LIKE @q 
+                       OR Email LIKE @q 
+                       OR Telefono LIKE @q 
+                       OR Localidad LIKE @q)
+                ORDER BY Nombre");
+
                     datos.setearParametro("@q", "%" + q + "%");
                 }
 
@@ -41,12 +51,18 @@ namespace Negocio
                         CondicionIVA = datos.Lector["CondicionIVA"].ToString(),
                         Habilitado = (bool)datos.Lector["Habilitado"]
                     };
+
                     lista.Add(c);
                 }
+
                 return lista;
             }
-            finally { datos.CerrarConexion(); }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
+
 
         public Cliente BuscarPorId(int id)
         {
@@ -115,22 +131,9 @@ namespace Negocio
         public void Eliminar(int id)
         {
             AccesoDatos datos = new AccesoDatos();
-
             try
             {
-                // Verificar si el cliente tiene ventas asociadas
-                datos.setearConsulta("SELECT COUNT(*) FROM VENTAS WHERE IdCliente = @id");
-                datos.setearParametro("@id", id);
-
-                int cantidad = Convert.ToInt32(datos.EjecutarScalar());
-
-                if (cantidad > 0)
-                {
-                    throw new Exception("No se puede eliminar el cliente porque tiene ventas asociadas.");
-                }
-
-                // Si no tiene ventas, eliminar
-                datos.setearConsulta("DELETE FROM CLIENTES WHERE Id = @id");
+                datos.setearConsulta("UPDATE CLIENTES SET Activo = 0 WHERE Id = @id");
                 datos.setearParametro("@id", id);
                 datos.ejecutarAccion();
             }
@@ -139,6 +142,7 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
 
     }
 }

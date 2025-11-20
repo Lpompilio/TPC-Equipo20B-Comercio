@@ -10,27 +10,45 @@ namespace Negocio
         {
             var lista = new List<Marca>();
             var datos = new AccesoDatos();
+
             try
             {
+                string consultaBase = @"
+            SELECT Id, Nombre
+            FROM Marcas
+            WHERE Activo = 1";
+
                 if (string.IsNullOrWhiteSpace(q))
                 {
-                    datos.setearConsulta("SELECT Id, Nombre FROM Marcas ORDER BY Nombre");
+                    datos.setearConsulta(consultaBase + " ORDER BY Nombre");
                 }
                 else
                 {
-                    datos.setearConsulta("SELECT Id, Nombre FROM Marcas WHERE Nombre LIKE @q ORDER BY Nombre");
+                    datos.setearConsulta(consultaBase + @"
+                AND Nombre LIKE @q
+                ORDER BY Nombre");
                     datos.setearParametro("@q", "%" + q + "%");
                 }
 
                 datos.ejecutarLectura();
+
                 while (datos.Lector.Read())
                 {
-                    lista.Add(new Marca { Id = (int)datos.Lector["Id"], Nombre = (string)datos.Lector["Nombre"] });
+                    lista.Add(new Marca
+                    {
+                        Id = (int)datos.Lector["Id"],
+                        Nombre = datos.Lector["Nombre"].ToString()
+                    });
                 }
+
                 return lista;
             }
-            finally { datos.CerrarConexion(); }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
+
 
         public void Agregar(Marca marca)
         {
@@ -56,26 +74,12 @@ namespace Negocio
             }
             finally { datos.CerrarConexion(); }
         }
-
         public void Eliminar(int id)
         {
             AccesoDatos datos = new AccesoDatos();
-
             try
             {
-                // Verificar si tiene productos asociados
-                datos.setearConsulta("SELECT COUNT(*) FROM PRODUCTOS WHERE IdMarca = @id AND Activo = 1");
-                datos.setearParametro("@id", id);
-
-                int cantidad = Convert.ToInt32(datos.EjecutarScalar());
-
-                if (cantidad > 0)
-                {
-                    throw new Exception("No se puede eliminar la marca porque tiene productos asociados.");
-                }
-
-                // Si no tiene productos, eliminar
-                datos.setearConsulta("DELETE FROM MARCAS WHERE Id = @id");
+                datos.setearConsulta("UPDATE MARCAS SET Activo = 0 WHERE Id = @id");
                 datos.setearParametro("@id", id);
                 datos.ejecutarAccion();
             }
@@ -84,6 +88,7 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
 
     }
 }

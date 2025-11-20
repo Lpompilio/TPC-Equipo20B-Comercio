@@ -14,14 +14,19 @@ namespace Negocio
             {
                 if (string.IsNullOrWhiteSpace(filtro))
                 {
-                    datos.setearConsulta("SELECT Id, Nombre FROM Categorias ORDER BY Nombre");
+                    datos.setearConsulta(@"
+                SELECT Id, Nombre 
+                FROM Categorias 
+                WHERE Activo = 1
+                ORDER BY Nombre");
                 }
                 else
                 {
-                    datos.setearConsulta(@"SELECT Id, Nombre 
-                                           FROM Categorias 
-                                           WHERE Nombre LIKE @filtro
-                                           ORDER BY Nombre");
+                    datos.setearConsulta(@"
+                SELECT Id, Nombre 
+                FROM Categorias 
+                WHERE Activo = 1 AND Nombre LIKE @filtro
+                ORDER BY Nombre");
                     datos.setearParametro("@filtro", $"%{filtro}%");
                 }
 
@@ -41,6 +46,7 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
 
         public void Agregar(Categoria cat)
         {
@@ -70,22 +76,9 @@ namespace Negocio
         public void Eliminar(int id)
         {
             AccesoDatos datos = new AccesoDatos();
-
             try
             {
-                // Verificar si hay productos asociados a esta categoría
-                datos.setearConsulta("SELECT COUNT(*) FROM PRODUCTOS WHERE IdCategoria = @id AND Activo = 1");
-                datos.setearParametro("@id", id);
-
-                int cantidad = Convert.ToInt32(datos.EjecutarScalar());
-
-                if (cantidad > 0)
-                {
-                    throw new Exception("No se puede eliminar la categoría porque tiene productos asociados.");
-                }
-
-                // Si no tiene productos, eliminar
-                datos.setearConsulta("DELETE FROM CATEGORIAS WHERE Id = @id");
+                datos.setearConsulta("UPDATE CATEGORIAS SET Activo = 0 WHERE Id = @id");
                 datos.setearParametro("@id", id);
                 datos.ejecutarAccion();
             }
@@ -94,6 +87,7 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
 
 
         public Categoria ObtenerPorId(int id)

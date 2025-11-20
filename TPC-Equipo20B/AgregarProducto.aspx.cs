@@ -20,16 +20,24 @@ namespace TPC_Equipo20B
             {
                 CargarCombos();
 
-                // Si viene con id es modo edición
+                // detectar edición
                 if (Request.QueryString["id"] != null)
                 {
                     idProducto = int.Parse(Request.QueryString["id"]);
+
                     CargarProducto(idProducto);
+                    CargarProveedores(idProducto);
+
                     lblTitulo.InnerText = "Editar Producto";
                     btnGuardar.Text = "Guardar Cambios";
                 }
+                else
+                {
+                    CargarProveedores(null);
+                }
             }
         }
+
         private void CargarCombos()
         {
             MarcaNegocio marcaNegocio = new MarcaNegocio();
@@ -46,9 +54,6 @@ namespace TPC_Equipo20B
             ddlCategoria.DataValueField = "Id";
             ddlCategoria.DataBind();
             ddlCategoria.Items.Insert(0, new ListItem("Seleccione una categoría...", "0"));
-
-            ddlProveedor.Items.Clear();
-            ddlProveedor.Items.Add(new System.Web.UI.WebControls.ListItem("Seleccione un proveedor...", "0"));
         }
 
         private void CargarProducto(int id)
@@ -63,7 +68,6 @@ namespace TPC_Equipo20B
                 txtStockMinimo.Text = producto.StockMinimo.ToString();
                 txtStockActual.Text = producto.StockActual.ToString();
                 txtGanancia.Text = producto.PorcentajeGanancia.ToString();
-                txtUrlImagen.Text = producto.UrlImagen;
                 chkActivo.Checked = producto.Activo;
 
                 if (producto.Marca != null)
@@ -94,8 +98,6 @@ namespace TPC_Equipo20B
             int idCategoria = 0;
             int.TryParse(ddlCategoria.SelectedValue, out idCategoria);
 
-            int.TryParse(ddlProveedor.SelectedValue, out int idProveedor);
-
             if (idCategoria == 0)
             {
                 
@@ -108,7 +110,6 @@ namespace TPC_Equipo20B
                 StockMinimo = stockMin,
                 StockActual = stockAct,
                 PorcentajeGanancia = ganancia,
-                UrlImagen = txtUrlImagen.Text.Trim(),
                 Activo = chkActivo.Checked,
                 Marca = new Marca { Id = idMarca },
                 Categoria = new Categoria { Id = idCategoria }
@@ -117,22 +118,83 @@ namespace TPC_Equipo20B
             if (idMarca > 0)
                 p.Marca = new Marca { Id = idMarca };
 
-            if (idProveedor > 0)
-                p.Proveedor = new Proveedor { Id = idProveedor };
-
             // Asigna Id si está en modo edición
             if (ViewState["idProducto"] != null)
                 p.Id = (int)ViewState["idProducto"];
 
             negocio.Guardar(p);
 
+            // --- Guardar proveedores asociados ---
+            List<int> proveedoresSeleccionados = new List<int>();
+
+            foreach (GridViewRow row in gvProveedores.Rows)
+            {
+                CheckBox chk = (CheckBox)row.FindControl("chkSel");
+
+                if (chk.Checked)
+                {
+                    int idProv = Convert.ToInt32(gvProveedores.DataKeys[row.RowIndex].Value);
+                    proveedoresSeleccionados.Add(idProv);
+                }
+            }
+
+            ProductoNegocio prodNeg = new ProductoNegocio();
+
+            prodNeg.ActualizarProveedoresProducto(p.Id, proveedoresSeleccionados);
+
+
             Response.Redirect("Productos.aspx", false);
         }
-
-
         protected void btnCancelar_Click(object sender, EventArgs e)
         {
             Response.Redirect("Productos.aspx", false);
         }
+
+        private void CargarProveedores(int? idProd = null)
+        {
+            ProveedorNegocio provNeg = new ProveedorNegocio();
+            gvProveedores.DataSource = provNeg.Listar();
+            gvProveedores.DataBind();
+
+            if (idProd.HasValue)
+                MarcarProveedoresAsociados(idProd.Value);
+        }
+
+
+        protected void btnBuscarProveedor_Click(object sender, EventArgs e)
+        {
+            string q = txtBuscarProveedor.Text.Trim();
+
+            ProveedorNegocio provNeg = new ProveedorNegocio();
+            var lista = string.IsNullOrWhiteSpace(q)
+                        ? provNeg.Listar()
+                        : provNeg.Listar(q);
+
+            gvProveedores.DataSource = lista;
+            gvProveedores.DataBind();
+
+            // volver a marcar seleccionados si es edición
+            if (ViewState["idProducto"] != null)
+            {
+                int idProd = (int)ViewState["idProducto"];
+                MarcarProveedoresAsociados(idProd);
+            }
+        }
+
+        private void MarcarProveedoresAsociados(int idProducto)
+        {
+            ProductoNegocio negocio = new ProductoNegocio();
+            var asociados = negocio.ObtenerProveedoresPorProducto(idProducto);
+
+            foreach (GridViewRow row in gvProveedores.Rows)
+            {
+                int idProv = Convert.ToInt32(gvProveedores.DataKeys[row.RowIndex].Value);
+                CheckBox chk = (CheckBox)row.FindControl("chkSel");
+                chk.Checked = asociados.Contains(idProv);
+            }
+        }
+
+
+
     }
 }

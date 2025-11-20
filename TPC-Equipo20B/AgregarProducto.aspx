@@ -8,6 +8,7 @@
             font-size: 12px;
         }
     </style>
+
     <div class="mb-4">
         <h2 id="lblTitulo" runat="server" class="fw-bold">Agregar/Editar Producto</h2>
         <p class="text-muted">Complete los campos para registrar o editar un producto</p>
@@ -16,99 +17,143 @@
     <div class="card shadow-sm">
         <div class="card-body">
 
-            <!-- Información básica -->
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <label for="txtDescripcion" class="form-label">Descripción</label>
-                    <asp:TextBox ID="txtDescripcion" runat="server" CssClass="form-control" placeholder="Ej: Agua Purificada 1L" />
-                    <asp:RequiredFieldValidator ErrorMessage="Agregar descripcion" CssClass="validator" ControlToValidate="txtDescripcion" runat="server" />
+            <!-- 🔥 LAYOUT EN DOS COLUMNAS: IZQUIERDA CAMPOS / DERECHA PROVEEDORES -->
+            <div class="row">
+
+                <!-- 🟩 IZQUIERDA — TODOS LOS CAMPOS -->
+                <div class="col-md-8">
+
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label for="txtDescripcion" class="form-label">Descripción</label>
+                        <asp:TextBox ID="txtDescripcion" runat="server" CssClass="form-control" placeholder="Ej: Agua Purificada 1L" />
+                        <asp:RequiredFieldValidator ErrorMessage="Agregar descripcion" CssClass="validator" ControlToValidate="txtDescripcion" runat="server" />
+                    </div>
+
+                    <!-- Marca / Categoría -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="ddlMarca" class="form-label">Marca</label>
+                            <asp:DropDownList ID="ddlMarca" runat="server" CssClass="form-select"></asp:DropDownList>
+                            <asp:RequiredFieldValidator ErrorMessage="Agregar Marca" CssClass="validator" ControlToValidate="ddlMarca" runat="server" InitialValue="0" Display="Dynamic" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="ddlCategoria" class="form-label">Categoría</label>
+                            <asp:DropDownList ID="ddlCategoria" runat="server" CssClass="form-select"></asp:DropDownList>
+                            <asp:RequiredFieldValidator
+                                ErrorMessage="Debe seleccionar una categoría"
+                                CssClass="validator"
+                                ControlToValidate="ddlCategoria"
+                                InitialValue="0"
+                                runat="server"
+                                Display="Dynamic" />
+                        </div>
+                    </div>
+
+                    <!-- Stock / Ganancia -->
+                    <div class="row g-3 mb-3">
+
+                        <div class="col-md-4">
+                            <label for="txtStockMinimo" class="form-label">Stock Mínimo</label>
+                            <asp:TextBox ID="txtStockMinimo" runat="server" CssClass="form-control" />
+                            <asp:RequiredFieldValidator ErrorMessage="Cargar el Stock Minimo" ControlToValidate="txtStockMinimo" runat="server" CssClass="validator" Display="Dynamic" />
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="txtStockActual" class="form-label">Stock Actual</label>
+                            <asp:TextBox ID="txtStockActual" runat="server" CssClass="form-control" />
+                            <asp:RequiredFieldValidator ErrorMessage="Cargar el Stock Actual" ControlToValidate="txtStockActual" runat="server" CssClass="validator" Display="Dynamic" />
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="txtGanancia" class="form-label">% Ganancia</label>
+                            <asp:TextBox ID="txtGanancia" runat="server" CssClass="form-control" />
+
+                            <asp:RegularExpressionValidator
+                                ID="revGanancia"
+                                runat="server"
+                                ControlToValidate="txtGanancia"
+                                ErrorMessage="El formato debe ser numérico con coma decimal (ej: 150,25)."
+                                CssClass="validator"
+                                Display="Dynamic"
+                                ValidationExpression="^\d+(,\d{1,2})?$" />
+
+                            <asp:RequiredFieldValidator
+                                ID="rfvGanancia"
+                                runat="server"
+                                ControlToValidate="txtGanancia"
+                                ErrorMessage="El % de ganancia es requerido."
+                                CssClass="validator"
+                                Display="Dynamic" />
+                        </div>
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="form-check form-switch mb-3">
+                        <asp:CheckBox ID="chkActivo" runat="server" Checked="true" CssClass="form-check-input" />
+                        <label class="form-check-label" for="chkActivo">Producto activo</label>
+                    </div>
+
                 </div>
 
-            <div class="row g-3 mb-3">
+
+                <!-- 🟦 DERECHA — PROVEEDORES -->
                 <div class="col-md-4">
-                    <label for="ddlMarca" class="form-label">Marca</label>
-                    <asp:DropDownList ID="ddlMarca" runat="server" CssClass="form-select"></asp:DropDownList>
-                    <asp:RequiredFieldValidator ErrorMessage="Agregar Marca" CssClass="validator" ControlToValidate="ddlMarca" runat="server" InitialValue="0" Display="Dynamic" />
+
+                    <label class="form-label fw-bold">Proveedores</label>
+
+                    <!-- Buscador -->
+                    <div class="input-group mb-2">
+                        <asp:TextBox ID="txtBuscarProveedor" runat="server" CssClass="form-control" placeholder="Buscar proveedor..." />
+                        <asp:Button ID="btnBuscarProveedor" runat="server" Text="🔍" CssClass="btn btn-outline-secondary" OnClick="btnBuscarProveedor_Click" />
+                    </div>
+
+                    <!-- Lista con scroll alto -->
+                    <div style="max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 6px; padding: 6px;">
+
+                        <asp:GridView ID="gvProveedores" runat="server"
+                            AutoGenerateColumns="False"
+                            CssClass="table table-sm table-hover"
+                            DataKeyNames="Id">
+
+                            <Columns>
+                                <asp:TemplateField HeaderText="">
+                                    <ItemTemplate>
+                                        <asp:CheckBox ID="chkSel" runat="server" />
+                                    </ItemTemplate>
+                                    <ItemStyle Width="35px" CssClass="text-center" />
+                                </asp:TemplateField>
+
+                                <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
+                                <asp:BoundField DataField="Telefono" HeaderText="Teléfono" />
+                            </Columns>
+
+                        </asp:GridView>
+
+                    </div>
+
                 </div>
 
-                <div class="col-md-4">
-                    <label for="ddlCategoria" class="form-label">Categoría</label>
-                    <asp:DropDownList ID="ddlCategoria" runat="server" CssClass="form-select"></asp:DropDownList>
-                    <asp:RequiredFieldValidator
-                        ErrorMessage="Debe seleccionar una categoría"
-                        CssClass="validator"
-                        ControlToValidate="ddlCategoria"
-                        InitialValue="0"
-                        runat="server"
-                        Display="Dynamic" />
-                </div>
+            </div> <!-- /row -->
 
-                <div class="col-md-4">
-                    <label for="ddlProveedor" class="form-label">Proveedor</label>
-                    <asp:DropDownList ID="ddlProveedor" runat="server" CssClass="form-select"></asp:DropDownList>
-                </div>
-            </div>
-
-            <!-- Detalles de stock -->
-            <div class="row g-3 mb-3">
-                <div class="col-md-4">
-                    <label for="txtStockMinimo" class="form-label">Stock Mínimo</label>
-                    <asp:TextBox ID="txtStockMinimo" runat="server" CssClass="form-control" />
-                    <asp:RequiredFieldValidator ErrorMessage="Cargar el Stock Minimo" ControlToValidate="txtStockMinimo" runat="server" CssClass="validator" Display="Dynamic" />
-                </div>
-
-                <div class="col-md-4">
-                    <label for="txtStockActual" class="form-label">Stock Actual</label>
-                    <asp:TextBox ID="txtStockActual" runat="server" CssClass="form-control" />
-                    <asp:RequiredFieldValidator ErrorMessage="Cargar el Stock Actual" ControlToValidate="txtStockActual" runat="server" CssClass="validator" Display="Dynamic" />
-                </div>
-
-                <div class="col-md-4">
-                    <label for="txtGanancia" class="form-label">% Ganancia</label>
-                    <asp:TextBox ID="txtGanancia" runat="server" CssClass="form-control" />
-
-                    <asp:RegularExpressionValidator
-                        ID="revGanancia"
-                        runat="server"
-                        ControlToValidate="txtGanancia"
-                        ErrorMessage="El formato debe ser numérico con coma decimal (ej: 150,25)."
-                        CssClass="validator"
-                        Display="Dynamic"
-                        SetFocusOnError="true"
-                        ValidationExpression="^\d+(,\d{1,2})?$" />
-                    <asp:RequiredFieldValidator
-                        ID="rfvGanancia"
-                        runat="server"
-                        ControlToValidate="txtGanancia"
-                        ErrorMessage="El % de ganancia es requerido."
-                        CssClass="validator"
-                        Display="Dynamic" />
-                </div>
-
-                <!-- Imagen -->
-                <div class="mb-3">
-                    <label for="txtUrlImagen" class="form-label">URL de Imagen (opcional)</label>
-                    <asp:TextBox ID="txtUrlImagen" runat="server" CssClass="form-control" placeholder="https://..." />
-                </div>
-
-                <!-- Estado -->
-                <div class="form-check form-switch mb-3">
-                    <asp:CheckBox ID="chkActivo" runat="server" Checked="true" CssClass="form-check-input" />
-                    <label class="form-check-label" for="chkActivo">Producto activo</label>
-                </div>
-
-            </div>
-
-            <div class="card-footer d-flex justify-content-end gap-2">
-                <asp:Button ID="btnCancelar" runat="server"
-                    Text="Cancelar"
-                    CssClass="btn btn-outline-secondary"
-                    OnClick="btnCancelar_Click" />
-
-                <asp:Button ID="btnGuardar" runat="server"
-                    Text="Guardar Producto"
-                    CssClass="btn btn-success"
-                    OnClick="btnGuardar_Click" />
-            </div>
         </div>
+
+        <!-- Footer -->
+        <div class="card-footer d-flex justify-content-end gap-2">
+            <asp:Button ID="btnCancelar" runat="server"
+                Text="Cancelar"
+                CssClass="btn btn-outline-secondary"
+                OnClick="btnCancelar_Click" />
+
+            <asp:Button ID="btnGuardar" runat="server"
+                Text="Guardar Producto"
+                CssClass="btn btn-success"
+                OnClick="btnGuardar_Click" />
+        </div>
+
+    </div>
+
 </asp:Content>
+
+
