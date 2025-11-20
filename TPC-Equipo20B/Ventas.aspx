@@ -49,6 +49,13 @@
                         CssClass="btn btn-sm btn-info me-2">
                         <i class="bi bi-eye"></i> Ver Detalle
                     </asp:LinkButton>
+                    <asp:LinkButton ID="cmdCancelar" runat="server"
+                        CommandName="Cancelar"
+                        CommandArgument='<%# Eval("Id") %>'
+                        CssClass="btn btn-sm btn-danger">
+                         <i class="bi bi-x-circle"></i> Cancelar
+                    </asp:LinkButton>
+
                 </ItemTemplate>
             </asp:TemplateField>
         </Columns>

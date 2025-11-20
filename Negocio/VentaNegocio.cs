@@ -222,5 +222,65 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
+        public void Cancelar(int idVenta, string motivo, int idUsuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                // Traemos líneas de la venta
+                datos.setearConsulta("SELECT IdProducto, Cantidad FROM DETALLE_VENTA WHERE IdVenta = @id");
+                datos.setearParametro("@id", idVenta);
+                datos.ejecutarLectura();
+
+                List<Tuple<int, int>> lineas = new List<Tuple<int, int>>();
+
+                while (datos.Lector.Read())
+                {
+                    lineas.Add(new Tuple<int, int>(
+                     (int)datos.Lector["IdProducto"],
+                        (int)datos.Lector["Cantidad"]
+                        ));
+                }
+
+                datos.CerrarConexion();
+
+                // DEVOLVER stock (lo contrario de la venta)
+                foreach (var item in lineas)
+                {
+                    AccesoDatos upd = new AccesoDatos();
+                    upd.setearConsulta("UPDATE PRODUCTOS SET StockActual = StockActual + @cant WHERE Id = @idProd");
+                    int idProd = item.Item1;
+                    int cant = item.Item2;
+                    upd.setearParametro("@cant", cant);
+                    upd.setearParametro("@idProd", idProd);
+                    upd.ejecutarAccion();
+                    upd.CerrarConexion();
+                }
+
+                // Marcar venta como CANCELADA
+                AccesoDatos updVenta = new AccesoDatos();
+                updVenta.setearConsulta(@"
+            UPDATE VENTAS
+            SET Cancelada = 1,
+                MotivoCancelacion = @motivo,
+                FechaCancelacion = GETDATE(),
+                IdUsuarioCancelacion = @idUsuario
+            WHERE Id = @idVenta
+        ");
+
+                updVenta.setearParametro("@motivo", motivo);
+                updVenta.setearParametro("@idUsuario", idUsuario);
+                updVenta.setearParametro("@idVenta", idVenta);
+                updVenta.ejecutarAccion();
+                updVenta.CerrarConexion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
     }
 }

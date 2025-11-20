@@ -12,6 +12,14 @@
                     OnClick="btnCerrar_Click" />
             </div>
 
+            <asp:Panel ID="panelCancelada" runat="server" Visible="false" CssClass="alert alert-danger mt-3">
+                <h5 class="fw-bold">⚠️ Venta Cancelada</h5>
+                <p><strong>Motivo:</strong> <asp:Label ID="lblMotivo" runat="server" /></p>
+                <p><strong>Fecha:</strong> <asp:Label ID="lblFechaCanc" runat="server" /></p>
+                <p><strong>Cancelada por:</strong> <asp:Label ID="lblUsuarioCanc" runat="server" /></p>
+                </asp:Panel>
+
+
             <div class="card-body">
                 <div class="mb-3">
                     <strong>Cliente:</strong> <asp:Label ID="lblCliente" runat="server" CssClass="ms-1" />

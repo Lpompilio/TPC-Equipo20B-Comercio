@@ -16,7 +16,7 @@ namespace TPC_Equipo20B
                 Session["VolverA"] = Request.UrlReferrer?.ToString();
                 lblMensaje.Text = Server.UrlDecode(Request.QueryString["msg"] ?? "¿Confirmar eliminación?");
 
-                if (Entidad == "compra")
+                if (Entidad == "compra" || Entidad == "venta")
                     panelMotivo.Visible = true;
             }
         }
@@ -75,7 +75,17 @@ namespace TPC_Equipo20B
                      Response.Redirect("Compras.aspx");
                      return;
 
-                 default:
+                    case "venta":
+                        string mot = txtMotivo.Text.Trim();
+                        var usu = (Usuario)Session["usuario"];
+                        int idUsu = usu != null ? usu.Id : 1;
+
+                        new VentaNegocio().Cancelar(Id, mot, idUsu);
+                        Response.Redirect("Ventas.aspx");
+                        return;
+
+
+                    default:
                  Volver();
                  return;
             }

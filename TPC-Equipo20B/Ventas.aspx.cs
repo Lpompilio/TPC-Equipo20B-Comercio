@@ -33,6 +33,15 @@ namespace TPC_Equipo20B
 
             if (e.CommandName == "Detalle")
                 Response.Redirect("VentaDetalle.aspx?id=" + id);
+
+            else if (e.CommandName == "Cancelar")
+            {
+                string msg = Server.UrlEncode(
+                    $"¿Cancelar la venta #{id}? Se reintegrará el stock."
+                );
+                Response.Redirect($"ConfirmarEliminar.aspx?tipo=venta&id={id}&msg={msg}");
+            }
+
         }
 
         protected void btnNuevaVenta_Click(object sender, EventArgs e)

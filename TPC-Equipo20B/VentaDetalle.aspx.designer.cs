@@ -24,6 +24,42 @@ namespace TPC_Equipo20B
         protected global::System.Web.UI.WebControls.Button btnCerrar;
 
         /// <summary>
+        /// Control panelCancelada.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel panelCancelada;
+
+        /// <summary>
+        /// Control lblMotivo.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMotivo;
+
+        /// <summary>
+        /// Control lblFechaCanc.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblFechaCanc;
+
+        /// <summary>
+        /// Control lblUsuarioCanc.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblUsuarioCanc;
+
+        /// <summary>
         /// Control lblCliente.
         /// </summary>
         /// <remarks>

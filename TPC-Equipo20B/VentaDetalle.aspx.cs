@@ -34,6 +34,17 @@ namespace TPC_Equipo20B
                 return;
             }
 
+            if (venta.Cancelada)
+            {
+                panelCancelada.Visible = true;
+                lblMotivo.Text = venta.MotivoCancelacion;
+                lblFechaCanc.Text = venta.FechaCancelacion?.ToString("dd/MM/yyyy HH:mm");
+                lblUsuarioCanc.Text = venta.UsuarioCancelacion?.Nombre ?? "(no encontrado)";
+            }
+            else
+                panelCancelada.Visible = false;
+
+
             lblCliente.Text = venta.Cliente?.Nombre ?? "-";
             lblFecha.Text = venta.Fecha.ToString("dd/MM/yyyy");
             lblMetodoPago.Text = venta.MetodoPago ?? "-";

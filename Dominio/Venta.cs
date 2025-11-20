@@ -30,5 +30,10 @@ namespace Dominio
         // Total que viene de la base de datos
         public decimal TotalBD { get; set; }
 
+        public bool Cancelada { get; set; }
+        public string MotivoCancelacion { get; set; }
+        public DateTime? FechaCancelacion { get; set; }
+        public Usuario UsuarioCancelacion { get; set; }
+
     }
 }
