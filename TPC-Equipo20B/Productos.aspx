@@ -17,6 +17,13 @@
       <asp:TextBox ID="txtBuscarProducto" runat="server"
         CssClass="form-control"
         placeholder="Buscar…" />
+
+      <asp:DropDownList ID="ddlProveedor" runat="server"
+        CssClass="form-select"
+        AutoPostBack="true"
+        OnSelectedIndexChanged="ddlProveedor_SelectedIndexChanged">
+      </asp:DropDownList>
+
       <asp:Button ID="btnBuscarProducto" runat="server"
         CssClass="btn btn-primary"
         Text="Buscar"

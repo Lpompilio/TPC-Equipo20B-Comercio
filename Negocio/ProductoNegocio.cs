@@ -6,7 +6,7 @@ namespace Negocio
 {
     public class ProductoNegocio
     {
-        public List<Producto> Listar(string q = null)
+        public List<Producto> Listar(string q = null, int? idProveedor = null)
         {
             var lista = new List<Producto>();
             var datos = new AccesoDatos();
@@ -25,6 +25,11 @@ namespace Negocio
             LEFT JOIN PROVEEDORES PR ON P.IdProveedor = PR.Id
             WHERE P.Activo = 1";
 
+                if (idProveedor.HasValue && idProveedor.Value > 0)
+                {
+                    query += " AND EXISTS (SELECT 1 FROM PRODUCTO_PROVEEDOR PP WHERE PP.IdProducto = P.Id AND PP.IdProveedor = @idProv)";
+                }
+
                 if (!string.IsNullOrWhiteSpace(q))
                 {
                     query += " AND (P.Descripcion LIKE @q OR P.CodigoSKU LIKE @q OR C.Nombre LIKE @q OR M.Nombre LIKE @q OR PR.Nombre LIKE @q)";
@@ -33,6 +38,9 @@ namespace Negocio
                 query += " ORDER BY P.Descripcion";
 
                 datos.setearConsulta(query);
+
+                if (idProveedor.HasValue && idProveedor.Value > 0)
+                    datos.setearParametro("@idProv", idProveedor.Value);
 
                 if (!string.IsNullOrWhiteSpace(q))
                     datos.setearParametro("@q", "%" + q + "%");
@@ -212,7 +220,6 @@ namespace Negocio
 
             try
             {
-                // Baja lógica
                 datos.setearConsulta("UPDATE PRODUCTOS SET Activo = 0 WHERE Id = @id");
                 datos.setearParametro("@id", id);
                 datos.ejecutarAccion();
@@ -262,7 +269,5 @@ namespace Negocio
             }
             finally { datos.CerrarConexion(); }
         }
-
-
     }
 }
