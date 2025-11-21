@@ -18,39 +18,42 @@ namespace Negocio
                 if (string.IsNullOrWhiteSpace(q))
                 {
                     datos.setearConsulta(@"
-                        SELECT 
-                            V.Id,
-                            V.Fecha,
-                            V.NumeroFactura,
-                            V.MetodoPago,
-                            V.Total,
-                            C.Id AS IdCliente,
-                            C.Nombre AS NombreCliente
-                        FROM Ventas V
-                        INNER JOIN Clientes C ON V.IdCliente = C.Id
-                        ORDER BY V.Fecha DESC
-                    ");
+                SELECT 
+                    V.Id,
+                    V.Fecha,
+                    V.NumeroFactura,
+                    V.MetodoPago,
+                    V.Total,
+                    V.Cancelada,          
+                    C.Id AS IdCliente,
+                    C.Nombre AS NombreCliente
+                FROM Ventas V
+                INNER JOIN Clientes C ON V.IdCliente = C.Id
+                ORDER BY V.Fecha DESC
+            ");
                 }
                 else
                 {
                     datos.setearConsulta(@"
-                        SELECT 
-                            V.Id,
-                            V.Fecha,
-                            V.NumeroFactura,
-                            V.MetodoPago,
-                            V.Total,
-                            C.Id AS IdCliente,
-                            C.Nombre AS NombreCliente
-                        FROM Ventas V
-                        INNER JOIN Clientes C ON V.IdCliente = C.Id
-                        WHERE 
-                            C.Nombre LIKE @q
-                            OR V.NumeroFactura LIKE @q
-                            OR V.MetodoPago LIKE @q
-                            OR CONVERT(VARCHAR(10), V.Id) LIKE @q
-                        ORDER BY V.Fecha DESC
-                    ");
+                SELECT 
+                    V.Id,
+                    V.Fecha,
+                    V.NumeroFactura,
+                    V.MetodoPago,
+                    V.Total,
+                    V.Cancelada,
+                    C.Id AS IdCliente,
+                    C.Nombre AS NombreCliente
+                FROM Ventas V
+                INNER JOIN Clientes C ON V.IdCliente = C.Id
+                WHERE 
+                    C.Nombre LIKE @q
+                    OR V.NumeroFactura LIKE @q
+                    OR V.MetodoPago LIKE @q
+                    OR CONVERT(VARCHAR(10), V.Id) LIKE @q
+                ORDER BY V.Fecha DESC
+            ");
+
                     datos.setearParametro("@q", "%" + q + "%");
                 }
 
@@ -75,7 +78,10 @@ namespace Negocio
                         },
                         TotalBD = datos.Lector["Total"] != DBNull.Value
                             ? Convert.ToDecimal(datos.Lector["Total"])
-                            : 0
+                            : 0,
+
+                      
+                        Cancelada = Convert.ToBoolean(datos.Lector["Cancelada"])
                     };
 
                     lista.Add(v);
@@ -89,6 +95,7 @@ namespace Negocio
             }
         }
 
+
         public Venta ObtenerPorId(int id)
         {
             Venta venta = null;
@@ -97,18 +104,27 @@ namespace Negocio
             try
             {
                 datos.setearConsulta(@"
-                    SELECT 
-                        V.Id,
-                        V.Fecha,
-                        V.NumeroFactura,
-                        V.MetodoPago,
-                        V.Total,
-                        C.Id AS IdCliente,
-                        C.Nombre AS NombreCliente
-                    FROM Ventas V
-                    INNER JOIN Clientes C ON V.IdCliente = C.Id
-                    WHERE V.Id = @id
-                ");
+            SELECT 
+                V.Id,
+                V.Fecha,
+                V.NumeroFactura,
+                V.MetodoPago,
+                V.Total AS TotalBD,
+                V.Cancelada,
+                V.MotivoCancelacion,
+                V.FechaCancelacion,
+                V.IdUsuarioCancelacion,
+
+                C.Id AS IdCliente,
+                C.Nombre AS NombreCliente,
+
+                U.Nombre AS NombreUsuarioCancelacion
+            FROM VENTAS V
+            INNER JOIN CLIENTES C ON V.IdCliente = C.Id
+            LEFT JOIN USUARIOS U ON V.IdUsuarioCancelacion = U.Id
+            WHERE V.Id = @id
+        ");
+
                 datos.setearParametro("@id", id);
                 datos.ejecutarLectura();
 
@@ -118,24 +134,50 @@ namespace Negocio
                     {
                         Id = (int)datos.Lector["Id"],
                         Fecha = (DateTime)datos.Lector["Fecha"],
-                        NumeroFactura = datos.Lector["NumeroFactura"].ToString(),
-                        MetodoPago = datos.Lector["MetodoPago"].ToString(),
+                        NumeroFactura = datos.Lector["NumeroFactura"]?.ToString(),
+                        MetodoPago = datos.Lector["MetodoPago"]?.ToString(),
+
+                        // TOTAL DE BD lo guardamos separado
+                        TotalBD = datos.Lector["TotalBD"] != DBNull.Value
+                            ? Convert.ToDecimal(datos.Lector["TotalBD"])
+                            : 0,
+
                         Cliente = new Cliente
                         {
                             Id = (int)datos.Lector["IdCliente"],
                             Nombre = datos.Lector["NombreCliente"].ToString()
                         },
+
+                        Cancelada = datos.Lector["Cancelada"] != DBNull.Value && (bool)datos.Lector["Cancelada"],
+                        MotivoCancelacion = datos.Lector["MotivoCancelacion"]?.ToString(),
+                        FechaCancelacion = datos.Lector["FechaCancelacion"] == DBNull.Value
+                            ? (DateTime?)null
+                            : Convert.ToDateTime(datos.Lector["FechaCancelacion"]),
+
+                        UsuarioCancelacion = datos.Lector["IdUsuarioCancelacion"] == DBNull.Value
+                            ? null
+                            : new Usuario
+                            {
+                                Id = Convert.ToInt32(datos.Lector["IdUsuarioCancelacion"]),
+                                Nombre = datos.Lector["NombreUsuarioCancelacion"]?.ToString()
+                            },
+
                         Lineas = new List<VentaLinea>()
                     };
                 }
             }
-            finally { datos.CerrarConexion(); }
+            finally
+            {
+                datos.CerrarConexion();
+            }
 
             if (venta != null)
                 venta.Lineas = ListarLineasPorVenta(id);
 
             return venta;
         }
+
+
 
         private List<VentaLinea> ListarLineasPorVenta(int idVenta)
         {
@@ -234,14 +276,14 @@ namespace Negocio
                 datos.setearParametro("@id", idVenta);
                 datos.ejecutarLectura();
 
-                List<Tuple<int, int>> lineas = new List<Tuple<int, int>>();
+                List<Tuple<int, decimal>> lineas = new List<Tuple<int, decimal>>();
 
                 while (datos.Lector.Read())
                 {
-                    lineas.Add(new Tuple<int, int>(
-                     (int)datos.Lector["IdProducto"],
-                        (int)datos.Lector["Cantidad"]
-                        ));
+                    lineas.Add(new Tuple<int, decimal>(
+                        (int)datos.Lector["IdProducto"],
+                        (decimal)datos.Lector["Cantidad"]
+                    ));
                 }
 
                 datos.CerrarConexion();
@@ -252,7 +294,7 @@ namespace Negocio
                     AccesoDatos upd = new AccesoDatos();
                     upd.setearConsulta("UPDATE PRODUCTOS SET StockActual = StockActual + @cant WHERE Id = @idProd");
                     int idProd = item.Item1;
-                    int cant = item.Item2;
+                    decimal cant = item.Item2;
                     upd.setearParametro("@cant", cant);
                     upd.setearParametro("@idProd", idProd);
                     upd.ejecutarAccion();

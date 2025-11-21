@@ -22,9 +22,10 @@
             UseSubmitBehavior="false" />
     </div>
 
-    <asp:GridView ID="gvCompras" runat="server" AutoGenerateColumns="False"
-        CssClass="table table-hover align-middle" DataKeyNames="Id"
-        OnRowCommand="gvCompras_RowCommand">
+<asp:GridView ID="gvCompras" runat="server" AutoGenerateColumns="False"
+    CssClass="table table-hover align-middle" DataKeyNames="Id"
+    OnRowCommand="gvCompras_RowCommand"
+    OnRowDataBound="gvCompras_RowDataBound">
         <Columns>
             <asp:BoundField DataField="Id" HeaderText="N° Compra" />
             <asp:BoundField DataField="Fecha" HeaderText="Fecha" DataFormatString="{0:dd/MM/yyyy}" />

@@ -62,5 +62,27 @@ namespace TPC_Equipo20B
                 Response.Redirect($"ConfirmarEliminar.aspx?tipo=compra&id={id}&msg={msg}");
             }
         }
+        protected void gvCompras_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                // Obtenemos la compra como el DataItem
+                Compra compra = (Compra)e.Row.DataItem;
+
+
+                LinkButton btnEliminar = (LinkButton)e.Row.FindControl("cmdEliminar");
+
+                if (compra.Cancelada)
+                {
+                    btnEliminar.Visible = false;
+
+                }
+                else
+                {
+                    btnEliminar.Visible = true;
+                }
+            }
+        }
+
     }
 }

@@ -15,7 +15,6 @@ namespace TPC_Equipo20B
                 CargarGrid();
         }
 
-        // Ahora admite filtro opcional
         private void CargarGrid(string q = null)
         {
             var negocio = new VentaNegocio();
@@ -41,7 +40,25 @@ namespace TPC_Equipo20B
                 );
                 Response.Redirect($"ConfirmarEliminar.aspx?tipo=venta&id={id}&msg={msg}");
             }
+        }
 
+        protected void gvVentas_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                Venta venta = (Venta)e.Row.DataItem;
+
+                LinkButton btnCancelar = (LinkButton)e.Row.FindControl("cmdCancelar");
+
+                if (venta.Cancelada)
+                {
+                    btnCancelar.Visible = false;
+                }
+                else
+                {
+                    btnCancelar.Visible = true;
+                }
+            }
         }
 
         protected void btnNuevaVenta_Click(object sender, EventArgs e)
@@ -55,4 +72,5 @@ namespace TPC_Equipo20B
             CargarGrid(q.Trim());
         }
     }
+
 }

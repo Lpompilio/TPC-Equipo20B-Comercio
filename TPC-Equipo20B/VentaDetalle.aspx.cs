@@ -20,6 +20,10 @@ namespace TPC_Equipo20B
                     int idVenta = int.Parse(Request.QueryString["id"]);
                     CargarVenta(idVenta);
                 }
+                else
+                {
+                    Response.Redirect("Ventas.aspx");
+                }
             }
         }
 
@@ -34,6 +38,7 @@ namespace TPC_Equipo20B
                 return;
             }
 
+            // PANEL CANCELADA
             if (venta.Cancelada)
             {
                 panelCancelada.Visible = true;
@@ -42,15 +47,20 @@ namespace TPC_Equipo20B
                 lblUsuarioCanc.Text = venta.UsuarioCancelacion?.Nombre ?? "(no encontrado)";
             }
             else
+            {
                 panelCancelada.Visible = false;
+            }
 
-
+            // CABECERA
             lblCliente.Text = venta.Cliente?.Nombre ?? "-";
             lblFecha.Text = venta.Fecha.ToString("dd/MM/yyyy");
             lblMetodoPago.Text = venta.MetodoPago ?? "-";
             lblFactura.Text = venta.NumeroFactura ?? "-";
-            lblTotal.Text = venta.Total.ToString("C");
 
+            // TOTAL BD)
+            lblTotal.Text = venta.TotalBD.ToString("C");
+
+            // LINEAS
             gvLineas.DataSource = venta.Lineas;
             gvLineas.DataBind();
         }
@@ -60,4 +70,5 @@ namespace TPC_Equipo20B
             Response.Redirect("Ventas.aspx");
         }
     }
+
 }

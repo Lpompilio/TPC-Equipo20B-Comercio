@@ -1,9 +1,9 @@
-SET IDENTITY_INSERT MARCAS ON;
+﻿SET IDENTITY_INSERT MARCAS ON;
 INSERT INTO MARCAS (Id, Nombre) VALUES
-(1, 'Coop Ap�cola  AMUYEN'),(2, 'CAUQUEVA'),(3, 'CEREALCOOP'),(4, 'FECOAPI'),(5, 'FLOR DE JARDIN'),
+(1, 'Coop Apícola  AMUYEN'),(2, 'CAUQUEVA'),(3, 'CEREALCOOP'),(4, 'FECOAPI'),(5, 'FLOR DE JARDIN'),
 (6, 'FLOR DE MANZANO'),(7, 'GRAPIA MILENARIA'),(8, 'HUANACACHE'),(9, 'ISONDU'),(10, 'JUAL'),
-(11, 'LA DULCERIA SAN PEDRO'),(12, 'LA HUELLA'),(13, 'LA OBERE�A'),(14, 'LA PAZ'),(15, 'LA OTOMANA'),
-(16, 'LAS TUNAS'),(17, 'MATERIA PRIMA'),(18, 'MULINI'),(19, 'NINA�S'),(20, 'OLIVOS DEL CARMEN'),
+(11, 'LA DULCERIA SAN PEDRO'),(12, 'LA HUELLA'),(13, 'LA OBEREÑA'),(14, 'LA PAZ'),(15, 'LA OTOMANA'),
+(16, 'LAS TUNAS'),(17, 'MATERIA PRIMA'),(18, 'MULINI'),(19, 'NINA´S'),(20, 'OLIVOS DEL CARMEN'),
 (21, 'CUCHIYACO'),(22, 'PICADA VIEJA'),(23, 'SOL Y LLUVIA'),(24, 'TAIHANG'),(25, 'TITRAYJU'),
 (26, 'TUCANGUA');
 SET IDENTITY_INSERT MARCAS OFF;
@@ -11,7 +11,7 @@ GO
 
 SET IDENTITY_INSERT CATEGORias ON;
 INSERT INTO CATEGORIAS (Id, Nombre) VALUES
-(1, 'MIEL'),(2, 'PANADER�A'),(3, 'ALMACEN'),(4, 'TOMATE'),(5, 'MERMELADAS'),(6, 'ENCURTIDOS'),
+(1, 'MIEL'),(2, 'PANADERÍA'),(3, 'ALMACEN'),(4, 'TOMATE'),(5, 'MERMELADAS'),(6, 'ENCURTIDOS'),
 (7, 'HARINAS'),(8, 'YERBA MATE'),(9, 'ALMIBARES'),(10, 'BEBIDAS'),(11, 'DULCE'),(12, 'COOPERATIVA'),
 (13, 'STEVIOSIDO'),(14, 'ACEITES'),(15, 'FIDEOS'),(16, 'CONDIMENTOS'),(17, 'TE'),(18, 'FRUTOS SECOS'),
 (19, 'CEREALES'),(20, 'ARROZ'),(21, 'AZUCAR');
@@ -231,12 +231,12 @@ INSERT INTO PRODUCTOS (CodigoSKU, Descripcion, IdMarca, IdCategoria, Activo) VAL
 ('210', 'BANANA DESHIDRATADA X 1 KG', 17, 18, 1),
 ('211', 'BANANA DESHIDRATADA X 1/2 KG', 17, 18, 1),
 ('212', 'BANANA DESHIDRATADA X 1/4 KG', 17, 18, 1),
-('213', 'CASTA�AS DE CAJU C/CHOCOLATE X 1 KG', 17, 18, 1),
-('214', 'CASTA�AS DE CAJU C/CHOCOLATE X 1/2 KG', 17, 18, 1),
-('215', 'CASTA�AS DE CAJU C/CHOCOLATE X 1/4 KG', 17, 18, 1),
-('216', 'CASTA�AS DE CAJU S/SAL X 1 KG', 17, 18, 1),
-('217', 'CASTA�AS DE CAJU S/SAL X 1/2 KG', 17, 18, 1),
-('218', 'CASTA�AS DE CAJU S/SAL X 1/4 KG', 17, 18, 1),
+('213', 'CASTAÑAS DE CAJU C/CHOCOLATE X 1 KG', 17, 18, 1),
+('214', 'CASTAÑAS DE CAJU C/CHOCOLATE X 1/2 KG', 17, 18, 1),
+('215', 'CASTAÑAS DE CAJU C/CHOCOLATE X 1/4 KG', 17, 18, 1),
+('216', 'CASTAÑAS DE CAJU S/SAL X 1 KG', 17, 18, 1),
+('217', 'CASTAÑAS DE CAJU S/SAL X 1/2 KG', 17, 18, 1),
+('218', 'CASTAÑAS DE CAJU S/SAL X 1/4 KG', 17, 18, 1),
 ('219', 'CHIPS DE BANANA X 1 KG', 17, 18, 1),
 ('220', 'CHIPS DE BANANA X 1/2 KG', 17, 18, 1),
 ('221', 'CHIPS DE BANANA X 1/4 KG', 17, 18, 1),
@@ -363,3 +363,128 @@ JOIN
 WHERE
     CTE.Precio IS NOT NULL AND CTE.Precio > 0;
 GO
+
+INSERT INTO USUARIOS (Nombre, Documento, Email, Telefono, Direccion, Localidad, Username, Password)
+VALUES
+('Administrador del Sistema', '30111222', 'admin@test.com', '1122334455', 'Av. Siempre Viva 123', 'CABA', 'admin', 'admin123'),
+('Empleado de Ventas', '28999111', 'vendedor@test.com', '1199887766', 'Calle Falsa 742', 'San Martín', 'vendedor', 'vend123');
+GO
+
+INSERT INTO USUARIO_ROLES (IdUsuario, IdRol)
+VALUES
+(1, 1),  -- admin → rol admin
+(2, 2);  -- vendedor → rol vendedor
+GO
+
+
+INSERT INTO CLIENTES (Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA)
+VALUES
+('Juan Perez', '20111222', 'juan@test.com', '1133445566', 'CABA 123', 'CABA', 'Consumidor Final'),
+('Ana García', '25999888', 'ana@test.com', '1177889900', 'Belgrano 400', 'San Isidro', 'Responsable Inscripto'),
+('Carlos López', '27888777', 'carlos@test.com', '1155667788', 'Mitre 1000', 'Ballester', 'Monotributista');
+GO
+
+
+INSERT INTO PROVEEDORES 
+(Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA)
+VALUES
+('Proveedor Norte', 'Proveedor Norte S.A.', '30-11111111-9', 'norte@prov.com', '1122334455', 'Av. Siempre Viva 123', 'CABA', 'Responsable Inscripto'),
+
+('Proveedor Sur', 'Proveedor Sur S.R.L.', '30-22222222-5', 'sur@prov.com', '1199887766', 'Belgrano 456', 'San Martín', 'Responsable Inscripto'),
+
+('Distribuidora Centro', 'Distribuidora Centro S.A.', '30-33333333-3', 'centro@prov.com', '1144556677', 'Mitre 900', 'Villa Ballester', 'Monotributista');
+GO
+
+
+---------------------------
+-- VENTAS EJEMPLO
+---------------------------
+
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
+VALUES (1, 1, GETDATE(), 'A-0001-00001234', 'Efectivo', 0);
+
+DECLARE @IdVenta1 INT = SCOPE_IDENTITY();
+
+INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario)
+VALUES
+(@IdVenta1, 1, 2, 5685.66),
+(@IdVenta1, 12, 1, 1422.30);
+
+UPDATE VENTAS
+SET Total = (SELECT SUM(Cantidad * PrecioUnitario) FROM DETALLE_VENTA WHERE IdVenta = @IdVenta1)
+WHERE Id = @IdVenta1;
+
+
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
+VALUES (2, 2, GETDATE(), 'A-0001-00001235', 'Tarjeta', 0);
+
+DECLARE @IdVenta2 INT = SCOPE_IDENTITY();
+
+INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario)
+VALUES
+(@IdVenta2, 54, 1, 5971.21),
+(@IdVenta2, 94, 1, 16127.34),
+(@IdVenta2, 19, 2, 1729.81);
+
+UPDATE VENTAS
+SET Total = (SELECT SUM(Cantidad * PrecioUnitario) FROM DETALLE_VENTA WHERE IdVenta = @IdVenta2)
+WHERE Id = @IdVenta2;
+
+
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
+VALUES (1, 3, GETDATE(), 'A-0001-00001236', 'Mercado Pago', 0);
+
+DECLARE @IdVenta3 INT = SCOPE_IDENTITY();
+
+INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario)
+VALUES
+(@IdVenta3, 176, 2, 8063.67);
+
+UPDATE VENTAS
+SET Total = (SELECT SUM(Cantidad * PrecioUnitario) FROM DETALLE_VENTA WHERE IdVenta = @IdVenta3)
+WHERE Id = @IdVenta3;
+
+---------------------------
+---------------------------
+
+
+---------------------------
+-- COMPRAS EJEMPLO
+---------------------------
+
+-- COMPRA 1 -----------------------------------------
+INSERT INTO COMPRAS (IdProveedor, IdUsuario, Fecha, Observaciones)
+VALUES (1, 1, GETDATE(), 'Compra inicial de stock');
+
+DECLARE @IdCompra1 INT = SCOPE_IDENTITY();
+
+INSERT INTO COMPRA_LINEAS (IdCompra, IdProducto, Cantidad, PrecioUnitario)
+VALUES
+(@IdCompra1, 1, 20, 4000),       -- Miel (ID 1)
+(@IdCompra1, 12, 50, 900);       -- Avena instantánea (ID 12)
+
+-- COMPRA 2 -----------------------------------------
+INSERT INTO COMPRAS (IdProveedor, IdUsuario, Fecha, Observaciones)
+VALUES (2, 1, GETDATE(), 'Reposición de mercadería variada');
+
+DECLARE @IdCompra2 INT = SCOPE_IDENTITY();
+
+INSERT INTO COMPRA_LINEAS (IdCompra, IdProducto, Cantidad, PrecioUnitario)
+VALUES
+(@IdCompra2, 54, 30, 3500),   -- Yerba elaborada 1kg
+(@IdCompra2, 94, 10, 12000),  -- Aceite de oliva extra virgen 1L
+(@IdCompra2, 19, 40, 900);    -- Mermelada de ciruela
+
+-- COMPRA 3 -----------------------------------------
+INSERT INTO COMPRAS (IdProveedor, IdUsuario, Fecha, Observaciones)
+VALUES (1, 2, GETDATE(), 'Compra por faltantes urgentes');
+
+DECLARE @IdCompra3 INT = SCOPE_IDENTITY();
+
+INSERT INTO COMPRA_LINEAS (IdCompra, IdProducto, Cantidad, PrecioUnitario)
+VALUES
+(@IdCompra3, 176, 15, 7000);   -- Aceite oliva 500cc
+
+
+---------------------------
+---------------------------
