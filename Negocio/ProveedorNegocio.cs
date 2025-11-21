@@ -13,57 +13,40 @@ namespace Negocio
 
             try
             {
-                string consultaBase = @"
-            SELECT 
-                Id,
-                CASE 
-                    WHEN (Nombre IS NULL OR Nombre = '') 
-                        THEN RazonSocial
-                    ELSE Nombre + ' (' + RazonSocial + ')'
-                END AS Nombre,
-                RazonSocial,
-                Documento,
-                Email,
-                Telefono,
-                Direccion,
-                Localidad,
-                CondicionIVA
-            FROM Proveedores
-            WHERE Activo = 1";
+                string consulta = @"
+                    SELECT Id, Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Activo
+                    FROM PROVEEDORES
+                    WHERE Activo = 1";
 
-                if (string.IsNullOrWhiteSpace(q))
-                {
-                    datos.setearConsulta(consultaBase + " ORDER BY Nombre");
-                }
-                else
-                {
-                    datos.setearConsulta(consultaBase + @"
-                AND (Nombre LIKE @q 
-                    OR RazonSocial LIKE @q 
-                    OR Documento LIKE @q
-                    OR Localidad LIKE @q
-                    OR Email LIKE @q)
-                ORDER BY Nombre");
+                if (!string.IsNullOrWhiteSpace(q))
+                    consulta += " AND (Nombre LIKE @q OR RazonSocial LIKE @q OR Documento LIKE @q OR Email LIKE @q OR Telefono LIKE @q OR Localidad LIKE @q)";
 
+                consulta += " ORDER BY Nombre";
+
+                datos.setearConsulta(consulta);
+
+                if (!string.IsNullOrWhiteSpace(q))
                     datos.setearParametro("@q", "%" + q + "%");
-                }
 
                 datos.ejecutarLectura();
 
                 while (datos.Lector.Read())
                 {
-                    lista.Add(new Proveedor
+                    var p = new Proveedor
                     {
                         Id = (int)datos.Lector["Id"],
-                        Nombre = datos.Lector["Nombre"]?.ToString() ?? "",
-                        RazonSocial = datos.Lector["RazonSocial"]?.ToString() ?? "",
-                        Documento = datos.Lector["Documento"]?.ToString() ?? "",
-                        Email = datos.Lector["Email"]?.ToString() ?? "",
-                        Telefono = datos.Lector["Telefono"]?.ToString() ?? "",
-                        Direccion = datos.Lector["Direccion"]?.ToString() ?? "",
-                        Localidad = datos.Lector["Localidad"]?.ToString() ?? "",
-                        CondicionIVA = datos.Lector["CondicionIVA"]?.ToString() ?? ""
-                    });
+                        Nombre = datos.Lector["Nombre"] as string ?? "",
+                        RazonSocial = datos.Lector["RazonSocial"] as string ?? "",
+                        Documento = datos.Lector["Documento"] as string ?? "",
+                        Email = datos.Lector["Email"] as string ?? "",
+                        Telefono = datos.Lector["Telefono"] as string ?? "",
+                        Direccion = datos.Lector["Direccion"] as string ?? "",
+                        Localidad = datos.Lector["Localidad"] as string ?? "",
+                        CondicionIVA = datos.Lector["CondicionIVA"] as string ?? "",
+                        Activo = datos.Lector["Activo"] != DBNull.Value && (bool)datos.Lector["Activo"]
+                    };
+
+                    lista.Add(p);
                 }
 
                 return lista;
@@ -74,74 +57,105 @@ namespace Negocio
             }
         }
 
-
-        public Proveedor BuscarPorId(int id)
+        public Proveedor ObtenerPorId(int id)
         {
             var datos = new AccesoDatos();
+
             try
             {
-                datos.setearConsulta("SELECT Id, Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA FROM Proveedores WHERE Id = @id");
+                datos.setearConsulta(@"
+                    SELECT Id, Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Activo
+                    FROM PROVEEDORES
+                    WHERE Id = @id");
+
                 datos.setearParametro("@id", id);
                 datos.ejecutarLectura();
 
+                Proveedor p = null;
+
                 if (datos.Lector.Read())
                 {
-                    return new Proveedor
+                    p = new Proveedor
                     {
                         Id = (int)datos.Lector["Id"],
-                        Nombre = datos.Lector["Nombre"].ToString(),
-                        RazonSocial = datos.Lector["RazonSocial"] != DBNull.Value ? datos.Lector["RazonSocial"].ToString() : "",
-                        Documento = datos.Lector["Documento"] != DBNull.Value ? datos.Lector["Documento"].ToString() : "",
-                        Email = datos.Lector["Email"] != DBNull.Value ? datos.Lector["Email"].ToString() : "",
-                        Telefono = datos.Lector["Telefono"] != DBNull.Value ? datos.Lector["Telefono"].ToString() : "",
-                        Direccion = datos.Lector["Direccion"] != DBNull.Value ? datos.Lector["Direccion"].ToString() : "",
-                        Localidad = datos.Lector["Localidad"] != DBNull.Value ? datos.Lector["Localidad"].ToString() : "",
-                        CondicionIVA = datos.Lector["CondicionIVA"] != DBNull.Value ? datos.Lector["CondicionIVA"].ToString() : ""
+                        Nombre = datos.Lector["Nombre"] as string ?? "",
+                        RazonSocial = datos.Lector["RazonSocial"] as string ?? "",
+                        Documento = datos.Lector["Documento"] as string ?? "",
+                        Email = datos.Lector["Email"] as string ?? "",
+                        Telefono = datos.Lector["Telefono"] as string ?? "",
+                        Direccion = datos.Lector["Direccion"] as string ?? "",
+                        Localidad = datos.Lector["Localidad"] as string ?? "",
+                        CondicionIVA = datos.Lector["CondicionIVA"] as string ?? "",
+                        Activo = datos.Lector["Activo"] != DBNull.Value && (bool)datos.Lector["Activo"]
                     };
                 }
-                return null;
+
+                return p;
             }
-            finally { datos.CerrarConexion(); }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        // Wrapper para mantener compatibilidad con el código de la web
+        public Proveedor BuscarPorId(int id)
+        {
+            return ObtenerPorId(id);
         }
 
         public void Guardar(Proveedor p)
         {
             var datos = new AccesoDatos();
+
             try
             {
                 if (p.Id == 0)
                 {
                     datos.setearConsulta(@"
-                        INSERT INTO Proveedores (Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA)
-                        VALUES (@nombre, @razon, @doc, @email, @tel, @dir, @loc, @iva)
-                    ");
+                        INSERT INTO PROVEEDORES
+                            (Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Activo)
+                        VALUES
+                            (@nom, @razon, @doc, @mail, @tel, @dir, @loc, @iva, 1)");
                 }
                 else
                 {
                     datos.setearConsulta(@"
-                        UPDATE Proveedores SET
-                        Nombre=@nombre, RazonSocial=@razon, Documento=@doc, Email=@email, Telefono=@tel, Direccion=@dir, Localidad=@loc, CondicionIVA=@iva
-                        WHERE Id=@id
-                    ");
+                        UPDATE PROVEEDORES SET
+                            Nombre = @nom,
+                            RazonSocial = @razon,
+                            Documento = @doc,
+                            Email = @mail,
+                            Telefono = @tel,
+                            Direccion = @dir,
+                            Localidad = @loc,
+                            CondicionIVA = @iva
+                        WHERE Id = @id");
+
                     datos.setearParametro("@id", p.Id);
                 }
 
-                datos.setearParametro("@nombre", p.Nombre);
+                datos.setearParametro("@nom", p.Nombre);
                 datos.setearParametro("@razon", p.RazonSocial);
-                datos.setearParametro("@doc", p.Documento);
-                datos.setearParametro("@email", p.Email);
-                datos.setearParametro("@tel", p.Telefono);
-                datos.setearParametro("@dir", p.Direccion);
-                datos.setearParametro("@loc", p.Localidad);
-                datos.setearParametro("@iva", p.CondicionIVA);
+                datos.setearParametro("@doc", (object)p.Documento ?? DBNull.Value);
+                datos.setearParametro("@mail", (object)p.Email ?? DBNull.Value);
+                datos.setearParametro("@tel", (object)p.Telefono ?? DBNull.Value);
+                datos.setearParametro("@dir", (object)p.Direccion ?? DBNull.Value);
+                datos.setearParametro("@loc", (object)p.Localidad ?? DBNull.Value);
+                datos.setearParametro("@iva", (object)p.CondicionIVA ?? DBNull.Value);
+
                 datos.ejecutarAccion();
             }
-            finally { datos.CerrarConexion(); }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
 
         public void Eliminar(int id)
         {
-            AccesoDatos datos = new AccesoDatos();
+            var datos = new AccesoDatos();
+
             try
             {
                 datos.setearConsulta("UPDATE PROVEEDORES SET Activo = 0 WHERE Id = @id");
@@ -153,7 +167,5 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
-
-
     }
 }

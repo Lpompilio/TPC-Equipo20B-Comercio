@@ -16,11 +16,7 @@
 
     <div class="card shadow-sm">
         <div class="card-body">
-
-            <!-- 🔥 LAYOUT EN DOS COLUMNAS: IZQUIERDA CAMPOS / DERECHA PROVEEDORES -->
             <div class="row">
-
-                <!-- 🟩 IZQUIERDA — TODOS LOS CAMPOS -->
                 <div class="col-md-8">
 
                     <!-- Descripción -->
@@ -30,7 +26,19 @@
                         <asp:RequiredFieldValidator ErrorMessage="Agregar descripcion" CssClass="validator" ControlToValidate="txtDescripcion" runat="server" />
                     </div>
 
-                    <!-- Marca / Categoría -->
+                    <!-- CÓDIGO SKU (manual) -->
+                    <div class="mb-3">
+                        <label for="txtSKU" class="form-label">Código SKU</label>
+                        <asp:TextBox ID="txtSKU" runat="server" CssClass="form-control" placeholder="Ej: SKU00187" />
+                        <asp:RequiredFieldValidator
+                            ID="rfvSKU"
+                            runat="server"
+                            ControlToValidate="txtSKU"
+                            ErrorMessage="El código SKU es obligatorio."
+                            CssClass="validator"
+                            Display="Dynamic" />
+                    </div>
+
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label for="ddlMarca" class="form-label">Marca</label>
@@ -51,9 +59,7 @@
                         </div>
                     </div>
 
-                    <!-- Stock / Ganancia -->
                     <div class="row g-3 mb-3">
-
                         <div class="col-md-4">
                             <label for="txtStockMinimo" class="form-label">Stock Mínimo</label>
                             <asp:TextBox ID="txtStockMinimo" runat="server" CssClass="form-control" />
@@ -62,8 +68,7 @@
 
                         <div class="col-md-4">
                             <label for="txtStockActual" class="form-label">Stock Actual</label>
-                            <asp:TextBox ID="txtStockActual" runat="server" CssClass="form-control" />
-                            <asp:RequiredFieldValidator ErrorMessage="Cargar el Stock Actual" ControlToValidate="txtStockActual" runat="server" CssClass="validator" Display="Dynamic" />
+                            <asp:TextBox ID="txtStockActual" runat="server" CssClass="form-control" ReadOnly="true" Enabled="false" />
                         </div>
 
                         <div class="col-md-4">
@@ -89,34 +94,25 @@
                         </div>
                     </div>
 
-                    <!-- Estado -->
                     <div class="form-check form-switch mb-3">
                         <asp:CheckBox ID="chkActivo" runat="server" Checked="true" CssClass="form-check-input" />
                         <label class="form-check-label" for="chkActivo">Producto activo</label>
                     </div>
-
                 </div>
 
-
-                <!-- 🟦 DERECHA — PROVEEDORES -->
                 <div class="col-md-4">
-
                     <label class="form-label fw-bold">Proveedores</label>
 
-                    <!-- Buscador -->
                     <div class="input-group mb-2">
                         <asp:TextBox ID="txtBuscarProveedor" runat="server" CssClass="form-control" placeholder="Buscar proveedor..." />
                         <asp:Button ID="btnBuscarProveedor" runat="server" Text="🔍" CssClass="btn btn-outline-secondary" OnClick="btnBuscarProveedor_Click" />
                     </div>
 
-                    <!-- Lista con scroll alto -->
                     <div style="max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 6px; padding: 6px;">
-
                         <asp:GridView ID="gvProveedores" runat="server"
                             AutoGenerateColumns="False"
                             CssClass="table table-sm table-hover"
                             DataKeyNames="Id">
-
                             <Columns>
                                 <asp:TemplateField HeaderText="">
                                     <ItemTemplate>
@@ -128,18 +124,12 @@
                                 <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
                                 <asp:BoundField DataField="Telefono" HeaderText="Teléfono" />
                             </Columns>
-
                         </asp:GridView>
-
                     </div>
-
                 </div>
-
-            </div> <!-- /row -->
-
+            </div>
         </div>
 
-        <!-- Footer -->
         <div class="card-footer d-flex justify-content-end gap-2">
             <asp:Button ID="btnCancelar" runat="server"
                 Text="Cancelar"
@@ -151,9 +141,5 @@
                 CssClass="btn btn-success"
                 OnClick="btnGuardar_Click" />
         </div>
-
     </div>
-
 </asp:Content>
-
-

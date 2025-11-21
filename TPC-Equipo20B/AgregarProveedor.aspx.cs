@@ -34,23 +34,26 @@ namespace TPC_Equipo20B
             if (Page.IsValid)
             {
                 var p = new Proveedor
-            {
-                Id = Id,
-                Nombre = txtNombre.Text.Trim(),
-                RazonSocial = txtRazonSocial.Text.Trim(),
-                Documento = txtDocumento.Text.Trim(),
-                Email = txtEmail.Text.Trim(),
-                Telefono = txtTelefono.Text.Trim(),
-                Direccion = txtDireccion.Text.Trim(),
-                Localidad = txtLocalidad.Text.Trim(),
-                CondicionIVA = txtIVA.Text.Trim()
-            };
+                {
+                    Id = Id,
+                    Nombre = txtNombre.Text.Trim(),
+                    RazonSocial = txtRazonSocial.Text.Trim(),
+                    Documento = txtDocumento.Text.Trim(),
+                    Email = txtEmail.Text.Trim(),
+                    Telefono = txtTelefono.Text.Trim(),
+                    Direccion = txtDireccion.Text.Trim(),
+                    Localidad = txtLocalidad.Text.Trim(),
+                    CondicionIVA = txtIVA.Text.Trim()
+                };
 
-            _negocio.Guardar(p);
+                _negocio.Guardar(p);
+                Response.Redirect("Proveedores.aspx");
+            }
+        }
+
+        protected void btnCancelar_Click(object sender, EventArgs e)
+        {
             Response.Redirect("Proveedores.aspx");
         }
-        }
-
-        protected void btnCancelar_Click(object sender, EventArgs e) => Response.Redirect("Proveedores.aspx");
     }
 }

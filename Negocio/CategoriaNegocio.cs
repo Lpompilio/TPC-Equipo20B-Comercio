@@ -6,39 +6,44 @@ namespace Negocio
 {
     public class CategoriaNegocio
     {
-        public List<Categoria> Listar(string filtro = null)
+        public List<Categoria> Listar(string q = null)
         {
             var lista = new List<Categoria>();
             var datos = new AccesoDatos();
+
             try
             {
-                if (string.IsNullOrWhiteSpace(filtro))
+                string consulta = @"
+                    SELECT Id, Nombre
+                    FROM CATEGORIAS";
+
+                // Si agregaste la columna Activo en BD y querés baja lógica:
+                // consulta += " WHERE Activo = 1";
+
+                if (!string.IsNullOrWhiteSpace(q))
                 {
-                    datos.setearConsulta(@"
-                SELECT Id, Nombre 
-                FROM Categorias 
-                WHERE Activo = 1
-                ORDER BY Nombre");
-                }
-                else
-                {
-                    datos.setearConsulta(@"
-                SELECT Id, Nombre 
-                FROM Categorias 
-                WHERE Activo = 1 AND Nombre LIKE @filtro
-                ORDER BY Nombre");
-                    datos.setearParametro("@filtro", $"%{filtro}%");
+                    // si usás Activo, acá sería: " AND Nombre LIKE @q"
+                    consulta += " WHERE Nombre LIKE @q";
                 }
 
+                consulta += " ORDER BY Nombre";
+
+                datos.setearConsulta(consulta);
+
+                if (!string.IsNullOrWhiteSpace(q))
+                    datos.setearParametro("@q", "%" + q + "%");
+
                 datos.ejecutarLectura();
+
                 while (datos.Lector.Read())
                 {
                     lista.Add(new Categoria
                     {
                         Id = (int)datos.Lector["Id"],
-                        Nombre = (string)datos.Lector["Nombre"]
+                        Nombre = datos.Lector["Nombre"]?.ToString() ?? ""
                     });
                 }
+
                 return lista;
             }
             finally
@@ -47,55 +52,12 @@ namespace Negocio
             }
         }
 
-
-        public void Agregar(Categoria cat)
-        {
-            var datos = new AccesoDatos();
-            try
-            {
-                datos.setearConsulta("INSERT INTO Categorias (Nombre) VALUES (@nombre)");
-                datos.setearParametro("@nombre", cat.Nombre);
-                datos.ejecutarAccion();
-            }
-            finally { datos.CerrarConexion(); }
-        }
-
-        public void Modificar(Categoria cat)
-        {
-            var datos = new AccesoDatos();
-            try
-            {
-                datos.setearConsulta("UPDATE Categorias SET Nombre=@nombre WHERE Id=@id");
-                datos.setearParametro("@nombre", cat.Nombre);
-                datos.setearParametro("@id", cat.Id);
-                datos.ejecutarAccion();
-            }
-            finally { datos.CerrarConexion(); }
-        }
-
-        public void Eliminar(int id)
-        {
-            AccesoDatos datos = new AccesoDatos();
-            try
-            {
-                datos.setearConsulta("UPDATE CATEGORIAS SET Activo = 0 WHERE Id = @id");
-                datos.setearParametro("@id", id);
-                datos.ejecutarAccion();
-            }
-            finally
-            {
-                datos.CerrarConexion();
-            }
-        }
-
-
-
         public Categoria ObtenerPorId(int id)
         {
             var datos = new AccesoDatos();
             try
             {
-                datos.setearConsulta("SELECT Id, Nombre FROM Categorias WHERE Id=@id");
+                datos.setearConsulta("SELECT Id, Nombre FROM CATEGORIAS WHERE Id = @id");
                 datos.setearParametro("@id", id);
                 datos.ejecutarLectura();
 
@@ -104,12 +66,72 @@ namespace Negocio
                     return new Categoria
                     {
                         Id = (int)datos.Lector["Id"],
-                        Nombre = (string)datos.Lector["Nombre"]
+                        Nombre = datos.Lector["Nombre"]?.ToString() ?? ""
                     };
                 }
+
                 return null;
             }
-            finally { datos.CerrarConexion(); }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public void Guardar(Categoria categoria)
+        {
+            var datos = new AccesoDatos();
+            try
+            {
+                if (categoria.Id == 0)
+                {
+                    datos.setearConsulta(@"
+                        INSERT INTO CATEGORIAS (Nombre)
+                        VALUES (@nombre)");
+                }
+                else
+                {
+                    datos.setearConsulta(@"
+                        UPDATE CATEGORIAS SET Nombre = @nombre
+                        WHERE Id = @id");
+                    datos.setearParametro("@id", categoria.Id);
+                }
+
+                datos.setearParametro("@nombre", categoria.Nombre);
+                datos.ejecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        // Métodos "viejos" para que sigan funcionando las páginas
+        public void Agregar(Categoria categoria)
+        {
+            Guardar(categoria);
+        }
+
+        public void Modificar(Categoria categoria)
+        {
+            Guardar(categoria);
+        }
+
+        public void Eliminar(int id)
+        {
+            var datos = new AccesoDatos();
+            try
+            {
+
+                datos.setearConsulta("UPDATE CATEGORIAS SET Activo = 0 WHERE Id = @id");
+
+                datos.setearParametro("@id", id);
+                datos.ejecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
     }
 }

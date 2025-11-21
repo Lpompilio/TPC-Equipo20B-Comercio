@@ -19,7 +19,7 @@ namespace Negocio
 
         public void setearConsulta(string consulta)
         {
-            comando.Parameters.Clear();            
+            comando.Parameters.Clear();
             comando.CommandType = System.Data.CommandType.Text;
             comando.CommandText = consulta;
         }
@@ -37,7 +37,7 @@ namespace Negocio
                 conexion.Open();
                 lector = comando.ExecuteReader();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -60,6 +60,7 @@ namespace Negocio
                 conexion.Close();
             }
         }
+
         public object EjecutarScalar()
         {
             comando.Connection = conexion;
@@ -85,7 +86,5 @@ namespace Negocio
             if (lector != null) lector.Close();
             conexion.Close();
         }
-
-
     }
 }

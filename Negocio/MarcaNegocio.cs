@@ -13,22 +13,25 @@ namespace Negocio
 
             try
             {
-                string consultaBase = @"
-            SELECT Id, Nombre
-            FROM Marcas
-            WHERE Activo = 1";
+                string consulta = @"
+                    SELECT Id, Nombre
+                    FROM MARCAS";
 
-                if (string.IsNullOrWhiteSpace(q))
+                // Si agregaste columna Activo en BD:
+                // consulta += " WHERE Activo = 1";
+
+                if (!string.IsNullOrWhiteSpace(q))
                 {
-                    datos.setearConsulta(consultaBase + " ORDER BY Nombre");
+                    // si usás Activo, acá sería: " AND Nombre LIKE @q"
+                    consulta += " WHERE Nombre LIKE @q";
                 }
-                else
-                {
-                    datos.setearConsulta(consultaBase + @"
-                AND Nombre LIKE @q
-                ORDER BY Nombre");
+
+                consulta += " ORDER BY Nombre";
+
+                datos.setearConsulta(consulta);
+
+                if (!string.IsNullOrWhiteSpace(q))
                     datos.setearParametro("@q", "%" + q + "%");
-                }
 
                 datos.ejecutarLectura();
 
@@ -37,7 +40,7 @@ namespace Negocio
                     lista.Add(new Marca
                     {
                         Id = (int)datos.Lector["Id"],
-                        Nombre = datos.Lector["Nombre"].ToString()
+                        Nombre = datos.Lector["Nombre"]?.ToString() ?? ""
                     });
                 }
 
@@ -49,38 +52,52 @@ namespace Negocio
             }
         }
 
-
-        public void Agregar(Marca marca)
+        public Marca ObtenerPorId(int id)
         {
             var datos = new AccesoDatos();
             try
             {
-                datos.setearConsulta("INSERT INTO Marcas (Nombre) VALUES (@nombre)");
-                datos.setearParametro("@nombre", marca.Nombre);
-                datos.ejecutarAccion();
-            }
-            finally { datos.CerrarConexion(); }
-        }
-
-        public void Modificar(Marca marca)
-        {
-            var datos = new AccesoDatos();
-            try
-            {
-                datos.setearConsulta("UPDATE Marcas SET Nombre=@nombre WHERE Id=@id");
-                datos.setearParametro("@nombre", marca.Nombre);
-                datos.setearParametro("@id", marca.Id);
-                datos.ejecutarAccion();
-            }
-            finally { datos.CerrarConexion(); }
-        }
-        public void Eliminar(int id)
-        {
-            AccesoDatos datos = new AccesoDatos();
-            try
-            {
-                datos.setearConsulta("UPDATE MARCAS SET Activo = 0 WHERE Id = @id");
+                datos.setearConsulta("SELECT Id, Nombre FROM MARCAS WHERE Id = @id");
                 datos.setearParametro("@id", id);
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    return new Marca
+                    {
+                        Id = (int)datos.Lector["Id"],
+                        Nombre = datos.Lector["Nombre"]?.ToString() ?? ""
+                    };
+                }
+
+                return null;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public void Guardar(Marca marca)
+        {
+            var datos = new AccesoDatos();
+            try
+            {
+                if (marca.Id == 0)
+                {
+                    datos.setearConsulta(@"
+                        INSERT INTO MARCAS (Nombre)
+                        VALUES (@nombre)");
+                }
+                else
+                {
+                    datos.setearConsulta(@"
+                        UPDATE MARCAS SET Nombre = @nombre
+                        WHERE Id = @id");
+                    datos.setearParametro("@id", marca.Id);
+                }
+
+                datos.setearParametro("@nombre", marca.Nombre);
                 datos.ejecutarAccion();
             }
             finally
@@ -89,6 +106,32 @@ namespace Negocio
             }
         }
 
+        // Métodos que usan las páginas
+        public void Agregar(Marca marca)
+        {
+            Guardar(marca);
+        }
 
+        public void Modificar(Marca marca)
+        {
+            Guardar(marca);
+        }
+
+        public void Eliminar(int id)
+        {
+            var datos = new AccesoDatos();
+            try
+            {
+               
+                datos.setearConsulta("UPDATE MARCAS SET Activo = 0 WHERE Id = @id");
+
+                datos.setearParametro("@id", id);
+                datos.ejecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
     }
 }

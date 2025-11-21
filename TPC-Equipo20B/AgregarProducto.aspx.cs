@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Dominio;
 using Negocio;
 
-
 namespace TPC_Equipo20B
 {
-    public partial class AgregarProducto : System.Web.UI.Page
+    public partial class AgregarProducto : Page
     {
         private int idProducto = 0;
 
@@ -20,19 +17,17 @@ namespace TPC_Equipo20B
             {
                 CargarCombos();
 
-                // detectar edición
                 if (Request.QueryString["id"] != null)
                 {
                     idProducto = int.Parse(Request.QueryString["id"]);
-
                     CargarProducto(idProducto);
                     CargarProveedores(idProducto);
-
                     lblTitulo.InnerText = "Editar Producto";
                     btnGuardar.Text = "Guardar Cambios";
                 }
                 else
                 {
+                    txtStockActual.Text = "0";
                     CargarProveedores(null);
                 }
             }
@@ -64,11 +59,13 @@ namespace TPC_Equipo20B
             if (producto != null)
             {
                 txtDescripcion.Text = producto.Descripcion;
-                //txtCodigo.Text = producto.CodigoSKU;
                 txtStockMinimo.Text = producto.StockMinimo.ToString();
                 txtStockActual.Text = producto.StockActual.ToString();
                 txtGanancia.Text = producto.PorcentajeGanancia.ToString();
                 chkActivo.Checked = producto.Activo;
+
+                // SKU existente
+                txtSKU.Text = producto.CodigoSKU;
 
                 if (producto.Marca != null)
                     ddlMarca.SelectedValue = producto.Marca.Id.ToString();
@@ -82,14 +79,15 @@ namespace TPC_Equipo20B
 
         protected void btnGuardar_Click(object sender, EventArgs e)
         {
+            if (!Page.IsValid)
+                return;
+
             ProductoNegocio negocio = new ProductoNegocio();
 
             int stockMin = 0;
-            int stockAct = 0;
             decimal ganancia = 0;
 
             int.TryParse(txtStockMinimo.Text, out stockMin);
-            int.TryParse(txtStockActual.Text, out stockAct);
             decimal.TryParse(txtGanancia.Text, out ganancia);
 
             int idMarca = 0;
@@ -99,16 +97,14 @@ namespace TPC_Equipo20B
             int.TryParse(ddlCategoria.SelectedValue, out idCategoria);
 
             if (idCategoria == 0)
-            {
-                
                 return;
-            }
 
             Producto p = new Producto
             {
                 Descripcion = txtDescripcion.Text.Trim(),
+                CodigoSKU = txtSKU.Text.Trim(),
                 StockMinimo = stockMin,
-                StockActual = stockAct,
+                StockActual = 0,
                 PorcentajeGanancia = ganancia,
                 Activo = chkActivo.Checked,
                 Marca = new Marca { Id = idMarca },
@@ -118,13 +114,12 @@ namespace TPC_Equipo20B
             if (idMarca > 0)
                 p.Marca = new Marca { Id = idMarca };
 
-            // Asigna Id si está en modo edición
             if (ViewState["idProducto"] != null)
                 p.Id = (int)ViewState["idProducto"];
 
+            // Guardar producto y relaciones
             negocio.Guardar(p);
 
-            // --- Guardar proveedores asociados ---
             List<int> proveedoresSeleccionados = new List<int>();
 
             foreach (GridViewRow row in gvProveedores.Rows)
@@ -139,12 +134,11 @@ namespace TPC_Equipo20B
             }
 
             ProductoNegocio prodNeg = new ProductoNegocio();
-
             prodNeg.ActualizarProveedoresProducto(p.Id, proveedoresSeleccionados);
-
 
             Response.Redirect("Productos.aspx", false);
         }
+
         protected void btnCancelar_Click(object sender, EventArgs e)
         {
             Response.Redirect("Productos.aspx", false);
@@ -160,7 +154,6 @@ namespace TPC_Equipo20B
                 MarcarProveedoresAsociados(idProd.Value);
         }
 
-
         protected void btnBuscarProveedor_Click(object sender, EventArgs e)
         {
             string q = txtBuscarProveedor.Text.Trim();
@@ -173,7 +166,6 @@ namespace TPC_Equipo20B
             gvProveedores.DataSource = lista;
             gvProveedores.DataBind();
 
-            // volver a marcar seleccionados si es edición
             if (ViewState["idProducto"] != null)
             {
                 int idProd = (int)ViewState["idProducto"];
@@ -193,8 +185,5 @@ namespace TPC_Equipo20B
                 chk.Checked = asociados.Contains(idProv);
             }
         }
-
-
-
     }
 }

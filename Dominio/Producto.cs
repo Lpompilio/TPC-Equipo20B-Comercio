@@ -37,6 +37,5 @@ namespace Dominio
                 return ultimoPrecio.PrecioUnitario * (1 + (PorcentajeGanancia / 100));
             }
         }
-
     }
 }
