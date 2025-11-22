@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Negocio;
+using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Web.UI.WebControls;
+
 
 namespace TPC_Equipo20B
 {
@@ -28,20 +31,17 @@ namespace TPC_Equipo20B
 
         private void BindGrid(string q)
         {
-            using (var con = new SqlConnection(cn))
-            using (var cmd = new SqlCommand(@"
-        SELECT Id, UPPER(Nombre) AS Nombre
-        FROM MARCAS
-        WHERE (@q = '' OR Nombre LIKE '%'+@q+'%')
-        ORDER BY Nombre;", con))
+            MarcaNegocio negocio = new MarcaNegocio();
+            var lista = negocio.Listar(q);
+
+            gvMarcas.DataSource = lista.Select(m => new
             {
-                cmd.Parameters.Add("@q", SqlDbType.VarChar, 100).Value = q ?? "";
-                var da = new SqlDataAdapter(cmd);
-                var dt = new DataTable();
-                da.Fill(dt);
-                gvMarcas.DataSource = dt;
-                gvMarcas.DataBind();
-            }
+                m.Id,
+                Nombre = m.Nombre.ToUpper()
+            }).ToList();
+
+            gvMarcas.DataBind();
         }
+
     }
 }

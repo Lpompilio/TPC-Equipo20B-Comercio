@@ -133,7 +133,7 @@ namespace Negocio
             AccesoDatos datos = new AccesoDatos();
             try
             {
-                datos.setearConsulta("UPDATE CLIENTES SET Activo = 0 WHERE Id = @id");
+                datos.setearConsulta("UPDATE CLIENTES SET Habilitado = 0 WHERE Id = @id");
                 datos.setearParametro("@id", id);
                 datos.ejecutarAccion();
             }

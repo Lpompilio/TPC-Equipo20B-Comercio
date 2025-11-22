@@ -15,10 +15,7 @@ namespace Negocio
             {
                 string consulta = @"
                     SELECT Id, Nombre
-                    FROM CATEGORIAS";
-
-                // Si agregaste la columna Activo en BD y querés baja lógica:
-                // consulta += " WHERE Activo = 1";
+                    FROM CATEGORIAS WHERE Activo = 1";
 
                 if (!string.IsNullOrWhiteSpace(q))
                 {

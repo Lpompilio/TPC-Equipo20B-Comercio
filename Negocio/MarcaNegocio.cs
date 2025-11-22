@@ -15,10 +15,8 @@ namespace Negocio
             {
                 string consulta = @"
                     SELECT Id, Nombre
-                    FROM MARCAS";
+                    FROM MARCAS WHERE Activo = 1";
 
-                // Si agregaste columna Activo en BD:
-                // consulta += " WHERE Activo = 1";
 
                 if (!string.IsNullOrWhiteSpace(q))
                 {

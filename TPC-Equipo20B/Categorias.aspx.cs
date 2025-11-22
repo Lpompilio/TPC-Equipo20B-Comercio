@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Negocio;
+using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
+using System.Linq;
+
 
 namespace TPC_Equipo20B
 {
@@ -28,20 +31,18 @@ namespace TPC_Equipo20B
 
         private void BindGrid(string q)
         {
-            using (var con = new SqlConnection(cn))
-            using (var cmd = new SqlCommand(@"
-        SELECT Id, UPPER(Nombre) AS Nombre
-        FROM CATEGORIAS
-        WHERE (@q = '' OR Nombre LIKE '%'+@q+'%')
-        ORDER BY Nombre;", con))
+            CategoriaNegocio negocio = new CategoriaNegocio();
+            var lista = negocio.Listar(q);
+
+            // Si tu GridView solo muestra ID y Nombre, así nomás
+            gvCategorias.DataSource = lista.Select(c => new
             {
-                cmd.Parameters.Add("@q", SqlDbType.VarChar, 100).Value = q ?? "";
-                var da = new SqlDataAdapter(cmd);
-                var dt = new DataTable();
-                da.Fill(dt);
-                gvCategorias.DataSource = dt;
-                gvCategorias.DataBind();
-            }
+                c.Id,
+                Nombre = c.Nombre.ToUpper()
+            }).ToList();
+
+            gvCategorias.DataBind();
         }
+
     }
 }

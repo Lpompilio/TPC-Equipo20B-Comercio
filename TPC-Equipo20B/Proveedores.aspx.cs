@@ -1,5 +1,9 @@
-﻿using System;
+﻿using Dominio;
+using Negocio;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
@@ -28,35 +32,24 @@ namespace TPC_Equipo20B
 
         private void BindGrid(string q)
         {
-            using (var con = new SqlConnection(cn))
-            using (var cmd = new SqlCommand(@"
-                SELECT 
-            Id,
-            -- ESTA ES LA LÍNEA CLAVE:
-            -- Si 'Nombre' (contacto) existe, muestra 'Nombre (RazonSocial)'.
-            -- Si 'Nombre' es NULO, muestra solo 'RazonSocial'.
-            UPPER(COALESCE(Nombre + ' (' + RazonSocial + ')', RazonSocial)) AS NombreCompleto,
-            
-            COALESCE(Documento,'') AS Documento,
-            COALESCE(Telefono,'')  AS Telefono
-        FROM dbo.PROVEEDORES
-        WHERE (
-            @q = '' OR
-            -- Modificamos la búsqueda para que busque en AMBOS campos
-            Nombre LIKE '%'+@q+'%' OR
-            RazonSocial LIKE '%'+@q+'%' OR
-            COALESCE(Documento,'') LIKE '%'+@q+'%'
-        )
-        -- Ordenamos por Razón Social (el nombre principal)
-        ORDER BY UPPER(RazonSocial), UPPER(Nombre);", con))
+            ProveedorNegocio negocio = new ProveedorNegocio();
+            List<Proveedor> lista = negocio.Listar(q);
+
+            // Armamos la columna que mostraba "Nombre (RazonSocial)"
+            var listaView = lista.Select(p => new
             {
-                cmd.Parameters.Add("@q", SqlDbType.VarChar, 100).Value = q ?? "";
-                var da = new SqlDataAdapter(cmd);
-                var dt = new DataTable();
-                da.Fill(dt);
-                gvProveedores.DataSource = dt;
-                gvProveedores.DataBind();
-            }
+                p.Id,
+                NombreCompleto =
+                    string.IsNullOrWhiteSpace(p.Nombre)
+                        ? p.RazonSocial.ToUpper()
+                        : (p.Nombre.ToUpper() + " (" + p.RazonSocial.ToUpper() + ")"),
+                Documento = p.Documento ?? "",
+                Telefono = p.Telefono ?? ""
+            }).ToList();
+
+            gvProveedores.DataSource = listaView;
+            gvProveedores.DataBind();
         }
+
     }
 }
