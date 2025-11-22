@@ -17,7 +17,7 @@
     <style>
         body {
             font-family: 'Manrope', sans-serif;
-            background-color: #f6f8f6; 
+            background-color: #f6f8f6;
             color: #111813;
         }
 
@@ -25,12 +25,14 @@
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
             user-select: none;
         }
+
         .validator {
             color: #dc3545;
             font-size: 0.875em;
             display: block;
             margin-top: 0.25rem;
         }
+
         .btn-primary {
             background-color: #11d452;
             border-color: #11d452;
@@ -48,6 +50,7 @@
                 border-color: #11d452;
                 box-shadow: 0 0 0 0.25rem rgba(17, 212, 82, 0.25);
             }
+
         .link-primary {
             color: #11d452 !important;
             text-decoration: none;
@@ -56,6 +59,7 @@
             .link-primary:hover {
                 text-decoration: underline !important;
             }
+
         .card-custom {
             background-color: #ffffff;
             border-color: #dbe6df;
@@ -65,6 +69,7 @@
             background-color: #ffffff;
             border-bottom: 1px solid #dbe6df;
         }
+
         .form-control::placeholder {
             color: #61896f;
             opacity: 1;
@@ -140,7 +145,8 @@
                                     ValidationGroup="Login" />
                             </div>
 
-                            <div class="mb-3 text-end">
+                            <div class="mb-3 d-flex justify-content-between align-items-center">
+                                <a class="link-primary small" href="RegistroUsuario.aspx">Registrarse</a>
                                 <a class="link-primary small" href="#">Olvidé mi contraseña</a>
                             </div>
 
