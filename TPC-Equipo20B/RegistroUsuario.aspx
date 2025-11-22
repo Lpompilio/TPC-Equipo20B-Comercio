@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - AGIAPURR distribuidora</title>
     
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet" />
@@ -42,25 +42,25 @@
             font-weight: 700;
         }
 
-            .btn-primary:hover {
-                background-color: #0fbc48;
-                border-color: #0fbc48;
-                color: #102216;
-            }
+        .btn-primary:hover {
+            background-color: #0fbc48;
+            border-color: #0fbc48;
+            color: #102216;
+        }
 
-            .form-control:focus, .btn-primary:focus {
-                border-color: #11d452;
-                box-shadow: 0 0 0 0.25rem rgba(17, 212, 82, 0.25);
-            }
+        .form-control:focus, .btn-primary:focus {
+            border-color: #11d452;
+            box-shadow: 0 0 0 0.25rem rgba(17, 212, 82, 0.25);
+        }
 
         .link-primary {
             color: #11d452 !important;
             text-decoration: none;
         }
 
-            .link-primary:hover {
-                text-decoration: underline !important;
-            }
+        .link-primary:hover {
+            text-decoration: underline !important;
+        }
 
         .card-custom {
             background-color: #ffffff;
@@ -76,6 +76,38 @@
             color: #61896f;
             opacity: 1;
         }
+
+        /* Contenedor más ancho y responsivo */
+        .form-container-wide {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 767.98px) {
+            .form-container-wide {
+                max-width: 100%;
+                padding: 0 0.5rem;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 991.98px) {
+            .form-container-wide {
+                max-width: 90%;
+            }
+        }
+
+        @media (min-width: 992px) and (max-width: 1399.98px) {
+            .form-container-wide {
+                max-width: 85%;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .form-container-wide {
+                max-width: 1400px;
+            }
+        }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -83,7 +115,7 @@
     <form id="form1" runat="server" class="d-flex flex-column flex-grow-1">
 
     <header class="w-100 header-custom shadow-sm">
-        <div class="container py-3">
+        <div class="container-fluid py-3 px-4">
             <div class="d-flex align-items-center gap-3">
                 <div class="text-primary" style="width: 24px; height: 24px;">
                     <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -97,7 +129,7 @@
 
     <main class="d-flex flex-grow-1 align-items-center justify-content-center p-4">
 
-        <div class="col-12 col-md-10 col-lg-8 col-xl-6 col-xxl-5">
+        <div class="form-container-wide">
             <div class="card card-custom p-4 p-sm-5 rounded-4 shadow-sm">
                 <div class="card-body">
 
@@ -107,7 +139,7 @@
                     </p>
 
                     <div class="mt-4">
-                        <div class="row g-3">
+                        <div class="row g-3 g-lg-4">
                             <!-- Columna izquierda -->
                             <div class="col-md-6">
                                 <!-- Nombre -->
