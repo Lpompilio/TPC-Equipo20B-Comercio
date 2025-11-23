@@ -13,7 +13,7 @@
   <!-- Estilos unificados -->
   <style>
     :root{
-      --brand:#10b957; /* verde AGIAPURR */
+      --brand:#10b957;
       --brand-ink:#0b6b36;
       --ink:#222;
       --muted:#6b7280;
@@ -30,8 +30,8 @@
     }
     .brand-dot{width:14px;height:14px;border-radius:4px;background:var(--brand);display:inline-block;margin-right:.6rem}
     .nav-link,.dropdown-item{font-weight:500}
-    .btn-brand{background:var(--brand);border-color:var(--brand)}
-    .btn-brand:hover{background:var(--brand-ink);border-color:var(--brand-ink)}
+    .btn-brand{background:var(--brand);border-color:var(--brand);color:white}
+    .btn-brand:hover{background:var(--brand-ink);border-color:var(--brand-ink);color:white}
     .page{
       background:var(--card);
       border-radius:var(--radius);
@@ -45,6 +45,10 @@
     .grid .action-col{width:180px}
     /* Estilos consistentes de botones de acción */
     .btn-action-sm{padding:.3rem .55rem;font-size:.875rem;border-radius:.45rem}
+    
+    /* Estilos para el dropdown de usuario */
+    .user-dropdown .dropdown-toggle::after{margin-left:.5rem}
+    .user-name{color:var(--brand);font-weight:600}
   </style>
 
   <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
@@ -79,7 +83,25 @@
             </ul>
           </li>
         </ul>
-        <span class="navbar-text fw-semibold">Bienvenido, <span class="text-success">Admin</span></span>
+        
+        <!-- Dropdown de Usuario -->
+        <div class="dropdown user-dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="navbar-text fw-semibold">Bienvenido, <span class="user-name"><%= Session["UsuarioNombre"] != null ? Session["UsuarioNombre"].ToString() : "Usuario" %></span></span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="/Perfil.aspx">Mi Perfil</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <asp:LinkButton ID="btnCerrarSesion" runat="server" 
+                CssClass="dropdown-item text-danger" 
+                OnClick="btnCerrarSesion_Click"
+                CausesValidation="false">
+                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+              </asp:LinkButton>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </nav>

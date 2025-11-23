@@ -201,5 +201,65 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+        public bool ActualizarUsuario(Usuario usuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.setearConsulta(@"UPDATE USUARIOS 
+                              SET Nombre = @Nombre, 
+                                  Documento = @Documento, 
+                                  Email = @Email, 
+                                  Telefono = @Telefono, 
+                                  Direccion = @Direccion, 
+                                  Localidad = @Localidad
+                              WHERE Id = @Id");
+
+                datos.setearParametro("@Nombre", usuario.Nombre);
+                datos.setearParametro("@Documento", usuario.Documento);
+                datos.setearParametro("@Email", usuario.Email);
+                datos.setearParametro("@Telefono", usuario.Telefono);
+                datos.setearParametro("@Direccion", usuario.Direccion);
+                datos.setearParametro("@Localidad", usuario.Localidad);
+                datos.setearParametro("@Id", usuario.Id);
+
+                datos.ejecutarAccion();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public bool CambiarPassword(int idUsuario, string nuevaPassword)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.setearConsulta("UPDATE USUARIOS SET Password = @Password WHERE Id = @Id");
+                datos.setearParametro("@Password", nuevaPassword);
+                datos.setearParametro("@Id", idUsuario);
+
+                datos.ejecutarAccion();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+
     }
 }
