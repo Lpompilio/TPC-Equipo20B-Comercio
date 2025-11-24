@@ -138,6 +138,7 @@ CREATE TABLE VENTAS (
     IdCliente INT NOT NULL,
     Fecha DATETIME NOT NULL DEFAULT(GETDATE()),
     NumeroFactura VARCHAR(50) NULL,
+    NumeroNC VARCHAR(50) NULL,           -- NUEVO: Número de Nota de Crédito
     MetodoPago VARCHAR(50) NULL,
     Total DECIMAL(18,2) NOT NULL,
 
