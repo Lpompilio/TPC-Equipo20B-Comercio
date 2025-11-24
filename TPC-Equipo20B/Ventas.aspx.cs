@@ -44,22 +44,35 @@ namespace TPC_Equipo20B
 
         protected void gvVentas_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (e.Row.RowType == DataControlRowType.DataRow)
+            if (e.Row.RowType != DataControlRowType.DataRow)
+                return;
+
+            Venta venta = (Venta)e.Row.DataItem;
+
+            LinkButton btnCancelar = (LinkButton)e.Row.FindControl("cmdCancelar");
+
+            // Si ya está cancelada, no mostrar el botón
+            if (venta.Cancelada)
             {
-                Venta venta = (Venta)e.Row.DataItem;
+                btnCancelar.Visible = false;
+                return;
+            }
 
-                LinkButton btnCancelar = (LinkButton)e.Row.FindControl("cmdCancelar");
+            // Obtener info de sesión
+            bool esAdmin = Session["EsAdmin"] != null && (bool)Session["EsAdmin"];
 
-                if (venta.Cancelada)
-                {
-                    btnCancelar.Visible = false;
-                }
-                else
-                {
-                    btnCancelar.Visible = true;
-                }
+            int idUsuarioLogueado = Session["UsuarioId"] != null
+                ? (int)Session["UsuarioId"]
+                : -1;
+
+            // Vendedor solo cancelar sus ventas
+            if (!esAdmin && venta.Usuario != null && venta.Usuario.Id != idUsuarioLogueado)
+            {
+                btnCancelar.Visible = false;
             }
         }
+
+
 
         protected void btnNuevaVenta_Click(object sender, EventArgs e)
         {

@@ -207,6 +207,7 @@
     <Compile Include="Perfil.aspx.designer.cs">
       <DependentUpon>Perfil.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Utilidades\Permisos.cs" />
     <Compile Include="ProductoEditar.aspx.cs">
       <DependentUpon>ProductoEditar.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

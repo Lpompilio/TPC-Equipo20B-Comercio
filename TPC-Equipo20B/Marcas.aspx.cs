@@ -1,4 +1,5 @@
-﻿using Negocio;
+﻿using Dominio;
+using Negocio;
 using System;
 using System.Configuration;
 using System.Data;
@@ -15,6 +16,7 @@ namespace TPC_Equipo20B
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            Permisos.RequiereAdmin(this);
             if (!IsPostBack) BindGrid("");
         }
 

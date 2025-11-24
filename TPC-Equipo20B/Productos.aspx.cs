@@ -68,5 +68,19 @@ namespace TPC_Equipo20B
             if (e.CommandName == "Eliminar")
                 Response.Redirect("ConfirmarEliminar.aspx?tipo=producto&id=" + e.CommandArgument);
         }
+
+        protected void gvProductos_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow ||
+                e.Row.RowType == DataControlRowType.Header)
+            {
+                bool esAdmin = (bool)(Session["EsAdmin"] ?? false);
+
+                int indexAcciones = gvProductos.Columns.Count - 1;
+
+                e.Row.Cells[indexAcciones].Visible = esAdmin;
+            }
+        }
+
     }
 }

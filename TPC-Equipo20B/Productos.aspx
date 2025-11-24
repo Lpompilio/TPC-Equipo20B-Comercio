@@ -36,7 +36,8 @@
         CssClass="table table-hover align-middle"
         AutoGenerateColumns="False"
         DataKeyNames="Id"
-        OnRowCommand="gvProductos_RowCommand">
+        OnRowCommand="gvProductos_RowCommand"
+        OnRowDataBound="gvProductos_RowDataBound">
 
         <Columns>
           <asp:BoundField DataField="Descripcion" HeaderText="Producto" />
@@ -52,7 +53,6 @@
                 : "<span class='badge bg-secondary'>No</span>" %>
             </ItemTemplate>
           </asp:TemplateField>
-
           <asp:TemplateField HeaderText="Acciones" HeaderStyle-CssClass="text-center">
             <ItemStyle CssClass="action-col text-center" />
             <ItemTemplate>

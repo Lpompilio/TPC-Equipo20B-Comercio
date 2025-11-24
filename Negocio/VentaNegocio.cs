@@ -15,47 +15,51 @@ namespace Negocio
 
             try
             {
-                if (string.IsNullOrWhiteSpace(q))
-                {
-                    datos.setearConsulta(@"
-                SELECT 
-                    V.Id,
-                    V.Fecha,
-                    V.NumeroFactura,
-                    V.MetodoPago,
-                    V.Total,
-                    V.Cancelada,          
-                    C.Id AS IdCliente,
-                    C.Nombre AS NombreCliente
-                FROM Ventas V
-                INNER JOIN Clientes C ON V.IdCliente = C.Id
-                ORDER BY V.Fecha DESC
-            ");
-                }
-                else
-                {
-                    datos.setearConsulta(@"
-                SELECT 
-                    V.Id,
-                    V.Fecha,
-                    V.NumeroFactura,
-                    V.MetodoPago,
-                    V.Total,
-                    V.Cancelada,
-                    C.Id AS IdCliente,
-                    C.Nombre AS NombreCliente
-                FROM Ventas V
-                INNER JOIN Clientes C ON V.IdCliente = C.Id
-                WHERE 
-                    C.Nombre LIKE @q
-                    OR V.NumeroFactura LIKE @q
-                    OR V.MetodoPago LIKE @q
-                    OR CONVERT(VARCHAR(10), V.Id) LIKE @q
-                ORDER BY V.Fecha DESC
-            ");
+                string consulta = @"
+SELECT 
+    V.Id,
+    V.Fecha,
+    V.NumeroFactura,
+    V.MetodoPago,
+    V.Total,
+    V.Cancelada,
+    V.MotivoCancelacion,
+    V.FechaCancelacion,
+    V.IdUsuarioCancelacion,
 
-                    datos.setearParametro("@q", "%" + q + "%");
+    -- Usuario que hizo la venta
+    V.IdUsuario,
+    U.Nombre AS NombreUsuario,
+
+    -- Cliente
+    C.Id AS IdCliente,  
+    C.Nombre AS NombreCliente
+
+FROM Ventas V
+INNER JOIN Clientes C ON V.IdCliente = C.Id
+INNER JOIN Usuarios U ON V.IdUsuario = U.Id
+WHERE 1 = 1
+";
+
+                // Si hay búsqueda → agregamos filtro
+                if (!string.IsNullOrWhiteSpace(q))
+                {
+                    consulta += @"
+ AND (
+        C.Nombre LIKE @q
+        OR V.NumeroFactura LIKE @q
+        OR V.MetodoPago LIKE @q
+        OR CONVERT(VARCHAR(10), V.Id) LIKE @q
+     )
+";
                 }
+
+                consulta += " ORDER BY V.Fecha DESC";
+
+                datos.setearConsulta(consulta);
+
+                if (!string.IsNullOrWhiteSpace(q))
+                    datos.setearParametro("@q", "%" + q + "%");
 
                 datos.ejecutarLectura();
 
@@ -65,22 +69,25 @@ namespace Negocio
                     {
                         Id = (int)datos.Lector["Id"],
                         Fecha = (DateTime)datos.Lector["Fecha"],
-                        NumeroFactura = datos.Lector["NumeroFactura"] != DBNull.Value
-                            ? datos.Lector["NumeroFactura"].ToString()
-                            : "",
-                        MetodoPago = datos.Lector["MetodoPago"] != DBNull.Value
-                            ? datos.Lector["MetodoPago"].ToString()
-                            : "",
+                        NumeroFactura = datos.Lector["NumeroFactura"]?.ToString(),
+                        MetodoPago = datos.Lector["MetodoPago"]?.ToString(),
+
                         Cliente = new Cliente
                         {
                             Id = (int)datos.Lector["IdCliente"],
                             Nombre = datos.Lector["NombreCliente"].ToString()
                         },
+
+                        Usuario = new Usuario
+                        {
+                            Id = (int)datos.Lector["IdUsuario"],
+                            Nombre = datos.Lector["NombreUsuario"]?.ToString()
+                        },
+
                         TotalBD = datos.Lector["Total"] != DBNull.Value
                             ? Convert.ToDecimal(datos.Lector["Total"])
                             : 0,
 
-                      
                         Cancelada = Convert.ToBoolean(datos.Lector["Cancelada"])
                     };
 
@@ -94,6 +101,7 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
 
 
         public Venta ObtenerPorId(int id)

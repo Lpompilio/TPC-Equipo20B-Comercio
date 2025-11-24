@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dominio;
+using System;
 using System.Data;
 
 namespace TPC_Equipo20B
@@ -7,6 +8,8 @@ namespace TPC_Equipo20B
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            Permisos.RequiereAdmin(this);
+
             if (IsPostBack) return;
 
             lblRptVentasMes.Text = "$ 25.480";
