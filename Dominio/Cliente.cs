@@ -17,6 +17,7 @@ namespace Dominio
         public string Localidad { get; set; }
         public string CondicionIVA { get; set; }
         public bool Habilitado { get; set; } = true;
+        public int IdUsuarioAlta { get; set; }
 
         public bool Activo { get; set; } = true;
     }

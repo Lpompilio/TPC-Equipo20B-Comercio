@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Dominio;
+using System;
 using System.Collections.Generic;
-using Dominio;
+using System.Data.SqlClient;
 
 namespace Negocio
 {
@@ -12,31 +13,31 @@ namespace Negocio
             var datos = new AccesoDatos();
             try
             {
-                if (string.IsNullOrWhiteSpace(q))
-                {
-                    datos.setearConsulta(@"
-                SELECT Id, Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Habilitado
-                FROM Clientes
-                WHERE Habilitado = 1
-                ORDER BY Nombre");
-                }
-                else
-                {
-                    datos.setearConsulta(@"
-                SELECT Id, Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Habilitado
-                FROM Clientes
-                WHERE Habilitado = 1
-                  AND (Nombre LIKE @q 
-                       OR Documento LIKE @q 
-                       OR Email LIKE @q 
-                       OR Telefono LIKE @q 
-                       OR Localidad LIKE @q)
-                ORDER BY Nombre");
+                string consulta = @"
+            SELECT Id, Nombre, Documento, Email, Telefono, Direccion,
+                   Localidad, CondicionIVA, Habilitado, IdUsuarioAlta
+            FROM Clientes
+            WHERE Habilitado = 1";
 
-                    datos.setearParametro("@q", "%" + q + "%");
+                if (!string.IsNullOrWhiteSpace(q))
+                {
+                    consulta += @"
+                AND (Nombre LIKE @q 
+                     OR Documento LIKE @q 
+                     OR Email LIKE @q 
+                     OR Telefono LIKE @q 
+                     OR Localidad LIKE @q)";
                 }
+
+                consulta += " ORDER BY Nombre";
+
+                datos.setearConsulta(consulta);
+
+                if (!string.IsNullOrWhiteSpace(q))
+                    datos.setearParametro("@q", "%" + q + "%");
 
                 datos.ejecutarLectura();
+
                 while (datos.Lector.Read())
                 {
                     var c = new Cliente
@@ -49,7 +50,11 @@ namespace Negocio
                         Direccion = datos.Lector["Direccion"].ToString(),
                         Localidad = datos.Lector["Localidad"].ToString(),
                         CondicionIVA = datos.Lector["CondicionIVA"].ToString(),
-                        Habilitado = (bool)datos.Lector["Habilitado"]
+                        Habilitado = (bool)datos.Lector["Habilitado"],
+
+                        IdUsuarioAlta = datos.Lector["IdUsuarioAlta"] != DBNull.Value
+                                        ? Convert.ToInt32(datos.Lector["IdUsuarioAlta"])
+                                        : 0
                     };
 
                     lista.Add(c);
@@ -62,6 +67,7 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
 
 
         public Cliente BuscarPorId(int id)
@@ -96,22 +102,27 @@ namespace Negocio
         public void Guardar(Cliente c)
         {
             var datos = new AccesoDatos();
+
             try
             {
                 if (c.Id == 0)
                 {
                     datos.setearConsulta(@"
-                        INSERT INTO Clientes (Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Habilitado)
-                        VALUES (@nom, @doc, @email, @tel, @dir, @loc, @iva, @hab)
-                    ");
+                INSERT INTO Clientes 
+                (Nombre, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Habilitado, IdUsuarioAlta)
+                VALUES 
+                (@nom, @doc, @email, @tel, @dir, @loc, @iva, @hab, @idUser)
+            ");
                 }
                 else
                 {
                     datos.setearConsulta(@"
-                        UPDATE Clientes SET
-                        Nombre=@nom, Documento=@doc, Email=@email, Telefono=@tel, Direccion=@dir, Localidad=@loc, CondicionIVA=@iva, Habilitado=@hab
-                        WHERE Id=@id
-                    ");
+                UPDATE Clientes SET
+                Nombre=@nom, Documento=@doc, Email=@email, Telefono=@tel, Direccion=@dir, 
+                Localidad=@loc, CondicionIVA=@iva, Habilitado=@hab
+                WHERE Id=@id
+            ");
+
                     datos.setearParametro("@id", c.Id);
                 }
 
@@ -123,10 +134,28 @@ namespace Negocio
                 datos.setearParametro("@loc", c.Localidad);
                 datos.setearParametro("@iva", c.CondicionIVA);
                 datos.setearParametro("@hab", c.Habilitado);
+
+                if (c.Id == 0)
+                    datos.setearParametro("@idUser", c.IdUsuarioAlta);
+
                 datos.ejecutarAccion();
             }
-            finally { datos.CerrarConexion(); }
+            catch (SqlException ex)
+            {
+                // Error 2601 o 2627 = violación UNIQUE
+                if (ex.Number == 2601 || ex.Number == 2627)
+                {
+                    throw new Exception("El documento ingresado ya existe. Por favor verifique los datos.");
+                }
+
+                throw; 
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
+
 
         public void Eliminar(int id)
         {

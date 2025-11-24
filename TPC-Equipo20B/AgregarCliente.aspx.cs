@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Dominio;
+using Negocio;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Dominio;
-using Negocio;
 
 namespace TPC_Equipo20B
 {
@@ -64,15 +65,23 @@ namespace TPC_Equipo20B
                 Direccion = txtDireccion.Text.Trim(),
                 Localidad = txtLocalidad.Text.Trim(),
                 CondicionIVA = ddlCondicionIVA.SelectedValue,
-                Habilitado = chkHabilitado.Checked
+                Habilitado = chkHabilitado.Checked,
+                IdUsuarioAlta = (int)Session["UsuarioId"]
             };
 
             if (ViewState["idCliente"] != null)
                 c.Id = (int)ViewState["idCliente"];
 
-            negocio.Guardar(c);
+            try
+            {
+                negocio.Guardar(c);
+                Response.Redirect("Clientes.aspx");
+            }
+            catch (Exception ex)
+            {
+                lblError.Text = ex.Message;
+            }
 
-            Response.Redirect("Clientes.aspx", false);
         }
 
         protected void btnCancelar_Click(object sender, EventArgs e)

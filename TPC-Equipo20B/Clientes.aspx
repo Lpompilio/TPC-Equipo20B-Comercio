@@ -21,20 +21,31 @@
       CssClass="table table-hover align-middle"
       AutoGenerateColumns="False"
       AllowPaging="true" PageSize="12"
-      OnPageIndexChanging="gvClientes_PageIndexChanging">
+      OnPageIndexChanging="gvClientes_PageIndexChanging"
+        OnRowDataBound="gvClientes_RowDataBound">
       <Columns>
         <asp:BoundField DataField="Nombre" HeaderText="Cliente" />
         <asp:BoundField DataField="Documento" HeaderText="Documento" />
         <asp:BoundField DataField="Telefono" HeaderText="Teléfono" />
-        <asp:TemplateField HeaderText="Acciones">
-          <ItemStyle CssClass="action-col text-center" />
-          <ItemTemplate>
-            <asp:HyperLink runat="server" CssClass="btn btn-primary btn-action-sm me-1"
-              NavigateUrl='<%# Eval("Id", "~/AgregarCliente.aspx?id={0}") %>'>Editar</asp:HyperLink>
-            <asp:HyperLink runat="server" CssClass="btn btn-danger btn-action-sm"
-              NavigateUrl='<%# Eval("Id", "~/ConfirmarEliminar.aspx?tipo=Cliente&id={0}") %>'>Eliminar</asp:HyperLink>
-          </ItemTemplate>
-        </asp:TemplateField>
+<asp:TemplateField HeaderText="Acciones">
+  <ItemStyle CssClass="action-col text-center" />
+  <ItemTemplate>
+
+    <asp:HyperLink ID="lnkEditar" runat="server"
+      CssClass="btn btn-primary btn-action-sm me-1"
+      NavigateUrl='<%# Eval("Id", "~/AgregarCliente.aspx?id={0}") %>'>
+      Editar
+    </asp:HyperLink>
+
+    <asp:HyperLink ID="lnkEliminar" runat="server"
+      CssClass="btn btn-danger btn-action-sm"
+      NavigateUrl='<%# Eval("Id", "~/ConfirmarEliminar.aspx?tipo=Cliente&id={0}") %>'>
+      Eliminar
+    </asp:HyperLink>
+
+  </ItemTemplate>
+</asp:TemplateField>
+
       </Columns>
     </asp:GridView>
   </div>

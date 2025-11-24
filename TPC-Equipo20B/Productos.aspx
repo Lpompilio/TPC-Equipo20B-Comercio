@@ -4,10 +4,12 @@
 
   <div class="d-flex align-items-center justify-content-between mb-3">
     <h2 class="page-title m-0">Gestión de Productos</h2>
+                   <% if ((bool)(Session["EsAdmin"] ?? false)) { %>
     <asp:Button ID="btnAgregarProducto" runat="server"
         Text="➕ Agregar Producto"
         CssClass="btn btn-brand"
         OnClick="btnAgregarProducto_Click" />
+                  <% } %>
   </div>
 
   <!-- Panel para que ENTER dispare la búsqueda y no el botón Agregar -->

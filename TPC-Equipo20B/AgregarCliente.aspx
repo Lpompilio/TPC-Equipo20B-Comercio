@@ -31,21 +31,24 @@
                         ValidationExpression="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$" />
                 </div>
 
-                <div class="col-md-6">
-                    <label for="txtDocumento" class="form-label">Documento / CUIT</label>
-                    <asp:TextBox ID="txtDocumento" runat="server" CssClass="form-control" placeholder="Ej: 30-12345678-9" />
-                    <asp:RequiredFieldValidator ErrorMessage="Ingrese documento del cliente" ControlToValidate="txtDocumento" runat="server" CssClass="validator" />
-                    <asp:RegularExpressionValidator
-                        ID="revSoloNumeros"
-                        runat="server"
-                        ControlToValidate="txtDocumento"
-                        ErrorMessage="Este campo solo acepta números."
-                        CssClass="validator"
-                        Display="Dynamic"
-                        SetFocusOnError="true"
-                        ValidationExpression="^\d+$" />
-                </div>
+<div class="col-md-6">
+    <label for="txtDocumento" class="form-label">Documento / CUIT</label>
+    <asp:TextBox ID="txtDocumento" runat="server" CssClass="form-control" placeholder="Ej: 30123456789" />
 
+    <asp:RequiredFieldValidator ErrorMessage="Ingrese documento del cliente" ControlToValidate="txtDocumento" runat="server" CssClass="validator" />
+
+    <asp:RegularExpressionValidator
+        ID="revSoloNumeros"
+        runat="server"
+        ControlToValidate="txtDocumento"
+        ErrorMessage="Este campo solo acepta números."
+        CssClass="validator"
+        Display="Dynamic"
+        ValidationExpression="^\d+$" />
+
+    <asp:Label ID="lblError" runat="server" CssClass="text-danger fw-bold"></asp:Label>
+</div>
+                    
                 <div class="col-md-6">
                     <label for="txtEmail" class="form-label">Email</label>
                     <asp:TextBox ID="txtEmail" runat="server" TextMode="Email" CssClass="form-control" placeholder="correo@cliente.com" />

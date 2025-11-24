@@ -1,4 +1,5 @@
-﻿using Negocio;
+﻿using Dominio;
+using Negocio;
 using System;
 using System.Configuration;
 using System.Data;
@@ -34,6 +35,31 @@ namespace TPC_Equipo20B
             gvClientes.DataSource = lista;
             gvClientes.DataBind();
         }
+        protected void gvClientes_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType != DataControlRowType.DataRow)
+                return;
+
+            Cliente cli = (Cliente)e.Row.DataItem;
+
+            HyperLink lnkEditar = (HyperLink)e.Row.FindControl("lnkEditar");
+            HyperLink lnkEliminar = (HyperLink)e.Row.FindControl("lnkEliminar");
+
+            bool esAdmin = Session["EsAdmin"] != null && (bool)Session["EsAdmin"];
+            int idUsuarioLogueado = Session["UsuarioId"] != null ? (int)Session["UsuarioId"] : -1;
+
+            // Si es admin dejar todo visible
+            if (esAdmin)
+                return;
+
+            // Si no es admin permitir solo si el cliente fue creado por él
+            if (cli.IdUsuarioAlta != idUsuarioLogueado)
+            {
+                lnkEditar.Visible = false;
+                lnkEliminar.Visible = false;
+            }
+        }
+
     }
 
 }
