@@ -106,6 +106,7 @@ WHERE 1 = 1
                 V.Id,
                 V.Fecha,
                 V.NumeroFactura,
+                V.NumeroNC,
                 V.MetodoPago,
                 V.Total AS TotalBD,
                 V.Cancelada,
@@ -133,6 +134,7 @@ WHERE 1 = 1
                         Id = (int)datos.Lector["Id"],
                         Fecha = (DateTime)datos.Lector["Fecha"],
                         NumeroFactura = datos.Lector["NumeroFactura"]?.ToString(),
+                        NumeroNC = datos.Lector["NumeroNC"]?.ToString(),
                         MetodoPago = datos.Lector["MetodoPago"]?.ToString(),
                         TotalBD = datos.Lector["TotalBD"] != DBNull.Value
                             ? Convert.ToDecimal(datos.Lector["TotalBD"])
@@ -206,6 +208,90 @@ WHERE 1 = 1
             finally { datos.CerrarConexion(); }
         }
 
+        // ======================================
+        //  NUMERACIÓN AUTOMÁTICA DE FACTURAS
+        // ======================================
+        private string GenerarNumeroFactura()
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(@"
+                    SELECT TOP 1 NumeroFactura
+                    FROM VENTAS
+                    WHERE NumeroFactura IS NOT NULL AND NumeroFactura <> ''
+                    ORDER BY Id DESC;
+                ");
+
+                object resultado = datos.EjecutarScalar();
+
+                if (resultado == null || resultado == DBNull.Value)
+                    return "A-0001-00000001";
+
+                string ultimo = resultado.ToString().Trim();
+
+                int posGuion = ultimo.LastIndexOf('-');
+                int correlativoActual;
+
+                if (posGuion >= 0 &&
+                    int.TryParse(ultimo.Substring(posGuion + 1), out correlativoActual))
+                {
+                    correlativoActual++;
+                    string prefijo = ultimo.Substring(0, posGuion + 1);
+                    return $"{prefijo}{correlativoActual:00000000}";
+                }
+
+                return "A-0001-00000001";
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        // ======================================
+        //  NUMERACIÓN AUTOMÁTICA DE NOTAS DE CRÉDITO
+        // ======================================
+        private string GenerarNumeroNC()
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(@"
+                    SELECT TOP 1 NumeroNC
+                    FROM VENTAS
+                    WHERE NumeroNC IS NOT NULL AND NumeroNC <> ''
+                    ORDER BY Id DESC;
+                ");
+
+                object resultado = datos.EjecutarScalar();
+
+                if (resultado == null || resultado == DBNull.Value)
+                    return "NC-0001-00000001";
+
+                string ultimo = resultado.ToString().Trim();
+
+                int posGuion = ultimo.LastIndexOf('-');
+                int correlativoActual;
+
+                if (posGuion >= 0 &&
+                    int.TryParse(ultimo.Substring(posGuion + 1), out correlativoActual))
+                {
+                    correlativoActual++;
+                    string prefijo = ultimo.Substring(0, posGuion + 1);
+                    return $"{prefijo}{correlativoActual:00000000}";
+                }
+
+                return "NC-0001-00000001";
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
         public void Registrar(Venta venta)
         {
             AccesoDatos datos = new AccesoDatos();
@@ -216,6 +302,9 @@ WHERE 1 = 1
                 foreach (var linea in venta.Lineas)
                     total += linea.Subtotal;
 
+                string numeroFactura = GenerarNumeroFactura();
+                venta.NumeroFactura = numeroFactura;
+
                 datos.setearConsulta(@"
                     INSERT INTO Ventas (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
                     OUTPUT INSERTED.Id
@@ -223,7 +312,7 @@ WHERE 1 = 1
                 datos.setearParametro("@usuario", venta.Usuario.Id);
                 datos.setearParametro("@cliente", venta.Cliente.Id);
                 datos.setearParametro("@fecha", venta.Fecha);
-                datos.setearParametro("@factura", venta.NumeroFactura ?? "");
+                datos.setearParametro("@factura", numeroFactura);
                 datos.setearParametro("@metodo", venta.MetodoPago ?? "");
                 datos.setearParametro("@total", total);
 
@@ -286,18 +375,23 @@ WHERE 1 = 1
                     upd.CerrarConexion();
                 }
 
+                // Generamos número de Nota de Crédito
+                string numeroNC = GenerarNumeroNC();
+
                 AccesoDatos updVenta = new AccesoDatos();
                 updVenta.setearConsulta(@"
             UPDATE VENTAS
             SET Cancelada = 1,
                 MotivoCancelacion = @motivo,
                 FechaCancelacion = GETDATE(),
-                IdUsuarioCancelacion = @idUsuario
+                IdUsuarioCancelacion = @idUsuario,
+                NumeroNC = @numeroNC
             WHERE Id = @idVenta
         ");
 
                 updVenta.setearParametro("@motivo", motivo);
                 updVenta.setearParametro("@idUsuario", idUsuario);
+                updVenta.setearParametro("@numeroNC", numeroNC);
                 updVenta.setearParametro("@idVenta", idVenta);
                 updVenta.ejecutarAccion();
                 updVenta.CerrarConexion();
@@ -475,7 +569,7 @@ WHERE 1 = 1
                         U.Nombre AS Vendedor
                     FROM DETALLE_VENTA DV
                     INNER JOIN VENTAS V ON DV.IdVenta = V.Id
-                    INNER JOIN PRODUCTOS P ON DV.IdProducto = P.Id
+                    INNER INNER JOIN PRODUCTOS P ON DV.IdProducto = P.Id
                     INNER JOIN CATEGORIAS C ON P.IdCategoria = C.Id
                     INNER JOIN USUARIOS U ON V.IdUsuario = U.Id
                     WHERE V.Cancelada = 0

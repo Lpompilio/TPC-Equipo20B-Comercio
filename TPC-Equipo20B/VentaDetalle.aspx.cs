@@ -43,6 +43,7 @@ namespace TPC_Equipo20B
             {
                 panelCancelada.Visible = true;
                 lblMotivo.Text = venta.MotivoCancelacion;
+                lblNumeroNC.Text = string.IsNullOrEmpty(venta.NumeroNC) ? "-" : venta.NumeroNC;
                 lblFechaCanc.Text = venta.FechaCancelacion?.ToString("dd/MM/yyyy HH:mm");
                 lblUsuarioCanc.Text = venta.UsuarioCancelacion?.Nombre ?? "(no encontrado)";
             }
@@ -57,7 +58,7 @@ namespace TPC_Equipo20B
             lblMetodoPago.Text = venta.MetodoPago ?? "-";
             lblFactura.Text = venta.NumeroFactura ?? "-";
 
-            // TOTAL BD)
+            // TOTAL BD
             lblTotal.Text = venta.TotalBD.ToString("C");
 
             // LINEAS
@@ -70,5 +71,4 @@ namespace TPC_Equipo20B
             Response.Redirect("Ventas.aspx");
         }
     }
-
 }

@@ -13,6 +13,7 @@ namespace Dominio
         public DateTime Fecha { get; set; }
         public Usuario Usuario { get; set; }
         public string NumeroFactura { get; set; }
+        public string NumeroNC { get; set; }         // NUEVO
         public string MetodoPago { get; set; }
 
         public List<VentaLinea> Lineas { get; set; } = new List<VentaLinea>();

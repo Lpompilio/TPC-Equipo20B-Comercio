@@ -19,6 +19,7 @@
                     class="alert alert-danger fw-bold">
                 <i class="bi bi-x-circle"></i> Esta venta está cancelada.<br />
                 Motivo: <asp:Label ID="lblMotivo" runat="server" /><br />
+                N° Nota de Crédito: <asp:Label ID="lblNumeroNC" runat="server" /><br />
                 Fecha: <asp:Label ID="lblFechaCanc" runat="server" /><br />
                 Usuario: <asp:Label ID="lblUsuarioCanc" runat="server" />
             </div>
