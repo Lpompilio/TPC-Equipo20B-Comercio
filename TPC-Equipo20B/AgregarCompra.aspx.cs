@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Dominio;
+using Negocio;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Dominio;
-using Negocio;
 
 namespace TPC_Equipo20B
 {
@@ -35,7 +36,7 @@ namespace TPC_Equipo20B
 
         private void CargarCombos()
         {
-
+            // Proveedores
             ProveedorNegocio provNeg = new ProveedorNegocio();
             ddlProveedor.DataSource = provNeg.Listar();
             ddlProveedor.DataTextField = "Nombre";
@@ -43,23 +44,65 @@ namespace TPC_Equipo20B
             ddlProveedor.DataBind();
             ddlProveedor.Items.Insert(0, new ListItem("-- Seleccione --", "0"));
 
+            // Productos vacío hasta elegir proveedor
+            ddlProducto.Items.Clear();
+            ddlProducto.Items.Insert(0, new ListItem("-- Seleccione proveedor --", "0"));
+        }
+
+        private void CargarProductosPorProveedor(int idProveedor)
+        {
             ProductoNegocio prodNeg = new ProductoNegocio();
-            ddlProducto.DataSource = prodNeg.Listar();
+            ddlProducto.DataSource = prodNeg.listarPorProveedor(idProveedor);
             ddlProducto.DataTextField = "Descripcion";
             ddlProducto.DataValueField = "Id";
             ddlProducto.DataBind();
-            ddlProducto.Items.Insert(0, new ListItem("-- Seleccione --", "0"));
+
+            ddlProducto.Items.Insert(0, new ListItem("-- Seleccione producto --", "0"));
+        }
+
+        protected void ddlProveedor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int idProveedor = int.Parse(ddlProveedor.SelectedValue);
+
+            if (idProveedor == 0)
+            {
+                ddlProducto.Items.Clear();
+                ddlProducto.Items.Insert(0, new ListItem("-- Seleccione proveedor --", "0"));
+                return;
+            }
+
+            CargarProductosPorProveedor(idProveedor);
         }
 
         protected void btnAgregarLinea_Click(object sender, EventArgs e)
         {
-
-            if (ddlProducto.SelectedValue == "0" || string.IsNullOrEmpty(txtCantidad.Text) || string.IsNullOrEmpty(txtPrecio.Text))
+            // Validaciones básicas
+            if (ddlProducto.SelectedValue == "0" ||
+                string.IsNullOrWhiteSpace(txtCantidad.Text) ||
+                string.IsNullOrWhiteSpace(txtPrecio.Text))
                 return;
 
-            ProductoNegocio prodNeg = new ProductoNegocio();
-            Producto prod = prodNeg.ObtenerPorId(int.Parse(ddlProducto.SelectedValue));
+            int idProveedorCompra = int.Parse(ddlProveedor.SelectedValue);
+            int idProducto = int.Parse(ddlProducto.SelectedValue);
 
+            // Validación de proveedor del producto
+            ProductoNegocio prodNeg = new ProductoNegocio();
+            bool pertenece = prodNeg.ProductoPerteneceAProveedor(idProducto, idProveedorCompra);
+
+            if (!pertenece)
+            {
+                lblError.Text = "❌ El producto seleccionado no pertenece al proveedor elegido para esta compra.";
+                lblError.Visible = true;
+                return;
+            }
+
+            // Ocultar mensaje si venía de antes
+            lblError.Visible = false;
+
+            // Obtener producto completo
+            Producto prod = prodNeg.ObtenerPorId(idProducto);
+
+            // Crear la línea de compra
             CompraLinea nueva = new CompraLinea
             {
                 Producto = prod,
@@ -67,7 +110,10 @@ namespace TPC_Equipo20B
                 PrecioUnitario = decimal.Parse(txtPrecio.Text)
             };
 
+            // Agregar la línea a la lista en Session
             Lineas.Add(nueva);
+
+            // Actualizar el GridView
             ActualizarGrid();
 
             // Limpiar campos
@@ -75,6 +121,8 @@ namespace TPC_Equipo20B
             txtCantidad.Text = "";
             txtPrecio.Text = "";
         }
+
+
 
         protected void gvLineas_RowCommand(object sender, GridViewCommandEventArgs e)
         {

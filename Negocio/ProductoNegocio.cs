@@ -16,14 +16,12 @@ namespace Negocio
                 string query = @"
                     SELECT 
                         P.Id, P.CodigoSKU, P.Descripcion, P.StockMinimo, P.StockActual,
-                        P.PorcentajeGanancia, P.UrlImagen, P.Activo,
+                        P.PorcentajeGanancia, P.Activo,
                         C.Id AS IdCategoria, C.Nombre AS NombreCategoria,
-                        M.Id AS IdMarca, M.Nombre AS NombreMarca,
-                        PR.Id AS IdProveedor, PR.Nombre AS NombreProveedor
+                        M.Id AS IdMarca, M.Nombre AS NombreMarca
                     FROM PRODUCTOS P
                     INNER JOIN CATEGORIAS C ON P.IdCategoria = C.Id
                     LEFT JOIN MARCAS M ON P.IdMarca = M.Id
-                    LEFT JOIN PROVEEDORES PR ON P.IdProveedor = PR.Id
                     WHERE P.Activo = 1";
 
                 if (idProveedor.HasValue && idProveedor.Value > 0)
@@ -54,7 +52,6 @@ namespace Negocio
                         StockMinimo = datos.Lector["StockMinimo"] is DBNull ? 0 : (decimal)datos.Lector["StockMinimo"],
                         StockActual = datos.Lector["StockActual"] is DBNull ? 0 : (decimal)datos.Lector["StockActual"],
                         PorcentajeGanancia = datos.Lector["PorcentajeGanancia"] is DBNull ? 0 : (decimal)datos.Lector["PorcentajeGanancia"],
-                        UrlImagen = datos.Lector["UrlImagen"] as string ?? "",
                         Activo = (bool)datos.Lector["Activo"],
                         Categoria = new Categoria
                         {
@@ -68,13 +65,6 @@ namespace Negocio
                                 Id = (int)datos.Lector["IdMarca"],
                                 Nombre = (string)datos.Lector["NombreMarca"]
                             },
-                        Proveedor = datos.Lector["IdProveedor"] is DBNull
-                            ? null
-                            : new Proveedor
-                            {
-                                Id = (int)datos.Lector["IdProveedor"],
-                                Nombre = (string)datos.Lector["NombreProveedor"]
-                            }
                     };
 
                     lista.Add(p);
@@ -95,17 +85,16 @@ namespace Negocio
             try
             {
                 datos.setearConsulta(@"
-                    SELECT 
-                        P.Id, P.CodigoSKU, P.Descripcion, P.StockMinimo, P.StockActual, P.PorcentajeGanancia, 
-                        P.UrlImagen, P.Activo,
-                        C.Id AS IdCategoria, C.Nombre AS NombreCategoria,
-                        M.Id AS IdMarca, M.Nombre AS NombreMarca,
-                        PR.Id AS IdProveedor, PR.Nombre AS NombreProveedor
-                    FROM PRODUCTOS P
-                    INNER JOIN CATEGORIAS C ON P.IdCategoria = C.Id
-                    LEFT JOIN MARCAS M ON P.IdMarca = M.Id
-                    LEFT JOIN PROVEEDORES PR ON P.IdProveedor = PR.Id
-                    WHERE P.Id = @id");
+    SELECT 
+        P.Id, P.CodigoSKU, P.Descripcion, P.StockMinimo, P.StockActual, P.PorcentajeGanancia, 
+        P.Activo,
+        C.Id AS IdCategoria, C.Nombre AS NombreCategoria,
+        M.Id AS IdMarca, M.Nombre AS NombreMarca
+    FROM PRODUCTOS P
+    INNER JOIN CATEGORIAS C ON P.IdCategoria = C.Id
+    LEFT JOIN MARCAS M ON P.IdMarca = M.Id
+    WHERE P.Id = @id");
+
 
                 datos.setearParametro("@id", id);
                 datos.ejecutarLectura();
@@ -122,7 +111,6 @@ namespace Negocio
                         StockMinimo = datos.Lector["StockMinimo"] is DBNull ? 0 : (decimal)datos.Lector["StockMinimo"],
                         StockActual = datos.Lector["StockActual"] is DBNull ? 0 : (decimal)datos.Lector["StockActual"],
                         PorcentajeGanancia = datos.Lector["PorcentajeGanancia"] is DBNull ? 0 : (decimal)datos.Lector["PorcentajeGanancia"],
-                        UrlImagen = datos.Lector["UrlImagen"] is DBNull ? "" : (string)datos.Lector["UrlImagen"],
                         Activo = (bool)datos.Lector["Activo"],
                         Categoria = new Categoria
                         {
@@ -136,13 +124,7 @@ namespace Negocio
                                 Id = (int)datos.Lector["IdMarca"],
                                 Nombre = (string)datos.Lector["NombreMarca"]
                             },
-                        Proveedor = datos.Lector["IdProveedor"] is DBNull
-                            ? null
-                            : new Proveedor
-                            {
-                                Id = (int)datos.Lector["IdProveedor"],
-                                Nombre = (string)datos.Lector["NombreProveedor"]
-                            }
+
                     };
                 }
 
@@ -382,5 +364,55 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
+
+        public List<Producto> listarPorProveedor(int idProveedor)
+        {
+            List<Producto> lista = new List<Producto>();
+            AccesoDatos datos = new AccesoDatos();
+
+            datos.setearConsulta(
+                "SELECT P.Id, P.Descripcion " +
+                "FROM PRODUCTOS P " +
+                "INNER JOIN PRODUCTO_PROVEEDOR PP ON PP.IdProducto = P.Id " +
+                "WHERE PP.IdProveedor = @id"
+            );
+            datos.setearParametro("@id", idProveedor);
+
+            datos.ejecutarLectura();
+            while (datos.Lector.Read())
+            {
+                Producto aux = new Producto();
+                aux.Id = (int)datos.Lector["Id"];
+                aux.Descripcion = (string)datos.Lector["Descripcion"];
+                lista.Add(aux);
+            }
+            datos.CerrarConexion();
+            return lista;
+        }
+
+        public bool ProductoPerteneceAProveedor(int idProducto, int idProveedor)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(
+                    "SELECT COUNT(*) FROM PRODUCTO_PROVEEDOR " +
+                    "WHERE IdProducto = @prod AND IdProveedor = @prov");
+                datos.setearParametro("@prod", idProducto);
+                datos.setearParametro("@prov", idProveedor);
+
+                int count = (int)datos.EjecutarScalar();
+
+                return count > 0;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+
     }
 }

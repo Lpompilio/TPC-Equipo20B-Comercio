@@ -21,7 +21,14 @@
             <div class="row g-3 mb-3">
                 <div class="col-md-6">
                     <label for="ddlProveedor" class="form-label">Proveedor</label>
-                    <asp:DropDownList ID="ddlProveedor" runat="server" CssClass="form-select"></asp:DropDownList>
+                    <asp:Label ID="lblError" runat="server" CssClass="text-danger fw-bold" Visible="false"></asp:Label>
+                    <asp:DropDownList 
+    ID="ddlProveedor" 
+    runat="server" 
+    CssClass="form-select"
+    AutoPostBack="true"
+    OnSelectedIndexChanged="ddlProveedor_SelectedIndexChanged">
+</asp:DropDownList>
                     <asp:RequiredFieldValidator ErrorMessage="Seleccione un proveedor"
                         ControlToValidate="ddlProveedor"
                         InitialValue="0"

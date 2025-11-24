@@ -17,6 +17,10 @@ namespace Negocio
             comando = new SqlCommand();
         }
 
+        public void LimpiarParametros()
+        {
+            comando.Parameters.Clear();
+        }
         public void setearConsulta(string consulta)
         {
             comando.Parameters.Clear();

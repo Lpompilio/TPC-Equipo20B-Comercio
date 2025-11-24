@@ -16,6 +16,7 @@ namespace Negocio
                 datos.setearConsulta(
                     "INSERT INTO Compras (IdProveedor, Fecha, IdUsuario, Observaciones) " +
                     "OUTPUT INSERTED.Id VALUES (@prov, @fecha, @usuario, @obs)");
+
                 datos.setearParametro("@prov", compra.Proveedor.Id);
                 datos.setearParametro("@fecha", compra.Fecha);
                 datos.setearParametro("@usuario", compra.Usuario.Id);
@@ -23,12 +24,15 @@ namespace Negocio
 
                 int idCompra = Convert.ToInt32(datos.EjecutarScalar());
 
-                // Insertar las líneas de la compra
+                datos.LimpiarParametros();
+
+
+                // Insertar las líneas
                 foreach (var linea in compra.Lineas)
                 {
                     datos.setearConsulta(@"
-                        INSERT INTO compra_lineas (IdCompra, IdProducto, Cantidad, PrecioUnitario)
-                        VALUES (@idCompra, @idProd, @cant, @precio)");
+                INSERT INTO compra_lineas (IdCompra, IdProducto, Cantidad, PrecioUnitario)
+                VALUES (@idCompra, @idProd, @cant, @precio)");
 
                     datos.setearParametro("@idCompra", idCompra);
                     datos.setearParametro("@idProd", linea.Producto.Id);
@@ -36,20 +40,31 @@ namespace Negocio
                     datos.setearParametro("@precio", linea.PrecioUnitario);
                     datos.ejecutarAccion();
 
+                    datos.LimpiarParametros();
+
+
                     // Actualizar stock
-                    datos.setearConsulta("UPDATE Productos SET StockActual = StockActual + @cant WHERE Id = @idProd");
+                    datos.setearConsulta(
+                        "UPDATE Productos SET StockActual = StockActual + @cant WHERE Id = @idProd");
+
                     datos.setearParametro("@cant", linea.Cantidad);
                     datos.setearParametro("@idProd", linea.Producto.Id);
                     datos.ejecutarAccion();
 
+                    datos.LimpiarParametros();
+
+
                     // Registrar precio de compra
                     datos.setearConsulta(@"
-                         INSERT INTO precios_compra (IdProducto, IdProveedor, Precio, Fecha)
-                         VALUES (@idProd, @idProv, @precio, GETDATE())");
+                INSERT INTO precios_compra (IdProducto, IdProveedor, Precio, Fecha)
+                VALUES (@idProd, @idProv, @precio, GETDATE())");
+
                     datos.setearParametro("@idProd", linea.Producto.Id);
                     datos.setearParametro("@idProv", compra.Proveedor.Id);
                     datos.setearParametro("@precio", linea.PrecioUnitario);
                     datos.ejecutarAccion();
+
+                    datos.LimpiarParametros();   
                 }
             }
             finally
@@ -57,6 +72,7 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
 
         // 🟢 Listar con búsqueda opcional
         public List<Compra> Listar(string q = null)
