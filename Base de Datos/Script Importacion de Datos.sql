@@ -388,12 +388,21 @@ GO
 INSERT INTO PROVEEDORES 
 (Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA)
 VALUES
-('Proveedor Norte', 'Proveedor Norte S.A.', '30-11111111-9', 'norte@prov.com', '1122334455', 'Av. Siempre Viva 123', 'CABA', 'Responsable Inscripto'),
+('Proveedor Oeste', 'Proveedor Oeste S.A.', '30-44444444-1', 'oeste@prov.com', '1133557799', 'Av. Rivadavia 4500', 'CABA', 'Responsable Inscripto'),
 
-('Proveedor Sur', 'Proveedor Sur S.R.L.', '30-22222222-5', 'sur@prov.com', '1199887766', 'Belgrano 456', 'San Martín', 'Responsable Inscripto'),
+('Proveedor Este', 'Proveedor Este S.R.L.', '30-55555555-4', 'este@prov.com', '1166778899', 'Av. La Plata 1200', 'CABA', 'Responsable Inscripto'),
 
-('Distribuidora Centro', 'Distribuidora Centro S.A.', '30-33333333-3', 'centro@prov.com', '1144556677', 'Mitre 900', 'Villa Ballester', 'Monotributista');
+('Proveedor Express', 'Proveedor Express S.A.', '30-66666666-2', 'express@prov.com', '1122664488', 'Córdoba 780', 'Vicente López', 'Monotributista'),
+
+('Tecno Distribuidora', 'Tecno Distribuidora SRL', '30-77777777-8', 'tecno@dist.com', '1177445566', 'Av. Cabildo 3200', 'CABA', 'Responsable Inscripto'),
+
+('Global Imports', 'Global Imports S.A.', '30-88888888-6', 'global@imports.com', '1188994455', 'San Martín 1500', 'San Isidro', 'Responsable Inscripto'),
+
+('Maxi Proveedor', 'MaxiProveedor SRL', '30-99999999-0', 'contacto@maxipro.com', '1199112233', 'Pueyrredón 2500', 'CABA', 'Monotributista'),
+
+('Suministros Delta', 'Suministros Delta S.A.', '30-10101010-1', 'delta@sum.com', '1155223344', 'Ameghino 900', 'Tigre', 'Responsable Inscripto');
 GO
+
 
 
 ---------------------------
