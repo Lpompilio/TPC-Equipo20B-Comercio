@@ -176,7 +176,6 @@ namespace Negocio
             }
         }
 
-        // Chequeo de SKU repetido
         private bool ExisteSku(string sku, int? idProductoExcluir = null)
         {
             var datos = new AccesoDatos();
@@ -213,7 +212,6 @@ namespace Negocio
 
             try
             {
-                // Validación de SKU único
                 int? idExcluir = p.Id == 0 ? (int?)null : p.Id;
                 if (ExisteSku(p.CodigoSKU, idExcluir))
                     throw new Exception("Ya existe un producto con el mismo código SKU.");
@@ -330,6 +328,54 @@ namespace Negocio
                     datos.setearParametro("@prov", idProv);
                     datos.ejecutarAccion();
                 }
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public List<Producto> ListarStockBajo()
+        {
+            var lista = new List<Producto>();
+            var datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(@"
+                    SELECT 
+                        P.Id, P.CodigoSKU, P.Descripcion, P.StockMinimo, P.StockActual,
+                        C.Id AS IdCategoria, C.Nombre AS NombreCategoria
+                    FROM PRODUCTOS P
+                    INNER JOIN CATEGORIAS C ON P.IdCategoria = C.Id
+                    WHERE P.Activo = 1
+                      AND P.StockMinimo IS NOT NULL
+                      AND P.StockActual IS NOT NULL
+                      AND P.StockActual < P.StockMinimo
+                    ORDER BY P.Descripcion");
+
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    var p = new Producto
+                    {
+                        Id = (int)datos.Lector["Id"],
+                        CodigoSKU = datos.Lector["CodigoSKU"] as string ?? "",
+                        Descripcion = datos.Lector["Descripcion"].ToString(),
+                        StockMinimo = datos.Lector["StockMinimo"] is DBNull ? 0 : (decimal)datos.Lector["StockMinimo"],
+                        StockActual = datos.Lector["StockActual"] is DBNull ? 0 : (decimal)datos.Lector["StockActual"],
+                        Categoria = new Categoria
+                        {
+                            Id = (int)datos.Lector["IdCategoria"],
+                            Nombre = datos.Lector["NombreCategoria"].ToString()
+                        }
+                    };
+
+                    lista.Add(p);
+                }
+
+                return lista;
             }
             finally
             {

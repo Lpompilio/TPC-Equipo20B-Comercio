@@ -46,7 +46,9 @@
     <Compile Include="Producto.cs" />
     <Compile Include="Compra.cs" />
     <Compile Include="Marca.cs" />
+    <Compile Include="ProductoReporte.cs" />
     <Compile Include="Proveedor.cs" />
+    <Compile Include="TopProductoVendido.cs" />
     <Compile Include="Usuario.cs" />
     <Compile Include="UsuarioRol.cs" />
     <Compile Include="Venta.cs" />

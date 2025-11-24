@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Dominio;
@@ -24,7 +23,6 @@ namespace TPC_Equipo20B
                 txtFecha.Text = DateTime.Now.ToString("yyyy-MM-dd");
                 CargarCombos();
 
-                // Si estamos modificando una venta existente
                 if (Request.QueryString["id"] != null)
                 {
                     int idVenta = int.Parse(Request.QueryString["id"]);
@@ -42,13 +40,13 @@ namespace TPC_Equipo20B
             ddlCliente.DataTextField = "Nombre";
             ddlCliente.DataValueField = "Id";
             ddlCliente.DataBind();
-            ddlCliente.Items.Insert(0, new System.Web.UI.WebControls.ListItem("-- Seleccione --", "0"));
+            ddlCliente.Items.Insert(0, new ListItem("-- Seleccione --", "0"));
 
             ddlProducto.DataSource = productoNeg.Listar();
             ddlProducto.DataTextField = "Descripcion";
             ddlProducto.DataValueField = "Id";
             ddlProducto.DataBind();
-            ddlProducto.Items.Insert(0, new System.Web.UI.WebControls.ListItem("-- Seleccione --", "0"));
+            ddlProducto.Items.Insert(0, new ListItem("-- Seleccione --", "0"));
         }
 
         protected void ddlProducto_SelectedIndexChanged(object sender, EventArgs e)
@@ -63,14 +61,12 @@ namespace TPC_Equipo20B
             ProductoNegocio negocio = new ProductoNegocio();
             Producto prod = negocio.ObtenerPorId(idProd);
 
-            // propiedad calculada directamente
             txtPrecio.Text = prod.PrecioVenta.ToString("0.00");
         }
 
-
         protected void btnAgregarLinea_Click(object sender, EventArgs e)
         {
-            lblErrorStock.Text = ""; // Limpia el mensaje previo
+            lblErrorStock.Text = "";
 
             if (ddlProducto.SelectedValue == "0" || string.IsNullOrEmpty(txtCantidad.Text) || string.IsNullOrEmpty(txtPrecio.Text))
                 return;
@@ -86,14 +82,12 @@ namespace TPC_Equipo20B
 
             int cantidad = int.Parse(txtCantidad.Text);
 
-            // no permitir vender más que el stock disponible
             if (cantidad > prod.StockActual)
             {
                 lblErrorStock.Text = $"Stock insuficiente. Solo hay {prod.StockActual} unidades disponibles de \"{prod.Descripcion}\".";
                 return;
             }
 
-            // Si hay stock, agregamos la línea
             VentaLinea nueva = new VentaLinea
             {
                 Producto = prod,
@@ -106,14 +100,12 @@ namespace TPC_Equipo20B
             gvLineas.DataBind();
             ActualizarTotal();
 
-            // Limpieza de campos
             txtCantidad.Text = "";
             ddlProducto.SelectedIndex = 0;
             txtPrecio.Text = "";
         }
 
-
-        protected void gvLineas_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
+        protected void gvLineas_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandName == "Eliminar")
             {
@@ -138,10 +130,12 @@ namespace TPC_Equipo20B
                 if (ddlCliente.SelectedValue == "0" || Lineas.Count == 0)
                     return;
 
+                int idUsuario = Session["UsuarioId"] != null ? (int)Session["UsuarioId"] : 0;
+
                 Venta venta = new Venta
                 {
                     Cliente = new Cliente { Id = int.Parse(ddlCliente.SelectedValue) },
-                    Usuario = new Usuario { Id = 1 }, // Temporal
+                    Usuario = new Usuario { Id = idUsuario },
                     Fecha = DateTime.Now,
                     MetodoPago = ddlMetodoPago.SelectedValue,
                     Lineas = Lineas
@@ -155,7 +149,6 @@ namespace TPC_Equipo20B
             }
             catch (Exception ex)
             {
-                // Manejo básico de error
                 Response.Write("<script>alert('Error al registrar la venta: " + ex.Message + "');</script>");
             }
         }

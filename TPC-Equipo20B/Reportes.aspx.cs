@@ -1,6 +1,7 @@
 ﻿using Dominio;
+using Negocio;
 using System;
-using System.Data;
+using System.Linq;
 
 namespace TPC_Equipo20B
 {
@@ -12,22 +13,35 @@ namespace TPC_Equipo20B
 
             if (IsPostBack) return;
 
-            lblRptVentasMes.Text = "$ 25.480";
-            lblRptPedidos.Text = "123";
-            lblRptClientes.Text = "18";
-            lblRptTicket.Text = "$ 2.070";
+            CargarReportes();
+        }
 
-            var dt = new DataTable();
-            dt.Columns.Add("Producto");
-            dt.Columns.Add("Categoria");
-            dt.Columns.Add("Unidades", typeof(int));
-            dt.Columns.Add("Ingresos", typeof(decimal));
+        private void CargarReportes()
+        {
+            var ventaNegocio = new VentaNegocio();
 
-            dt.Rows.Add("Agua Purificada 20L", "Aguas", 2345, 58625m);
-            dt.Rows.Add("Isotónica Naranja 600ml", "Bebidas", 1102, 19836m);
-            dt.Rows.Add("Snack Mix 50g", "Snacks", 876, 10512m);
+            decimal totalMes = ventaNegocio.ObtenerTotalVentasMes(null);
+            int pedidosMes = ventaNegocio.ObtenerPedidosCompletadosMes(null);
+            int clientesMes = ventaNegocio.ObtenerClientesNuevosMes(null);
+            decimal ticketPromedio = ventaNegocio.ObtenerTicketPromedioMes(null);
 
-            gvTopProductos.DataSource = dt;
+            lblRptVentasMes.Text = totalMes.ToString("C");
+            lblRptPedidos.Text = pedidosMes.ToString();
+            lblRptClientes.Text = clientesMes.ToString();
+            lblRptTicket.Text = ticketPromedio.ToString("C");
+
+            var top = ventaNegocio.TopProductosVendidosMes(null)
+                .Select(p => new
+                {
+                    p.Producto,
+                    p.Categoria,
+                    p.Unidades,
+                    p.Ingresos,
+                    p.Vendedor
+                })
+                .ToList();
+
+            gvTopProductos.DataSource = top;
             gvTopProductos.DataBind();
         }
     }

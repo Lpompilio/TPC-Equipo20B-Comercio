@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Data;
+using System.Linq;
+using Negocio;
 
 namespace TPC_Equipo20B
 {
@@ -8,45 +9,63 @@ namespace TPC_Equipo20B
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
-            {
-                
-                lblVentasMes.Text = "$ 25.480";
-                lblPedidosCompletados.Text = "42";
-                lblClientesNuevos.Text = "7";
-
-                gvStockBajo.DataSource = TablaStockBajo();
-                gvStockBajo.DataBind();
-
-                gvUltimasVentas.DataSource = TablaUltimasVentas();
-                gvUltimasVentas.DataBind();
-            }
+                CargarDatos();
         }
 
-        private DataTable TablaStockBajo()
+        private void CargarDatos()
         {
-            var t = new DataTable();
-            t.Columns.Add("Codigo");
-            t.Columns.Add("Producto");
-            t.Columns.Add("StockActual");
-            t.Columns.Add("StockMinimo");
+            bool esAdmin = Session["EsAdmin"] != null && (bool)Session["EsAdmin"];
+            int? idUsuario = null;
 
-            t.Rows.Add("AG-003", "Producto Ejemplo 3", "8", "15");
-            t.Rows.Add("AG-004", "Producto Ejemplo 4", "0", "10");
-            return t;
-        }
+            if (!esAdmin && Session["UsuarioId"] != null)
+                idUsuario = (int)Session["UsuarioId"];
 
-        private DataTable TablaUltimasVentas()
-        {
-            var t = new DataTable();
-            t.Columns.Add("IdVenta");
-            t.Columns.Add("Cliente");
-            t.Columns.Add("Fecha");
-            t.Columns.Add("Total");
-            t.Columns.Add("Estado");
+            var ventaNegocio = new VentaNegocio();
+            var productoNegocio = new ProductoNegocio();
 
-            t.Rows.Add("78901", "Ana Torres", DateTime.Today.ToString("yyyy-MM-dd"), "$150.00", "Procesando");
-            t.Rows.Add("78900", "Carlos Gomez", DateTime.Today.ToString("yyyy-MM-dd"), "$275.50", "Enviado");
-            return t;
+            decimal totalMes = ventaNegocio.ObtenerTotalVentasMes(idUsuario);
+            int pedidosMes = ventaNegocio.ObtenerPedidosCompletadosMes(idUsuario);
+            int clientesMes = ventaNegocio.ObtenerClientesNuevosMes(idUsuario);
+
+            lblVentasMes.Text = totalMes.ToString("C");
+            lblPedidosCompletados.Text = pedidosMes.ToString();
+            lblClientesNuevos.Text = clientesMes.ToString();
+
+            var stockBajo = productoNegocio.ListarStockBajo()
+                .Select(p => new
+                {
+                    Codigo = p.CodigoSKU,
+                    Producto = p.Descripcion,
+                    StockActual = p.StockActual,
+                    StockMinimo = p.StockMinimo
+                })
+                .ToList();
+
+            gvStockBajo.DataSource = stockBajo;
+            gvStockBajo.DataBind();
+
+            var listaVentas = ventaNegocio.Listar(null)
+                .Where(v => !v.Cancelada);
+
+            if (idUsuario.HasValue)
+                listaVentas = listaVentas.Where(v => v.Usuario != null && v.Usuario.Id == idUsuario.Value);
+
+            var ultimas = listaVentas
+                .OrderByDescending(v => v.Fecha)
+                .Take(10)
+                .Select(v => new
+                {
+                    IdVenta = v.Id,
+                    Cliente = v.Cliente != null ? v.Cliente.Nombre : "",
+                    Fecha = v.Fecha.ToString("dd/MM/yyyy"),
+                    Total = v.TotalBD,
+                    Vendedor = v.Usuario != null ? v.Usuario.Nombre : "",
+                    Estado = v.Cancelada ? "Cancelada" : "Activa"
+                })
+                .ToList();
+
+            gvUltimasVentas.DataSource = ultimas;
+            gvUltimasVentas.DataBind();
         }
     }
 }

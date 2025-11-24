@@ -7,7 +7,6 @@ namespace Negocio
 {
     public class VentaNegocio
     {
-        // Ahora soporta búsqueda opcional
         public List<Venta> Listar(string q = null)
         {
             List<Venta> lista = new List<Venta>();
@@ -27,11 +26,9 @@ SELECT
     V.FechaCancelacion,
     V.IdUsuarioCancelacion,
 
-    -- Usuario que hizo la venta
     V.IdUsuario,
     U.Nombre AS NombreUsuario,
 
-    -- Cliente
     C.Id AS IdCliente,  
     C.Nombre AS NombreCliente
 
@@ -41,7 +38,6 @@ INNER JOIN Usuarios U ON V.IdUsuario = U.Id
 WHERE 1 = 1
 ";
 
-                // Si hay búsqueda → agregamos filtro
                 if (!string.IsNullOrWhiteSpace(q))
                 {
                     consulta += @"
@@ -71,23 +67,19 @@ WHERE 1 = 1
                         Fecha = (DateTime)datos.Lector["Fecha"],
                         NumeroFactura = datos.Lector["NumeroFactura"]?.ToString(),
                         MetodoPago = datos.Lector["MetodoPago"]?.ToString(),
-
                         Cliente = new Cliente
                         {
                             Id = (int)datos.Lector["IdCliente"],
                             Nombre = datos.Lector["NombreCliente"].ToString()
                         },
-
                         Usuario = new Usuario
                         {
                             Id = (int)datos.Lector["IdUsuario"],
                             Nombre = datos.Lector["NombreUsuario"]?.ToString()
                         },
-
                         TotalBD = datos.Lector["Total"] != DBNull.Value
                             ? Convert.ToDecimal(datos.Lector["Total"])
                             : 0,
-
                         Cancelada = Convert.ToBoolean(datos.Lector["Cancelada"])
                     };
 
@@ -101,8 +93,6 @@ WHERE 1 = 1
                 datos.CerrarConexion();
             }
         }
-
-
 
         public Venta ObtenerPorId(int id)
         {
@@ -144,24 +134,19 @@ WHERE 1 = 1
                         Fecha = (DateTime)datos.Lector["Fecha"],
                         NumeroFactura = datos.Lector["NumeroFactura"]?.ToString(),
                         MetodoPago = datos.Lector["MetodoPago"]?.ToString(),
-
-                        // TOTAL DE BD lo guardamos separado
                         TotalBD = datos.Lector["TotalBD"] != DBNull.Value
                             ? Convert.ToDecimal(datos.Lector["TotalBD"])
                             : 0,
-
                         Cliente = new Cliente
                         {
                             Id = (int)datos.Lector["IdCliente"],
                             Nombre = datos.Lector["NombreCliente"].ToString()
                         },
-
                         Cancelada = datos.Lector["Cancelada"] != DBNull.Value && (bool)datos.Lector["Cancelada"],
                         MotivoCancelacion = datos.Lector["MotivoCancelacion"]?.ToString(),
                         FechaCancelacion = datos.Lector["FechaCancelacion"] == DBNull.Value
                             ? (DateTime?)null
                             : Convert.ToDateTime(datos.Lector["FechaCancelacion"]),
-
                         UsuarioCancelacion = datos.Lector["IdUsuarioCancelacion"] == DBNull.Value
                             ? null
                             : new Usuario
@@ -169,7 +154,6 @@ WHERE 1 = 1
                                 Id = Convert.ToInt32(datos.Lector["IdUsuarioCancelacion"]),
                                 Nombre = datos.Lector["NombreUsuarioCancelacion"]?.ToString()
                             },
-
                         Lineas = new List<VentaLinea>()
                     };
                 }
@@ -184,8 +168,6 @@ WHERE 1 = 1
 
             return venta;
         }
-
-
 
         private List<VentaLinea> ListarLineasPorVenta(int idVenta)
         {
@@ -234,7 +216,6 @@ WHERE 1 = 1
                 foreach (var linea in venta.Lineas)
                     total += linea.Subtotal;
 
-                // Insertar la venta principal
                 datos.setearConsulta(@"
                     INSERT INTO Ventas (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
                     OUTPUT INSERTED.Id
@@ -248,7 +229,6 @@ WHERE 1 = 1
 
                 int idVenta = Convert.ToInt32(datos.EjecutarScalar());
 
-                // Insertar las líneas de la venta
                 foreach (var linea in venta.Lineas)
                 {
                     datos.setearConsulta(@"
@@ -260,7 +240,6 @@ WHERE 1 = 1
                     datos.setearParametro("@precio", linea.PrecioUnitario);
                     datos.ejecutarAccion();
 
-                    // Actualizar stock (restar)
                     datos.setearConsulta("UPDATE Productos SET StockActual = StockActual - @cant WHERE Id = @idProd");
                     datos.setearParametro("@cant", linea.Cantidad);
                     datos.setearParametro("@idProd", linea.Producto.Id);
@@ -279,7 +258,6 @@ WHERE 1 = 1
 
             try
             {
-                // Traemos líneas de la venta
                 datos.setearConsulta("SELECT IdProducto, Cantidad FROM DETALLE_VENTA WHERE IdVenta = @id");
                 datos.setearParametro("@id", idVenta);
                 datos.ejecutarLectura();
@@ -296,7 +274,6 @@ WHERE 1 = 1
 
                 datos.CerrarConexion();
 
-                // DEVOLVER stock (lo contrario de la venta)
                 foreach (var item in lineas)
                 {
                     AccesoDatos upd = new AccesoDatos();
@@ -309,7 +286,6 @@ WHERE 1 = 1
                     upd.CerrarConexion();
                 }
 
-                // Marcar venta como CANCELADA
                 AccesoDatos updVenta = new AccesoDatos();
                 updVenta.setearConsulta(@"
             UPDATE VENTAS
@@ -332,5 +308,219 @@ WHERE 1 = 1
             }
         }
 
+        public decimal ObtenerTotalVentasMes(int? idUsuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                string consulta = @"
+                    SELECT ISNULL(SUM(V.Total), 0)
+                    FROM VENTAS V
+                    WHERE V.Cancelada = 0
+                      AND V.Fecha >= @inicio
+                      AND V.Fecha < @fin";
+
+                if (idUsuario.HasValue)
+                    consulta += " AND V.IdUsuario = @idUsuario";
+
+                DateTime inicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                DateTime fin = inicio.AddMonths(1);
+
+                datos.setearConsulta(consulta);
+                datos.setearParametro("@inicio", inicio);
+                datos.setearParametro("@fin", fin);
+
+                if (idUsuario.HasValue)
+                    datos.setearParametro("@idUsuario", idUsuario.Value);
+
+                object r = datos.EjecutarScalar();
+                if (r == null || r == DBNull.Value)
+                    return 0;
+
+                return Convert.ToDecimal(r);
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public int ObtenerPedidosCompletadosMes(int? idUsuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                string consulta = @"
+                    SELECT COUNT(*)
+                    FROM VENTAS V
+                    WHERE V.Cancelada = 0
+                      AND V.Fecha >= @inicio
+                      AND V.Fecha < @fin";
+
+                if (idUsuario.HasValue)
+                    consulta += " AND V.IdUsuario = @idUsuario";
+
+                DateTime inicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                DateTime fin = inicio.AddMonths(1);
+
+                datos.setearConsulta(consulta);
+                datos.setearParametro("@inicio", inicio);
+                datos.setearParametro("@fin", fin);
+
+                if (idUsuario.HasValue)
+                    datos.setearParametro("@idUsuario", idUsuario.Value);
+
+                object r = datos.EjecutarScalar();
+                if (r == null || r == DBNull.Value)
+                    return 0;
+
+                return Convert.ToInt32(r);
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public int ObtenerClientesNuevosMes(int? idUsuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                string consulta = @"
+                    SELECT COUNT(DISTINCT V.IdCliente)
+                    FROM VENTAS V
+                    WHERE V.Cancelada = 0
+                      AND V.Fecha >= @inicio
+                      AND V.Fecha < @fin";
+
+                if (idUsuario.HasValue)
+                    consulta += " AND V.IdUsuario = @idUsuario";
+
+                DateTime inicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                DateTime fin = inicio.AddMonths(1);
+
+                datos.setearConsulta(consulta);
+                datos.setearParametro("@inicio", inicio);
+                datos.setearParametro("@fin", fin);
+
+                if (idUsuario.HasValue)
+                    datos.setearParametro("@idUsuario", idUsuario.Value);
+
+                object r = datos.EjecutarScalar();
+                if (r == null || r == DBNull.Value)
+                    return 0;
+
+                return Convert.ToInt32(r);
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public decimal ObtenerTicketPromedioMes(int? idUsuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                string consulta = @"
+                    SELECT ISNULL(
+                        SUM(V.Total) / NULLIF(COUNT(*), 0),
+                        0
+                    )
+                    FROM VENTAS V
+                    WHERE V.Cancelada = 0
+                      AND V.Fecha >= @inicio
+                      AND V.Fecha < @fin";
+
+                if (idUsuario.HasValue)
+                    consulta += " AND V.IdUsuario = @idUsuario";
+
+                DateTime inicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                DateTime fin = inicio.AddMonths(1);
+
+                datos.setearConsulta(consulta);
+                datos.setearParametro("@inicio", inicio);
+                datos.setearParametro("@fin", fin);
+
+                if (idUsuario.HasValue)
+                    datos.setearParametro("@idUsuario", idUsuario.Value);
+
+                object r = datos.EjecutarScalar();
+                if (r == null || r == DBNull.Value)
+                    return 0;
+
+                return Convert.ToDecimal(r);
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public List<TopProductoVendido> TopProductosVendidosMes(int? idUsuario)
+        {
+            List<TopProductoVendido> lista = new List<TopProductoVendido>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                string consulta = @"
+                    SELECT TOP 10
+                        P.Descripcion AS Producto,
+                        C.Nombre AS Categoria,
+                        SUM(DV.Cantidad) AS Unidades,
+                        SUM(DV.Cantidad * DV.PrecioUnitario) AS Ingresos,
+                        U.Nombre AS Vendedor
+                    FROM DETALLE_VENTA DV
+                    INNER JOIN VENTAS V ON DV.IdVenta = V.Id
+                    INNER JOIN PRODUCTOS P ON DV.IdProducto = P.Id
+                    INNER JOIN CATEGORIAS C ON P.IdCategoria = C.Id
+                    INNER JOIN USUARIOS U ON V.IdUsuario = U.Id
+                    WHERE V.Cancelada = 0
+                      AND V.Fecha >= @inicio
+                      AND V.Fecha < @fin";
+
+                if (idUsuario.HasValue)
+                    consulta += " AND V.IdUsuario = @idUsuario";
+
+                consulta += @"
+                    GROUP BY P.Descripcion, C.Nombre, U.Nombre
+                    ORDER BY Unidades DESC";
+
+                DateTime inicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                DateTime fin = inicio.AddMonths(1);
+
+                datos.setearConsulta(consulta);
+                datos.setearParametro("@inicio", inicio);
+                datos.setearParametro("@fin", fin);
+
+                if (idUsuario.HasValue)
+                    datos.setearParametro("@idUsuario", idUsuario.Value);
+
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    var item = new TopProductoVendido
+                    {
+                        Producto = datos.Lector["Producto"].ToString(),
+                        Categoria = datos.Lector["Categoria"].ToString(),
+                        Unidades = Convert.ToDecimal(datos.Lector["Unidades"]),
+                        Ingresos = Convert.ToDecimal(datos.Lector["Ingresos"]),
+                        Vendedor = datos.Lector["Vendedor"].ToString()
+                    };
+
+                    lista.Add(item);
+                }
+
+                return lista;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
     }
 }
