@@ -92,7 +92,6 @@ namespace Negocio
                 U.Nombre AS NombreUsuario,
                 C.Observaciones,
 
-                -- 🔥 CAMPOS DE CANCELACIÓN
                 C.Cancelada,
                 C.MotivoCancelacion,
                 C.FechaCancelacion,
@@ -203,6 +202,7 @@ namespace Negocio
 
             try
             {
+                // Traigo las líneas de la compra
                 datos.setearConsulta("SELECT IdProducto, Cantidad FROM COMPRA_LINEAS WHERE IdCompra = @id");
                 datos.setearParametro("@id", idCompra);
                 datos.ejecutarLectura();
@@ -216,18 +216,36 @@ namespace Negocio
 
                 datos.CerrarConexion();
 
-                // Revertir stock
+                // Ajustar stock sin dejar valores negativos
                 foreach (var item in lineas)
                 {
+                    // Traigo stock actual
+                    AccesoDatos get = new AccesoDatos();
+                    get.setearConsulta("SELECT StockActual FROM PRODUCTOS WHERE Id = @idProd");
+                    get.setearParametro("@idProd", item.idProd);
+                    get.ejecutarLectura();
+
+                    int stockActual = 0;
+                    if (get.Lector.Read())
+                        stockActual = Convert.ToInt32(get.Lector["StockActual"]);
+
+                    get.CerrarConexion();
+
+                    // Calculo stock resultante
+                    int nuevoStock = stockActual - item.cant;
+                    if (nuevoStock < 0)
+                        nuevoStock = 0;      // evitar negativos
+
+                    // Guardo el nuevo stock
                     AccesoDatos upd = new AccesoDatos();
-                    upd.setearConsulta("UPDATE Productos SET StockActual = StockActual - @cant WHERE Id = @idProd");
-                    upd.setearParametro("@cant", item.cant);
+                    upd.setearConsulta("UPDATE PRODUCTOS SET StockActual = @stk WHERE Id = @idProd");
+                    upd.setearParametro("@stk", nuevoStock);
                     upd.setearParametro("@idProd", item.idProd);
                     upd.ejecutarAccion();
                     upd.CerrarConexion();
                 }
 
-                // Marcar como cancelada
+                // Marcar la compra como cancelada
                 AccesoDatos updCompra = new AccesoDatos();
                 updCompra.setearConsulta(@"
             UPDATE Compras 
@@ -249,6 +267,7 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
 
 
     }

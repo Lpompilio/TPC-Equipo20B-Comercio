@@ -78,23 +78,30 @@
             </div>
 
             <!-- Grid con las líneas -->
-            <asp:GridView ID="gvLineas" runat="server" AutoGenerateColumns="False" CssClass="table table-sm table-hover">
-                <Columns>
-                    <asp:BoundField DataField="Producto.Descripcion" HeaderText="Producto" />
-                    <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" />
-                    <asp:BoundField DataField="PrecioUnitario" HeaderText="Precio Unitario" DataFormatString="{0:C}" />
-                    <asp:BoundField DataField="Subtotal" HeaderText="Subtotal" DataFormatString="{0:C}" />
-                    <asp:TemplateField HeaderText="Acciones">
-                        <ItemTemplate>
-                            <asp:LinkButton ID="cmdEliminar" runat="server" CommandName="Eliminar"
-                                CommandArgument='<%# Container.DataItemIndex %>'
-                                CssClass="btn btn-sm btn-danger">
-                                <i class="bi bi-trash"></i> Quitar
-                            </asp:LinkButton>
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                </Columns>
-            </asp:GridView>
+            <asp:GridView ID="gvLineas" runat="server"
+    AutoGenerateColumns="False"
+    CssClass="table table-sm table-hover"
+    OnRowCommand="gvLineas_RowCommand">
+
+    <Columns>
+        <asp:BoundField DataField="Producto.Descripcion" HeaderText="Producto" />
+        <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" />
+        <asp:BoundField DataField="PrecioUnitario" HeaderText="Precio Unitario" DataFormatString="{0:C}" />
+        <asp:BoundField DataField="Subtotal" HeaderText="Subtotal" DataFormatString="{0:C}" />
+
+        <asp:TemplateField HeaderText="Acciones">
+            <ItemTemplate>
+                <asp:LinkButton ID="cmdEliminar" runat="server"
+                    CommandName="Eliminar"
+                    CommandArgument='<%# Container.DataItemIndex %>'
+                    CssClass="btn btn-sm btn-danger">
+                    <i class="bi bi-trash"></i> Quitar
+                </asp:LinkButton>
+            </ItemTemplate>
+        </asp:TemplateField>
+    </Columns>
+</asp:GridView>
+
 
             <!-- Total -->
             <div class="text-end mt-3">

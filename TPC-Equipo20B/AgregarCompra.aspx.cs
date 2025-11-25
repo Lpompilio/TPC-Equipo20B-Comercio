@@ -34,6 +34,8 @@ namespace TPC_Equipo20B
             }
         }
 
+
+
         private void CargarCombos()
         {
             // Proveedores
@@ -116,6 +118,9 @@ namespace TPC_Equipo20B
             // Actualizar el GridView
             ActualizarGrid();
 
+            if (Lineas.Count == 1)
+                ddlProveedor.Enabled = false;
+
             // Limpiar campos
             ddlProducto.SelectedIndex = 0;
             txtCantidad.Text = "";
@@ -128,11 +133,22 @@ namespace TPC_Equipo20B
         {
             if (e.CommandName == "Eliminar")
             {
-                int index = Convert.ToInt32(e.CommandArgument);
+                int index;
+
+                if (!int.TryParse(e.CommandArgument.ToString(), out index))
+                    return;
+
+                if (index < 0 || index >= Lineas.Count)
+                    return;
+
                 Lineas.RemoveAt(index);
                 ActualizarGrid();
+
+                if (Lineas.Count == 0)
+                    ddlProveedor.Enabled = true;
             }
         }
+
 
         private void ActualizarGrid()
         {
