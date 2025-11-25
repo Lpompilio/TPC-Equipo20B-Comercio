@@ -68,11 +68,16 @@ namespace TPC_Equipo20B
         {
             lblErrorStock.Text = "";
 
-            if (ddlProducto.SelectedValue == "0" || string.IsNullOrEmpty(txtCantidad.Text) || string.IsNullOrEmpty(txtPrecio.Text))
+            if (ddlProducto.SelectedValue == "0" ||
+                string.IsNullOrEmpty(txtCantidad.Text) ||
+                string.IsNullOrEmpty(txtPrecio.Text))
                 return;
 
             ProductoNegocio productoNeg = new ProductoNegocio();
-            Producto prod = productoNeg.Listar().FirstOrDefault(p => p.Id == int.Parse(ddlProducto.SelectedValue));
+            int idProducto = int.Parse(ddlProducto.SelectedValue);
+
+            // Traigo producto real de BD (stock real)
+            Producto prod = productoNeg.ObtenerPorId(idProducto);
 
             if (prod == null)
             {
@@ -80,18 +85,28 @@ namespace TPC_Equipo20B
                 return;
             }
 
-            int cantidad = int.Parse(txtCantidad.Text);
+            int cantidadSolicitada = int.Parse(txtCantidad.Text);
 
-            if (cantidad > prod.StockActual)
+            // Calcular cantidad ya agregada en esta venta para este producto
+            decimal cantidadYaAgregada = Lineas
+                .Where(l => l.Producto.Id == idProducto)
+                .Sum(l => l.Cantidad);
+
+            // Stock disponible real para esta venta
+            int stockDisponible = (int)prod.StockActual - (int)cantidadYaAgregada;
+
+            if (cantidadSolicitada > stockDisponible)
             {
-                lblErrorStock.Text = $"Stock insuficiente. Solo hay {prod.StockActual} unidades disponibles de \"{prod.Descripcion}\".";
+                lblErrorStock.Text =
+                    $"Stock insuficiente. Disponible: {stockDisponible} unidad(es) del producto \"{prod.Descripcion}\".";
                 return;
             }
 
+            // Si pasa la validación, agregamos la línea
             VentaLinea nueva = new VentaLinea
             {
                 Producto = prod,
-                Cantidad = cantidad,
+                Cantidad = cantidadSolicitada,
                 PrecioUnitario = decimal.Parse(txtPrecio.Text)
             };
 
@@ -100,10 +115,12 @@ namespace TPC_Equipo20B
             gvLineas.DataBind();
             ActualizarTotal();
 
+            // Limpiar campos
             txtCantidad.Text = "";
             ddlProducto.SelectedIndex = 0;
             txtPrecio.Text = "";
         }
+
 
         protected void gvLineas_RowCommand(object sender, GridViewCommandEventArgs e)
         {
