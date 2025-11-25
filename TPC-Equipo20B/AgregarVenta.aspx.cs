@@ -142,6 +142,7 @@ namespace TPC_Equipo20B
                 };
 
                 VentaNegocio negocio = new VentaNegocio();
+                // Registrar ya se encarga de guardar y enviar el mail
                 negocio.Registrar(venta);
 
                 Session["VentaLineas"] = null;

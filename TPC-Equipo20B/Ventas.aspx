@@ -39,7 +39,7 @@
                 <ItemTemplate><%# Eval("Cliente.Nombre") %></ItemTemplate>
             </asp:TemplateField>
 
-            <asp:BoundField DataField="NumeroFactura" HeaderText="N° Factura" />
+            <asp:BoundField DataField="NumeroFactura" HeaderText="N° Remito" />
 
             <asp:BoundField DataField="MetodoPago" HeaderText="Método de Pago" />
 

@@ -3,48 +3,105 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
+    <script type="text/javascript">
+        function imprimirComprobante(nombreArchivo) {
+            if (nombreArchivo && nombreArchivo.trim() !== "") {
+                document.title = nombreArchivo;
+            }
+            window.print();
+            return false;
+        }
+    </script>
+
+    <style type="text/css">
+        @media print {
+            .navbar,
+            .btn-cerrar,
+            .btn-imprimir,
+            .btn-enviar-mail,
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background: #ffffff !important;
+            }
+
+            .card {
+                box-shadow: none !important;
+                border: 1px solid #000 !important;
+            }
+
+            .card-header {
+                background-color: #ffffff !important;
+                color: #000 !important;
+                border-bottom: 1px solid #000 !important;
+            }
+
+            .alert {
+                border: 1px solid #000 !important;
+            }
+        }
+    </style>
+
     <div class="d-flex justify-content-center align-items-center" style="min-height:80vh;">
         <div class="card shadow-lg border-0" style="width: 700px; max-width: 95%;">
 
-            <!-- HEADER -->
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h4 class="mb-0"><i class="bi bi-receipt me-2"></i>Detalle de Venta</h4>
-                <asp:Button ID="btnCerrar" runat="server" Text="✖"
-                    CssClass="btn btn-light btn-sm fw-bold"
-                    OnClick="btnCerrar_Click" />
+                <h4 class="mb-0">
+                    <i class="bi bi-receipt me-2"></i>Detalle de Venta
+                </h4>
+
+                <div class="d-flex gap-2">
+                    <asp:Button ID="btnEnviarMail" runat="server"
+                        CssClass="btn btn-warning btn-sm fw-bold btn-enviar-mail"
+                        Text="Reenviar mail"
+                        OnClick="btnEnviarMail_Click" />
+
+                    <asp:Button ID="btnImprimir" runat="server"
+                        CssClass="btn btn-light btn-sm fw-bold btn-imprimir"
+                        Text="Imprimir / PDF"
+                        UseSubmitBehavior="false"
+                        OnClientClick="return imprimirComprobante('<%= NombreComprobante %>');" />
+
+                    <asp:Button ID="btnCerrar" runat="server" Text="✖"
+                        CssClass="btn btn-light btn-sm fw-bold btn-cerrar"
+                        OnClick="btnCerrar_Click" />
+                </div>
             </div>
 
-            <!-- PANEL CANCELADA -->
             <div runat="server" id="panelCancelada" visible="false"
-                    class="alert alert-danger fw-bold">
+                 class="alert alert-danger fw-bold mb-0">
                 <i class="bi bi-x-circle"></i> Esta venta está cancelada.<br />
                 Motivo: <asp:Label ID="lblMotivo" runat="server" /><br />
-                N° Nota de Crédito: <asp:Label ID="lblNumeroNC" runat="server" /><br />
+                N° Nota de Crédito: <asp:Label ID="lblNC" runat="server" /><br />
                 Fecha: <asp:Label ID="lblFechaCanc" runat="server" /><br />
                 Usuario: <asp:Label ID="lblUsuarioCanc" runat="server" />
             </div>
 
-            <!-- BODY -->
             <div class="card-body">
 
                 <div class="mb-3">
-                    <strong>Cliente:</strong> <asp:Label ID="lblCliente" runat="server" CssClass="ms-1" />
+                    <strong>Cliente:</strong>
+                    <asp:Label ID="lblCliente" runat="server" CssClass="ms-1" />
                 </div>
 
                 <div class="mb-3">
-                    <strong>Fecha:</strong> <asp:Label ID="lblFecha" runat="server" CssClass="ms-1" />
+                    <strong>Fecha:</strong>
+                    <asp:Label ID="lblFecha" runat="server" CssClass="ms-1" />
                 </div>
 
                 <div class="mb-3">
-                    <strong>Método de Pago:</strong> <asp:Label ID="lblMetodoPago" runat="server" CssClass="ms-1" />
+                    <strong>Método de Pago:</strong>
+                    <asp:Label ID="lblMetodoPago" runat="server" CssClass="ms-1" />
                 </div>
 
                 <div class="mb-3">
-                    <strong>N° Factura:</strong> <asp:Label ID="lblFactura" runat="server" CssClass="ms-1" />
+                    <strong>N° Remito:</strong>
+                    <asp:Label ID="lblFactura" runat="server" CssClass="ms-1" />
                 </div>
             </div>
 
-            <!-- GRILLA -->
             <div class="table-responsive px-3">
                 <asp:GridView ID="gvLineas" runat="server" AutoGenerateColumns="False"
                     CssClass="table table-sm table-striped align-middle mb-0">
@@ -61,7 +118,6 @@
                 </asp:GridView>
             </div>
 
-            <!-- FOOTER -->
             <div class="card-footer d-flex justify-content-end bg-light">
                 <h5 class="fw-bold text-end mb-0">Total:
                     <asp:Label ID="lblTotal" runat="server"

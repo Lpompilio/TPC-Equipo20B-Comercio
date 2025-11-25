@@ -11,19 +11,16 @@ namespace Negocio
             AccesoDatos datos = new AccesoDatos();
             try
             {
-                
                 if (ExisteUsername(nuevoUsuario.Username))
                 {
                     throw new Exception("El nombre de usuario ya está en uso");
                 }
 
-                
                 if (ExisteEmail(nuevoUsuario.Email))
                 {
                     throw new Exception("El correo electrónico ya está registrado");
                 }
 
-               
                 datos.setearConsulta(@"INSERT INTO USUARIOS (Nombre, Documento, Email, Telefono, Direccion, Localidad, Username, Password, Activo) 
                                        VALUES (@Nombre, @Documento, @Email, @Telefono, @Direccion, @Localidad, @Username, @Password, @Activo);
                                        SELECT SCOPE_IDENTITY();");
@@ -42,6 +39,12 @@ namespace Negocio
 
                 // Asignar rol de Vendedor (Id = 2)
                 AsignarRol(idUsuario, 2);
+
+                // Mail de bienvenida si tiene email
+                if (!string.IsNullOrWhiteSpace(nuevoUsuario.Email))
+                {
+                    EmailService.EnviarBienvenidaUsuario(nuevoUsuario);
+                }
 
                 return true;
             }
@@ -201,6 +204,7 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
         public bool ActualizarUsuario(Usuario usuario)
         {
             AccesoDatos datos = new AccesoDatos();
@@ -259,7 +263,5 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
-
-
     }
 }

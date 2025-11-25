@@ -25,13 +25,10 @@ SELECT
     V.MotivoCancelacion,
     V.FechaCancelacion,
     V.IdUsuarioCancelacion,
-
     V.IdUsuario,
     U.Nombre AS NombreUsuario,
-
     C.Id AS IdCliente,  
     C.Nombre AS NombreCliente
-
 FROM Ventas V
 INNER JOIN Clientes C ON V.IdCliente = C.Id
 INNER JOIN Usuarios U ON V.IdUsuario = U.Id
@@ -113,10 +110,9 @@ WHERE 1 = 1
                 V.MotivoCancelacion,
                 V.FechaCancelacion,
                 V.IdUsuarioCancelacion,
-
                 C.Id AS IdCliente,
                 C.Nombre AS NombreCliente,
-
+                C.Email AS EmailCliente,
                 U.Nombre AS NombreUsuarioCancelacion
             FROM VENTAS V
             INNER JOIN CLIENTES C ON V.IdCliente = C.Id
@@ -142,7 +138,10 @@ WHERE 1 = 1
                         Cliente = new Cliente
                         {
                             Id = (int)datos.Lector["IdCliente"],
-                            Nombre = datos.Lector["NombreCliente"].ToString()
+                            Nombre = datos.Lector["NombreCliente"].ToString(),
+                            Email = datos.Lector["EmailCliente"] == DBNull.Value
+                                ? null
+                                : datos.Lector["EmailCliente"].ToString()
                         },
                         Cancelada = datos.Lector["Cancelada"] != DBNull.Value && (bool)datos.Lector["Cancelada"],
                         MotivoCancelacion = datos.Lector["MotivoCancelacion"]?.ToString(),
@@ -205,12 +204,12 @@ WHERE 1 = 1
                 }
                 return lineas;
             }
-            finally { datos.CerrarConexion(); }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
 
-        // ======================================
-        //  NUMERACIÓN AUTOMÁTICA DE FACTURAS
-        // ======================================
         private string GenerarNumeroFactura()
         {
             AccesoDatos datos = new AccesoDatos();
@@ -218,16 +217,18 @@ WHERE 1 = 1
             try
             {
                 datos.setearConsulta(@"
-                    SELECT TOP 1 NumeroFactura
-                    FROM VENTAS
-                    WHERE NumeroFactura IS NOT NULL AND NumeroFactura <> ''
-                    ORDER BY Id DESC;
-                ");
+            SELECT TOP 1 NumeroFactura
+            FROM VENTAS
+            WHERE NumeroFactura LIKE 'R-%'
+                  AND NumeroFactura IS NOT NULL
+                  AND NumeroFactura <> ''
+            ORDER BY Id DESC;
+        ");
 
                 object resultado = datos.EjecutarScalar();
 
                 if (resultado == null || resultado == DBNull.Value)
-                    return "A-0001-00000001";
+                    return "R-0001-00000001";
 
                 string ultimo = resultado.ToString().Trim();
 
@@ -238,11 +239,10 @@ WHERE 1 = 1
                     int.TryParse(ultimo.Substring(posGuion + 1), out correlativoActual))
                 {
                     correlativoActual++;
-                    string prefijo = ultimo.Substring(0, posGuion + 1);
-                    return $"{prefijo}{correlativoActual:00000000}";
+                    return $"R-0001-{correlativoActual:00000000}";
                 }
 
-                return "A-0001-00000001";
+                return "R-0001-00000001";
             }
             finally
             {
@@ -250,9 +250,6 @@ WHERE 1 = 1
             }
         }
 
-        // ======================================
-        //  NUMERACIÓN AUTOMÁTICA DE NOTAS DE CRÉDITO
-        // ======================================
         private string GenerarNumeroNC()
         {
             AccesoDatos datos = new AccesoDatos();
@@ -295,6 +292,7 @@ WHERE 1 = 1
         public void Registrar(Venta venta)
         {
             AccesoDatos datos = new AccesoDatos();
+            int idVenta = 0;
 
             try
             {
@@ -316,7 +314,7 @@ WHERE 1 = 1
                 datos.setearParametro("@metodo", venta.MetodoPago ?? "");
                 datos.setearParametro("@total", total);
 
-                int idVenta = Convert.ToInt32(datos.EjecutarScalar());
+                idVenta = Convert.ToInt32(datos.EjecutarScalar());
 
                 foreach (var linea in venta.Lineas)
                 {
@@ -338,6 +336,23 @@ WHERE 1 = 1
             finally
             {
                 datos.CerrarConexion();
+            }
+
+            // ---------- ENVÍO AUTOMÁTICO DE FACTURA (SILENCIOSO) ----------
+            try
+            {
+                Venta ventaCompleta = ObtenerPorId(idVenta);
+
+                if (ventaCompleta != null &&
+                    ventaCompleta.Cliente != null &&
+                    !string.IsNullOrEmpty(ventaCompleta.Cliente.Email))
+                {
+                    EnviarFacturaPorMail(ventaCompleta);
+                }
+            }
+            catch
+            {
+                // silencioso: NO rompe el registro de venta
             }
         }
 
@@ -375,7 +390,6 @@ WHERE 1 = 1
                     upd.CerrarConexion();
                 }
 
-                // Generamos número de Nota de Crédito
                 string numeroNC = GenerarNumeroNC();
 
                 AccesoDatos updVenta = new AccesoDatos();
@@ -399,6 +413,23 @@ WHERE 1 = 1
             finally
             {
                 datos.CerrarConexion();
+            }
+
+            // ---------- ENVÍO AUTOMÁTICO DE NOTA DE CRÉDITO (SILENCIOSO) ----------
+            try
+            {
+                Venta ventaCancelada = ObtenerPorId(idVenta);
+
+                if (ventaCancelada != null &&
+                    ventaCancelada.Cliente != null &&
+                    !string.IsNullOrEmpty(ventaCancelada.Cliente.Email))
+                {
+                    EnviarFacturaPorMail(ventaCancelada); // reutiliza el mismo método
+                }
+            }
+            catch
+            {
+                // silencioso: no rompe la cancelación
             }
         }
 
@@ -569,7 +600,7 @@ WHERE 1 = 1
                         U.Nombre AS Vendedor
                     FROM DETALLE_VENTA DV
                     INNER JOIN VENTAS V ON DV.IdVenta = V.Id
-                    INNER INNER JOIN PRODUCTOS P ON DV.IdProducto = P.Id
+                    INNER JOIN PRODUCTOS P ON DV.IdProducto = P.Id
                     INNER JOIN CATEGORIAS C ON P.IdCategoria = C.Id
                     INNER JOIN USUARIOS U ON V.IdUsuario = U.Id
                     WHERE V.Cancelada = 0
@@ -615,6 +646,19 @@ WHERE 1 = 1
             {
                 datos.CerrarConexion();
             }
+        }
+
+        // ----------------------------------------------------
+        // ENVÍO DE MAIL
+        // ----------------------------------------------------
+        public void EnviarFacturaPorMail(Venta venta)
+        {
+            EmailService.EnviarFactura(venta);
+        }
+
+        public void EnviarMailFactura(Venta venta)
+        {
+            EnviarFacturaPorMail(venta);
         }
     }
 }

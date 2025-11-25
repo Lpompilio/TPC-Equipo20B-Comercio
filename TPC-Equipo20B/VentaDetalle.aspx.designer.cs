@@ -15,6 +15,24 @@ namespace TPC_Equipo20B
     {
 
         /// <summary>
+        /// Control btnEnviarMail.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnEnviarMail;
+
+        /// <summary>
+        /// Control btnImprimir.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnImprimir;
+
+        /// <summary>
         /// Control btnCerrar.
         /// </summary>
         /// <remarks>
@@ -42,13 +60,13 @@ namespace TPC_Equipo20B
         protected global::System.Web.UI.WebControls.Label lblMotivo;
 
         /// <summary>
-        /// Control lblNumeroNC.
+        /// Control lblNC.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblNumeroNC;
+        protected global::System.Web.UI.WebControls.Label lblNC;
 
         /// <summary>
         /// Control lblFechaCanc.

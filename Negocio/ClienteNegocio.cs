@@ -51,7 +51,6 @@ namespace Negocio
                         Localidad = datos.Lector["Localidad"].ToString(),
                         CondicionIVA = datos.Lector["CondicionIVA"].ToString(),
                         Habilitado = (bool)datos.Lector["Habilitado"],
-
                         IdUsuarioAlta = datos.Lector["IdUsuarioAlta"] != DBNull.Value
                                         ? Convert.ToInt32(datos.Lector["IdUsuarioAlta"])
                                         : 0
@@ -67,8 +66,6 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
-
-
 
         public Cliente BuscarPorId(int id)
         {
@@ -105,7 +102,9 @@ namespace Negocio
 
             try
             {
-                if (c.Id == 0)
+                bool esNuevo = (c.Id == 0);
+
+                if (esNuevo)
                 {
                     datos.setearConsulta(@"
                 INSERT INTO Clientes 
@@ -135,10 +134,16 @@ namespace Negocio
                 datos.setearParametro("@iva", c.CondicionIVA);
                 datos.setearParametro("@hab", c.Habilitado);
 
-                if (c.Id == 0)
+                if (esNuevo)
                     datos.setearParametro("@idUser", c.IdUsuarioAlta);
 
                 datos.ejecutarAccion();
+
+                // Mail de bienvenida SOLO para clientes nuevos con email
+                if (esNuevo && !string.IsNullOrWhiteSpace(c.Email))
+                {
+                    EmailService.EnviarBienvenidaCliente(c);
+                }
             }
             catch (SqlException ex)
             {
@@ -148,14 +153,13 @@ namespace Negocio
                     throw new Exception("El documento ingresado ya existe. Por favor verifique los datos.");
                 }
 
-                throw; 
+                throw;
             }
             finally
             {
                 datos.CerrarConexion();
             }
         }
-
 
         public void Eliminar(int id)
         {
@@ -171,7 +175,5 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
-
-
     }
 }
