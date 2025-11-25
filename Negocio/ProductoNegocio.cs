@@ -14,21 +14,31 @@ namespace Negocio
             try
             {
                 string query = @"
-                    SELECT 
-                        P.Id, P.CodigoSKU, P.Descripcion, P.StockMinimo, P.StockActual,
-                        P.PorcentajeGanancia, P.Activo,
-                        C.Id AS IdCategoria, C.Nombre AS NombreCategoria,
-                        M.Id AS IdMarca, M.Nombre AS NombreMarca
-                    FROM PRODUCTOS P
-                    INNER JOIN CATEGORIAS C ON P.IdCategoria = C.Id
-                    LEFT JOIN MARCAS M ON P.IdMarca = M.Id
-                    WHERE P.Activo = 1";
+            SELECT DISTINCT
+                P.Id, P.CodigoSKU, P.Descripcion, P.StockMinimo, P.StockActual,
+                P.PorcentajeGanancia, P.Activo,
+                C.Id AS IdCategoria, C.Nombre AS NombreCategoria,
+                M.Id AS IdMarca, M.Nombre AS NombreMarca
+            FROM PRODUCTOS P
+            INNER JOIN CATEGORIAS C ON P.IdCategoria = C.Id
+            LEFT JOIN MARCAS M ON P.IdMarca = M.Id
+            LEFT JOIN PRODUCTO_PROVEEDOR PP ON PP.IdProducto = P.Id
+            LEFT JOIN PROVEEDORES PR ON PR.Id = PP.IdProveedor
+            WHERE P.Activo = 1";
 
+                // FILTRO POR PROVEEDOR
                 if (idProveedor.HasValue && idProveedor.Value > 0)
-                    query += " AND EXISTS (SELECT 1 FROM PRODUCTO_PROVEEDOR PP WHERE PP.IdProducto = P.Id AND PP.IdProveedor = @idProv)";
+                    query += " AND PP.IdProveedor = @idProv";
 
+                // FILTRO POR BUSQUEDA
                 if (!string.IsNullOrWhiteSpace(q))
-                    query += " AND (P.Descripcion LIKE @q OR P.CodigoSKU LIKE @q OR C.Nombre LIKE @q OR M.Nombre LIKE @q OR PR.Nombre LIKE @q)";
+                    query += @" AND (
+                            P.Descripcion LIKE @q 
+                            OR P.CodigoSKU LIKE @q 
+                            OR C.Nombre LIKE @q 
+                            OR M.Nombre LIKE @q
+                            OR PR.Nombre LIKE @q
+                        )";
 
                 query += " ORDER BY P.Descripcion";
 
@@ -58,13 +68,11 @@ namespace Negocio
                             Id = (int)datos.Lector["IdCategoria"],
                             Nombre = (string)datos.Lector["NombreCategoria"]
                         },
-                        Marca = datos.Lector["IdMarca"] is DBNull
-                            ? null
-                            : new Marca
-                            {
-                                Id = (int)datos.Lector["IdMarca"],
-                                Nombre = (string)datos.Lector["NombreMarca"]
-                            },
+                        Marca = datos.Lector["IdMarca"] is DBNull ? null : new Marca
+                        {
+                            Id = (int)datos.Lector["IdMarca"],
+                            Nombre = (string)datos.Lector["NombreMarca"]
+                        }
                     };
 
                     lista.Add(p);
@@ -77,6 +85,7 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
 
         public Producto ObtenerPorId(int id)
         {
@@ -202,9 +211,9 @@ namespace Negocio
                 {
                     datos.setearConsulta(@"
                         INSERT INTO PRODUCTOS
-                            (CodigoSKU, Descripcion, StockMinimo, StockActual, PorcentajeGanancia, UrlImagen, Activo, IdCategoria, IdMarca, IdProveedor)
+                            (CodigoSKU, Descripcion, StockMinimo, StockActual, PorcentajeGanancia, Activo, IdCategoria, IdMarca)
                         VALUES
-                            (@sku, @desc, @min, @act, @gan, @img, @actv, @idCat, @idMar, @idProv);
+                            (@sku, @desc, @min, @act, @gan, @actv, @idCat, @idMar);
                         SELECT SCOPE_IDENTITY();");
 
                     datos.setearParametro("@sku", p.CodigoSKU);
@@ -212,11 +221,9 @@ namespace Negocio
                     datos.setearParametro("@min", p.StockMinimo);
                     datos.setearParametro("@act", p.StockActual);
                     datos.setearParametro("@gan", p.PorcentajeGanancia);
-                    datos.setearParametro("@img", p.UrlImagen);
                     datos.setearParametro("@actv", p.Activo);
                     datos.setearParametro("@idCat", p.Categoria.Id);
                     datos.setearParametro("@idMar", p.Marca != null && p.Marca.Id > 0 ? (object)p.Marca.Id : DBNull.Value);
-                    datos.setearParametro("@idProv", p.Proveedor != null && p.Proveedor.Id > 0 ? (object)p.Proveedor.Id : DBNull.Value);
 
                     var nuevoId = Convert.ToInt32(datos.EjecutarScalar());
                     p.Id = nuevoId;
@@ -229,11 +236,9 @@ namespace Negocio
                             Descripcion = @desc,
                             StockMinimo = @min,
                             PorcentajeGanancia = @gan,
-                            UrlImagen = @img,
                             Activo = @actv,
                             IdCategoria = @idCat,
-                            IdMarca = @idMar,
-                            IdProveedor = @idProv
+                            IdMarca = @idMar
                         WHERE Id = @id");
 
                     datos.setearParametro("@id", p.Id);
@@ -241,11 +246,9 @@ namespace Negocio
                     datos.setearParametro("@desc", p.Descripcion);
                     datos.setearParametro("@min", p.StockMinimo);
                     datos.setearParametro("@gan", p.PorcentajeGanancia);
-                    datos.setearParametro("@img", p.UrlImagen);
                     datos.setearParametro("@actv", p.Activo);
                     datos.setearParametro("@idCat", p.Categoria.Id);
                     datos.setearParametro("@idMar", p.Marca != null && p.Marca.Id > 0 ? (object)p.Marca.Id : DBNull.Value);
-                    datos.setearParametro("@idProv", p.Proveedor != null && p.Proveedor.Id > 0 ? (object)p.Proveedor.Id : DBNull.Value);
                     datos.ejecutarAccion();
                 }
             }

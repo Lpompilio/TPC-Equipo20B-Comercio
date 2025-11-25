@@ -21,7 +21,7 @@ namespace Negocio
                 if (!string.IsNullOrWhiteSpace(q))
                 {
                     // si usás Activo, acá sería: " AND Nombre LIKE @q"
-                    consulta += " WHERE Nombre LIKE @q";
+                    consulta += " AND Nombre LIKE @q";
                 }
 
                 consulta += " ORDER BY Nombre";
