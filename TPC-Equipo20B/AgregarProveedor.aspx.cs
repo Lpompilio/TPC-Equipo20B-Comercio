@@ -31,25 +31,33 @@ namespace TPC_Equipo20B
 
         protected void btnGuardar_Click(object sender, EventArgs e)
         {
-            if (Page.IsValid)
+            try
             {
-                var p = new Proveedor
+                Proveedor p = new Proveedor
                 {
-                    Id = Id,
-                    Nombre = txtNombre.Text.Trim(),
-                    RazonSocial = txtRazonSocial.Text.Trim(),
-                    Documento = txtDocumento.Text.Trim(),
-                    Email = txtEmail.Text.Trim(),
-                    Telefono = txtTelefono.Text.Trim(),
-                    Direccion = txtDireccion.Text.Trim(),
-                    Localidad = txtLocalidad.Text.Trim(),
-                    CondicionIVA = txtIVA.Text.Trim()
+                    Id = (Request.QueryString["id"] != null ? int.Parse(Request.QueryString["id"]) : 0),
+                    Nombre = txtNombre.Text,
+                    RazonSocial = txtRazonSocial.Text,
+                    Documento = txtDocumento.Text,
+                    Email = txtEmail.Text,
+                    Telefono = txtTelefono.Text,
+                    Direccion = txtDireccion.Text,
+                    Localidad = txtLocalidad.Text,
+                    CondicionIVA = txtIVA.Text
                 };
 
-                _negocio.Guardar(p);
-                Response.Redirect("Proveedores.aspx");
+                ProveedorNegocio negocio = new ProveedorNegocio();
+                negocio.Guardar(p);
+
+                Response.Redirect("Proveedores.aspx", false);
+            }
+            catch (Exception ex)
+            {
+                panelError.Visible = true;
+                lblError.Text = ex.Message;
             }
         }
+
 
         protected void btnCancelar_Click(object sender, EventArgs e)
         {

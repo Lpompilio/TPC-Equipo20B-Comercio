@@ -110,31 +110,51 @@ namespace Negocio
 
             try
             {
+                // Busco si existe un proveedor con este CUIT
+                var existente = BuscarPorCuit(p.Documento);
+
+                // Si existe y NO soy yo
+                if (existente != null && existente.Id != p.Id)
+                {
+                    if (existente.Activo)
+                    {
+                        // Ya existe uno activo, no se puede duplicar
+                        throw new Exception("Ya existe un proveedor activo con este CUIT.");
+                    }
+                    else
+                    {
+                        // Existe pero está INACTIVO, lo IGNORAMOS
+                    }
+                }
+
+                // Alta nueva
                 if (p.Id == 0)
                 {
                     datos.setearConsulta(@"
-                        INSERT INTO PROVEEDORES
-                            (Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Activo)
-                        VALUES
-                            (@nom, @razon, @doc, @mail, @tel, @dir, @loc, @iva, 1)");
+                INSERT INTO PROVEEDORES
+                    (Nombre, RazonSocial, Documento, Email, Telefono, Direccion, Localidad, CondicionIVA, Activo)
+                VALUES
+                    (@nom, @razon, @doc, @mail, @tel, @dir, @loc, @iva, 1)");
                 }
                 else
                 {
+                    // Modificación de un proveedor existente
                     datos.setearConsulta(@"
-                        UPDATE PROVEEDORES SET
-                            Nombre = @nom,
-                            RazonSocial = @razon,
-                            Documento = @doc,
-                            Email = @mail,
-                            Telefono = @tel,
-                            Direccion = @dir,
-                            Localidad = @loc,
-                            CondicionIVA = @iva
-                        WHERE Id = @id");
+                UPDATE PROVEEDORES SET
+                    Nombre = @nom,
+                    RazonSocial = @razon,
+                    Documento = @doc,
+                    Email = @mail,
+                    Telefono = @tel,
+                    Direccion = @dir,
+                    Localidad = @loc,
+                    CondicionIVA = @iva
+                WHERE Id = @id");
 
                     datos.setearParametro("@id", p.Id);
                 }
 
+                // Parámetros comunes
                 datos.setearParametro("@nom", p.Nombre);
                 datos.setearParametro("@razon", p.RazonSocial);
                 datos.setearParametro("@doc", (object)p.Documento ?? DBNull.Value);
@@ -152,6 +172,8 @@ namespace Negocio
             }
         }
 
+
+
         public void Eliminar(int id)
         {
             var datos = new AccesoDatos();
@@ -167,5 +189,41 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
+        public Proveedor BuscarPorCuit(string cuit)
+        {
+            var datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta("SELECT * FROM PROVEEDORES WHERE Documento = @cuit");
+                datos.setearParametro("@cuit", cuit);
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    return new Proveedor
+                    {
+                        Id = (int)datos.Lector["Id"],
+                        Nombre = datos.Lector["Nombre"].ToString(),
+                        RazonSocial = datos.Lector["RazonSocial"].ToString(),
+                        Documento = datos.Lector["Documento"].ToString(),
+                        Email = datos.Lector["Email"].ToString(),
+                        Telefono = datos.Lector["Telefono"].ToString(),
+                        Direccion = datos.Lector["Direccion"].ToString(),
+                        Localidad = datos.Lector["Localidad"].ToString(),
+                        CondicionIVA = datos.Lector["CondicionIVA"].ToString(),
+                        Activo = (bool)datos.Lector["Activo"]
+                    };
+                }
+
+                return null;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
     }
 }

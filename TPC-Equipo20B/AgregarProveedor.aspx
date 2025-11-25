@@ -13,6 +13,14 @@
         <p class="text-muted">Complete los datos del proveedor</p>
     </div>
 
+    <asp:Panel ID="panelError" runat="server" Visible="false">
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <asp:Label ID="lblError" runat="server" Text=""></asp:Label>
+    </div>
+    </asp:Panel>
+
+
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="row g-3 mb-3">
