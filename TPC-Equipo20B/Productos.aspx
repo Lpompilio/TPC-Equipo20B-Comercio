@@ -19,6 +19,15 @@
                   <% } %>
   </div>
 
+    <div class="form-check mb-3">
+    <asp:CheckBox ID="chkSoloHabilitados" runat="server"
+        CssClass="form-check-input"
+        AutoPostBack="true"
+        OnCheckedChanged="chkSoloHabilitados_CheckedChanged" />
+    <label class="form-check-label" for="chkSoloHabilitados">
+        Mostrar solo habilitados
+    </label>
+</div>
   <!-- Panel para que ENTER dispare la búsqueda y no el botón Agregar -->
   <asp:Panel ID="pnlBusquedaProductos" runat="server" DefaultButton="btnBuscarProducto">
 

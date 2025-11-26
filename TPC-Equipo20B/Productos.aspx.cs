@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Negocio;
+using System;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Negocio;
 
 namespace TPC_Equipo20B
 {
@@ -29,9 +30,16 @@ namespace TPC_Equipo20B
         private void Bind(string q = null, int? idProveedor = null)
         {
             var negocio = new ProductoNegocio();
-            gvProductos.DataSource = negocio.Listar(q, idProveedor);
+            var lista = negocio.Listar(q, idProveedor);
+
+            // FILTRO SOLO HABILITADOS
+            if (chkSoloHabilitados.Checked)
+                lista = lista.Where(x => x.Habilitado).ToList();
+
+            gvProductos.DataSource = lista;
             gvProductos.DataBind();
         }
+
 
         protected void btnAgregarProducto_Click(object sender, EventArgs e)
         {
@@ -96,6 +104,10 @@ namespace TPC_Equipo20B
             }
         }
 
+        protected void chkSoloHabilitados_CheckedChanged(object sender, EventArgs e)
+        {
+            Bind(txtBuscarProducto.Text, ddlProveedor.SelectedValue != "" ? (int?)int.Parse(ddlProveedor.SelectedValue) : null);
+        }
 
 
     }
