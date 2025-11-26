@@ -2,6 +2,13 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
+    <style>
+    .fila-deshabilitada td {
+        background-color: #f0f0f0 !important;
+        color: #6c757d !important;
+    }
+</style>
+
   <div class="d-flex align-items-center justify-content-between mb-3">
     <h2 class="page-title m-0">Gestión de Productos</h2>
                    <% if ((bool)(Session["EsAdmin"] ?? false)) { %>
@@ -39,7 +46,8 @@
         AutoGenerateColumns="False"
         DataKeyNames="Id"
         OnRowCommand="gvProductos_RowCommand"
-        OnRowDataBound="gvProductos_RowDataBound">
+        OnRowDataBound="gvProductos_RowDataBound"
+          >
 
         <Columns>
           <asp:BoundField DataField="Descripcion" HeaderText="Producto" />
@@ -48,13 +56,16 @@
           <asp:BoundField DataField="StockMinimo" HeaderText="Stock Mínimo" />
           <asp:BoundField DataField="PorcentajeGanancia" HeaderText="Ganancia (%)" />
 
-          <asp:TemplateField HeaderText="Activo">
-            <ItemTemplate>
-              <%# (bool)Eval("Activo")
-                ? "<span class='badge bg-success'>Sí</span>"
-                : "<span class='badge bg-secondary'>No</span>" %>
-            </ItemTemplate>
-          </asp:TemplateField>
+<asp:TemplateField HeaderText="Habilitado">
+    <ItemTemplate>
+        <%# (bool)Eval("Habilitado")
+            ? "<span class='badge bg-success'>Sí</span>"
+            : "<span class='badge bg-danger'>No</span>" %>
+    </ItemTemplate>
+</asp:TemplateField>
+
+
+
           <asp:TemplateField HeaderText="Acciones" HeaderStyle-CssClass="text-center">
             <ItemStyle CssClass="action-col text-center" />
             <ItemTemplate>

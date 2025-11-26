@@ -16,10 +16,10 @@ namespace Dominio
         public Proveedor Proveedor { get; set; }
         public decimal StockMinimo { get; set; }
         public decimal StockActual { get; set; }
-
-        public string UrlImagen { get; set; }
         public decimal PorcentajeGanancia { get; set; }
         public bool Activo { get; set; } = true;
+
+        public bool Habilitado { get; set; } = true;
 
         public List<PrecioCompra> PreciosCompra { get; set; } = new List<PrecioCompra>();
 

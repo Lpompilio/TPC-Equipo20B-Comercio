@@ -36,7 +36,6 @@ namespace TPC_Equipo20B
             txtStockMinimo.Text = p.StockMinimo.ToString("0.##");
             txtStockActual.Text = p.StockActual.ToString("0.##");
             txtGanancia.Text = p.PorcentajeGanancia.ToString("0.##");
-            txtUrlImagen.Text = p.UrlImagen ?? "";
             chkActivo.Checked = p.Activo;
         }
 
@@ -47,7 +46,6 @@ namespace TPC_Equipo20B
                 Id = IdProducto,
                 Descripcion = txtDescripcion.Text?.Trim(),
                 CodigoSKU = txtCodigo.Text?.Trim(),
-                UrlImagen = txtUrlImagen.Text?.Trim(),
                 Activo = chkActivo.Checked
             };
 

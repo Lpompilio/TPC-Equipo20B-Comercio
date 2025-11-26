@@ -62,7 +62,7 @@ namespace TPC_Equipo20B
                 txtStockMinimo.Text = producto.StockMinimo.ToString();
                 txtStockActual.Text = producto.StockActual.ToString();
                 txtGanancia.Text = producto.PorcentajeGanancia.ToString();
-                chkActivo.Checked = producto.Activo;
+                chkHabilitado.Checked = producto.Habilitado;
 
                 // SKU existente
                 txtSKU.Text = producto.CodigoSKU;
@@ -106,20 +106,24 @@ namespace TPC_Equipo20B
                 StockMinimo = stockMin,
                 StockActual = 0,
                 PorcentajeGanancia = ganancia,
-                Activo = chkActivo.Checked,
+
+                // AHORA: usa Habilitado
+                Habilitado = chkHabilitado.Checked,
+
+                // Activo ya NO se modifica desde el form
+                //Activo = chkActivo.Checked;
+
                 Marca = new Marca { Id = idMarca },
                 Categoria = new Categoria { Id = idCategoria }
             };
 
-            if (idMarca > 0)
-                p.Marca = new Marca { Id = idMarca };
-
             if (ViewState["idProducto"] != null)
                 p.Id = (int)ViewState["idProducto"];
 
-            // Guardar producto y relaciones
+            // Guardar producto
             negocio.Guardar(p);
 
+            // Guardar los proveedores asociados
             List<int> proveedoresSeleccionados = new List<int>();
 
             foreach (GridViewRow row in gvProveedores.Rows)

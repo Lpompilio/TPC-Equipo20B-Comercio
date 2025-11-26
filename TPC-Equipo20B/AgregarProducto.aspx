@@ -95,8 +95,8 @@
                     </div>
 
                     <div class="form-check form-switch mb-3">
-                        <asp:CheckBox ID="chkActivo" runat="server" Checked="true" CssClass="form-check-input" />
-                        <label class="form-check-label" for="chkActivo">Producto activo</label>
+                        <asp:CheckBox ID="chkHabilitado" runat="server" Checked="true" CssClass="form-check-input" />
+                        <label class="form-check-label" for="chkHabilitado">Producto Habilitado</label>
                     </div>
                 </div>
 

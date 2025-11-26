@@ -71,16 +71,32 @@ namespace TPC_Equipo20B
 
         protected void gvProductos_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (e.Row.RowType == DataControlRowType.DataRow ||
-                e.Row.RowType == DataControlRowType.Header)
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                // Visibilidad acciones
+                bool esAdmin = (bool)(Session["EsAdmin"] ?? false);
+                int indexAcciones = gvProductos.Columns.Count - 1;
+                e.Row.Cells[indexAcciones].Visible = esAdmin;
+
+                // Pintar filas deshabilitadas
+                bool habilitado = (bool)DataBinder.Eval(e.Row.DataItem, "Habilitado");
+
+                if (!habilitado)
+                {
+                    e.Row.CssClass = "fila-deshabilitada";
+                }
+
+            }
+
+            if (e.Row.RowType == DataControlRowType.Header)
             {
                 bool esAdmin = (bool)(Session["EsAdmin"] ?? false);
-
                 int indexAcciones = gvProductos.Columns.Count - 1;
-
                 e.Row.Cells[indexAcciones].Visible = esAdmin;
             }
         }
+
+
 
     }
 }
