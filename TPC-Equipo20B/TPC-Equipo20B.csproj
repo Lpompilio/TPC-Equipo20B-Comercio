@@ -87,6 +87,7 @@
     <Content Include="Proveedores.aspx" />
     <Content Include="RegistroUsuario.aspx" />
     <Content Include="Reportes.aspx" />
+    <Content Include="Usuarios.aspx" />
     <Content Include="VentaDetalle.aspx" />
     <Content Include="Ventas.aspx" />
     <Content Include="Web.config" />
@@ -206,6 +207,13 @@
     </Compile>
     <Compile Include="Perfil.aspx.designer.cs">
       <DependentUpon>Perfil.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Usuarios.aspx.cs">
+      <DependentUpon>Usuarios.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Usuarios.aspx.designer.cs">
+      <DependentUpon>Usuarios.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utilidades\Permisos.cs" />
     <Compile Include="ProductoEditar.aspx.cs">

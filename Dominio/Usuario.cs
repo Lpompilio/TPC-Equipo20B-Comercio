@@ -20,5 +20,14 @@ namespace Dominio
         public bool Activo { get; set; } = true;
 
         public List<UsuarioRol> Roles { get; set; } = new List<UsuarioRol>();
+
+        public string RolDescripcion
+        {
+            get
+            {
+                return Roles.Count > 0 ? Roles.First().Nombre : "Sin rol";
+            }
+        }
+
     }
 }

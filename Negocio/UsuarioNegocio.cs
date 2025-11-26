@@ -263,5 +263,90 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+        public List<Usuario> ListarUsuarios(string q = null)
+        {
+            var lista = new List<Usuario>();
+            var datos = new AccesoDatos();
+
+            try
+            {
+                string query = @"
+                SELECT 
+    U.Id, U.Nombre, U.Documento, U.Email, U.Telefono,
+    U.Direccion, U.Localidad, U.Username, U.Password, U.Activo,
+    R.Id AS IdRol,
+    R.Descripcion AS RolDescripcion
+FROM USUARIOS U
+INNER JOIN USUARIO_ROLES UR ON UR.IdUsuario = U.Id
+INNER JOIN ROLES R ON R.Id = UR.IdRol
+";
+
+                if (!string.IsNullOrWhiteSpace(q))
+                {
+                    query += @" AND (
+                            U.Nombre LIKE @q OR 
+                            U.Email LIKE @q OR
+                            U.Username LIKE @q
+                           )";
+                }
+
+                datos.setearConsulta(query);
+
+                if (!string.IsNullOrWhiteSpace(q))
+                    datos.setearParametro("@q", "%" + q + "%");
+
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Usuario u = new Usuario
+                    {
+                        Id = (int)datos.Lector["Id"],
+                        Nombre = datos.Lector["Nombre"] as string,
+                        Documento = datos.Lector["Documento"] as string,
+                        Email = (string)datos.Lector["Email"],
+                        Telefono = datos.Lector["Telefono"] as string,
+                        Direccion = datos.Lector["Direccion"] as string,
+                        Localidad = datos.Lector["Localidad"] as string,
+                        Username = (string)datos.Lector["Username"],
+                        Password = (string)datos.Lector["Password"],
+                        Activo = (bool)datos.Lector["Activo"],
+                    };
+
+                    // Rol asignado
+                    var rol = new UsuarioRol
+                    {
+                        Id = (int)datos.Lector["IdRol"],
+                        Nombre = (string)datos.Lector["RolDescripcion"] // viene de ROLES.Descripcion
+                    };
+
+
+                    u.Roles.Add(rol);
+
+                    lista.Add(u);
+                }
+
+                return lista;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public void HacerAdmin(int idUsuario)
+        {
+            var datos = new AccesoDatos();
+            try
+            {
+                datos.setearConsulta("UPDATE USUARIO_ROLES SET IdRol = 1 WHERE IdUsuario = @id");
+                datos.setearParametro("@id", idUsuario);
+                datos.ejecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
     }
 }

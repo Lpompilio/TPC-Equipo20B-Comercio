@@ -87,7 +87,16 @@
             </ul>
           </li>
         </ul>
-        
+        <% if ((bool)(Session["EsAdmin"] ?? false)) { %>
+    <ul class="navbar-nav ms-3">
+        <li class="nav-item">
+            <a class="nav-link text-primary fw-semibold" href="/Usuarios.aspx">
+                <i class="bi bi-people"></i> Usuarios
+            </a>
+        </li>
+    </ul>
+<% } %>
+
         <!-- Dropdown de Usuario -->
         <div class="dropdown user-dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
