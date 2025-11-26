@@ -11,6 +11,24 @@
     .precio-venta {
         font-weight: bold;
     }
+
+    /* Íconos de orden */
+    .sort-icon {
+        font-size: 0.8rem;
+        opacity: 0.6;
+        margin-left: 4px;
+    }
+
+    /* Link del header clickable */
+    .sort-link {
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+    }
+
+    .sort-link:hover {
+        opacity: 0.7;
+    }
 </style>
 
 <div class="d-flex align-items-center justify-content-between mb-3">
@@ -34,7 +52,7 @@
     </label>
 </div>
 
-<!-- Panel para que ENTER dispare la búsqueda -->
+<!-- Panel de búsqueda -->
 <asp:Panel ID="pnlBusquedaProductos" runat="server" DefaultButton="btnBuscarProducto">
 
     <div class="toolbar d-flex gap-2 mb-3">
@@ -59,6 +77,8 @@
         <asp:GridView ID="gvProductos" runat="server"
             CssClass="table table-hover align-middle"
             AutoGenerateColumns="False"
+            AllowSorting="true"
+            OnSorting="gvProductos_Sorting"
             DataKeyNames="Id"
             OnRowCommand="gvProductos_RowCommand"
             OnRowDataBound="gvProductos_RowDataBound">
@@ -66,29 +86,89 @@
             <Columns>
 
 
-                <asp:BoundField DataField="Descripcion" HeaderText="Producto" />
+                <asp:TemplateField SortExpression="Descripcion">
+                    <HeaderTemplate>
+                        <asp:LinkButton runat="server"
+                                        CommandName="Sort"
+                                        CommandArgument="Descripcion"
+                                        CssClass="sort-link">
+                            Producto <span class="sort-icon">▲ ▼</span>
+                        </asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("Descripcion") %>
+                    </ItemTemplate>
+                </asp:TemplateField>
 
 
-                <asp:BoundField DataField="CodigoSKU" HeaderText="Código SKU" />
+                <asp:TemplateField SortExpression="CodigoSKU">
+                    <HeaderTemplate>
+                        <asp:LinkButton runat="server"
+                                        CommandName="Sort"
+                                        CommandArgument="CodigoSKU"
+                                        CssClass="sort-link">
+                            Código SKU <span class="sort-icon">▲ ▼</span>
+                        </asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("CodigoSKU") %>
+                    </ItemTemplate>
+                </asp:TemplateField>
 
 
-                <asp:TemplateField HeaderText="Marca">
+                <asp:TemplateField SortExpression="Marca.Nombre">
+                    <HeaderTemplate>
+                        <asp:LinkButton runat="server"
+                                        CommandName="Sort"
+                                        CommandArgument="Marca.Nombre"
+                                        CssClass="sort-link">
+                            Marca <span class="sort-icon">▲ ▼</span>
+                        </asp:LinkButton>
+                    </HeaderTemplate>
                     <ItemTemplate>
                         <%# Eval("Marca.Nombre") ?? "-" %>
                     </ItemTemplate>
                 </asp:TemplateField>
 
 
-                <asp:TemplateField HeaderText="Categoría">
+                <asp:TemplateField SortExpression="Categoria.Nombre">
+                    <HeaderTemplate>
+                        <asp:LinkButton runat="server"
+                                        CommandName="Sort"
+                                        CommandArgument="Categoria.Nombre"
+                                        CssClass="sort-link">
+                            Categoría <span class="sort-icon">▲ ▼</span>
+                        </asp:LinkButton>
+                    </HeaderTemplate>
                     <ItemTemplate>
                         <%# Eval("Categoria.Nombre") ?? "-" %>
                     </ItemTemplate>
                 </asp:TemplateField>
 
 
-                <asp:BoundField DataField="StockActual" HeaderText="Stock Actual" />
+                <asp:TemplateField SortExpression="StockActual">
+                    <HeaderTemplate>
+                        <asp:LinkButton runat="server"
+                                        CommandName="Sort"
+                                        CommandArgument="StockActual"
+                                        CssClass="sort-link">
+                            Stock Actual <span class="sort-icon">▲ ▼</span>
+                        </asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("StockActual") %>
+                    </ItemTemplate>
+                </asp:TemplateField>
 
-                <asp:TemplateField HeaderText="Precio Venta">
+                <asp:TemplateField SortExpression="PrecioVenta">
+                    <HeaderTemplate>
+                        <asp:LinkButton runat="server"
+                                        CommandName="Sort"
+                                        CommandArgument="PrecioVenta"
+                                        CssClass="sort-link">
+                            Precio Venta <span class="sort-icon">▲ ▼</span>
+                        </asp:LinkButton>
+                    </HeaderTemplate>
                     <ItemTemplate>
                         <span class="precio-venta">
                             <%# String.Format("$ {0:N2}", Eval("PrecioVenta")) %>
@@ -97,13 +177,22 @@
                 </asp:TemplateField>
 
 
-                <asp:TemplateField HeaderText="Habilitado">
+                <asp:TemplateField SortExpression="Habilitado">
+                    <HeaderTemplate>
+                        <asp:LinkButton runat="server"
+                                        CommandName="Sort"
+                                        CommandArgument="Habilitado"
+                                        CssClass="sort-link">
+                            Habilitado <span class="sort-icon">▲ ▼</span>
+                        </asp:LinkButton>
+                    </HeaderTemplate>
                     <ItemTemplate>
                         <%# (bool)Eval("Habilitado")
                             ? "<span class='badge bg-success'>Sí</span>"
                             : "<span class='badge bg-danger'>No</span>" %>
                     </ItemTemplate>
                 </asp:TemplateField>
+
 
                 <asp:TemplateField HeaderText="Acciones" HeaderStyle-CssClass="text-center">
                     <ItemStyle CssClass="action-col text-center" />
@@ -121,7 +210,6 @@
                 </asp:TemplateField>
 
             </Columns>
-
         </asp:GridView>
     </div>
 

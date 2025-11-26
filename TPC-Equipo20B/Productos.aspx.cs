@@ -110,5 +110,50 @@ namespace TPC_Equipo20B
         }
 
 
+        protected void gvProductos_Sorting(object sender, GridViewSortEventArgs e)
+        {
+            var negocio = new ProductoNegocio();
+
+
+            int? idProv = null;
+            int temp;
+
+            if (int.TryParse(ddlProveedor.SelectedValue, out temp))
+                idProv = temp;
+
+
+            var lista = negocio.Listar(txtBuscarProducto.Text, idProv);
+
+
+            if (chkSoloHabilitados.Checked)
+                lista = lista.Where(x => x.Habilitado).ToList();
+
+            if (ViewState["SortExpression"] as string == e.SortExpression)
+            {
+                if ((string)ViewState["SortDirection"] == "ASC")
+                    ViewState["SortDirection"] = "DESC";
+                else
+                    ViewState["SortDirection"] = "ASC";
+            }
+            else
+            {
+                ViewState["SortExpression"] = e.SortExpression;
+                ViewState["SortDirection"] = "ASC";
+            }
+
+            string direction = ViewState["SortDirection"].ToString();
+            string expr = e.SortExpression;
+
+            if (direction == "ASC")
+                lista = lista.OrderBy(p => DataBinder.Eval(p, expr)).ToList();
+            else
+                lista = lista.OrderByDescending(p => DataBinder.Eval(p, expr)).ToList();
+
+            gvProductos.DataSource = lista;
+            gvProductos.DataBind();
+        }
+
+
+
     }
 }
