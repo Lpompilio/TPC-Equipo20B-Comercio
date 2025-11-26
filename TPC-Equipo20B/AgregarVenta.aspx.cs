@@ -42,7 +42,7 @@ namespace TPC_Equipo20B
             ddlCliente.DataBind();
             ddlCliente.Items.Insert(0, new ListItem("-- Seleccione --", "0"));
 
-            ddlProducto.DataSource = productoNeg.Listar();
+            ddlProducto.DataSource = productoNeg.ListarHabilitados();
             ddlProducto.DataTextField = "Descripcion";
             ddlProducto.DataValueField = "Id";
             ddlProducto.DataBind();
