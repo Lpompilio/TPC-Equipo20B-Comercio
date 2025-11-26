@@ -15,8 +15,10 @@ namespace Negocio
             {
                 string query = @"
         SELECT DISTINCT
-            P.Id, P.CodigoSKU, P.Descripcion, P.StockMinimo, P.StockActual,
-            P.PorcentajeGanancia, P.Activo, P.Habilitado,
+            P.Id, P.CodigoSKU, P.Descripcion, 
+            P.StockMinimo, P.StockActual,
+            P.PorcentajeGanancia, 
+            P.Activo, P.Habilitado,
             C.Id AS IdCategoria, C.Nombre AS NombreCategoria,
             M.Id AS IdMarca, M.Nombre AS NombreMarca
         FROM PRODUCTOS P
@@ -26,11 +28,9 @@ namespace Negocio
         LEFT JOIN PROVEEDORES PR ON PR.Id = PP.IdProveedor
         WHERE P.Activo = 1";
 
-                // FILTRO POR PROVEEDOR
                 if (idProveedor.HasValue && idProveedor.Value > 0)
                     query += " AND PP.IdProveedor = @idProv";
 
-                // FILTRO POR BUSQUEDA
                 if (!string.IsNullOrWhiteSpace(q))
                     query += @" AND (
                         P.Descripcion LIKE @q 
@@ -79,6 +79,34 @@ namespace Negocio
                     lista.Add(p);
                 }
 
+                datos.CerrarConexion();
+
+                // 🚀 Cargar el último precio de compra de cada producto
+                foreach (var prod in lista)
+                {
+                    var datosPrecios = new AccesoDatos();
+                    datosPrecios.setearConsulta(@"
+                SELECT TOP 1 Precio, Fecha 
+                FROM PRECIOS_COMPRA 
+                WHERE IdProducto = @idProd
+                ORDER BY Fecha DESC");
+
+                    datosPrecios.setearParametro("@idProd", prod.Id);
+                    datosPrecios.ejecutarLectura();
+
+                    if (datosPrecios.Lector.Read())
+                    {
+                        prod.PreciosCompra.Add(new PrecioCompra
+                        {
+                            ProductoId = prod.Id,
+                            PrecioUnitario = (decimal)datosPrecios.Lector["Precio"],
+                            Fecha = (DateTime)datosPrecios.Lector["Fecha"]
+                        });
+                    }
+
+                    datosPrecios.CerrarConexion();
+                }
+
                 return lista;
             }
             finally
@@ -86,6 +114,7 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
 
         public List<Producto> ListarHabilitados()
         {
