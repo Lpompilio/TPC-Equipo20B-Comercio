@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Dominio;
 using Negocio;
-using Dominio;
+using System;
+using System.Web.UI.WebControls;
 
 namespace TPC_Equipo20B
 {
@@ -29,8 +30,26 @@ namespace TPC_Equipo20B
             }
         }
 
+        protected void cvNombreRazon_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            bool tieneNombre = !string.IsNullOrEmpty(txtNombre.Text);
+            bool tieneRazon = !string.IsNullOrEmpty(txtRazonSocial.Text);
+
+            // Si tiene nombre O tiene razón social, es válido.
+            if (tieneNombre || tieneRazon)
+            {
+                args.IsValid = true;
+            }
+            else
+            {
+                args.IsValid = false;
+            }
+        }
+
         protected void btnGuardar_Click(object sender, EventArgs e)
         {
+            if (!Page.IsValid)
+                return;
             try
             {
                 Proveedor p = new Proveedor

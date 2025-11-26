@@ -63,22 +63,41 @@ namespace TPC_Equipo20B
 
             txtPrecio.Text = prod.PrecioVenta.ToString("0.00");
         }
+        protected void ValidarCantidad_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            int cantidad;
+            if (int.TryParse(args.Value, out cantidad) && cantidad > 0)
+            {
+                args.IsValid = true;
+            }
+            else
+            {
+                args.IsValid = false;
+            }
+        }
 
         protected void btnAgregarLinea_Click(object sender, EventArgs e)
         {
             lblErrorStock.Text = "";
 
+            // Validar campos vacíos ANTES de ejecutar Page.Validate()
             if (ddlProducto.SelectedValue == "0" ||
                 string.IsNullOrEmpty(txtCantidad.Text) ||
                 string.IsNullOrEmpty(txtPrecio.Text))
                 return;
+
+            // Ahora sí validar cantidad
+            Page.Validate("AgregarLinea");
+            if (!Page.IsValid)
+            {
+                return; // Detener si hay errores de validación
+            }
 
             ProductoNegocio productoNeg = new ProductoNegocio();
             int idProducto = int.Parse(ddlProducto.SelectedValue);
 
             // Traigo producto real de BD (stock real)
             Producto prod = productoNeg.ObtenerPorId(idProducto);
-
             if (prod == null)
             {
                 lblErrorStock.Text = "❌ Error: producto no encontrado.";
@@ -144,8 +163,19 @@ namespace TPC_Equipo20B
         {
             try
             {
-                if (ddlCliente.SelectedValue == "0" || Lineas.Count == 0)
+
+                bool clienteNoSeleccionado = ddlCliente.SelectedValue == "0";
+                bool sinProductos = (Lineas == null || Lineas.Count == 0);
+
+                if (clienteNoSeleccionado || sinProductos)
+                {
+
+                    lblMensajeFooter.Text = "Debe cargar los datos (Seleccione cliente y agregue productos)";
+                    lblMensajeFooter.Visible = true;
                     return;
+                }
+
+                lblMensajeFooter.Visible = false;
 
                 int idUsuario = Session["UsuarioId"] != null ? (int)Session["UsuarioId"] : 0;
 
@@ -159,15 +189,16 @@ namespace TPC_Equipo20B
                 };
 
                 VentaNegocio negocio = new VentaNegocio();
-                // Registrar ya se encarga de guardar y enviar el mail
                 negocio.Registrar(venta);
 
                 Session["VentaLineas"] = null;
-                Response.Redirect("Ventas.aspx");
+                Response.Redirect("Ventas.aspx", false);
             }
             catch (Exception ex)
             {
-                Response.Write("<script>alert('Error al registrar la venta: " + ex.Message + "');</script>");
+  
+                lblMensajeFooter.Text = "Error al registrar la venta: " + ex.Message;
+                lblMensajeFooter.Visible = true;
             }
         }
 

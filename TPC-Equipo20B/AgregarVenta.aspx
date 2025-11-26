@@ -8,6 +8,18 @@
             color: red;
             font-size: 12px;
         }
+
+        .error-flotante {
+            position: absolute;
+            font-size: 0.8rem;
+            margin-top: 2px;
+        }
+
+        .sin-flechas::-webkit-outer-spin-button,
+        .sin-flechas::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
     </style>
 
     <div class="mb-4">
@@ -20,15 +32,23 @@
 
             <!-- Datos principales -->
             <div class="row g-3 mb-3">
-                <div class="col-md-6">
+
+                <div class="col-md-6 position-relative">
                     <label for="ddlCliente" class="form-label">Cliente</label>
-                    <asp:DropDownList ID="ddlCliente" runat="server" CssClass="form-select"></asp:DropDownList>
-                    <asp:RequiredFieldValidator ErrorMessage="Seleccione un cliente"
-                        ControlToValidate="ddlCliente" InitialValue="0"
-                        CssClass="validator" runat="server" />
+                    <asp:DropDownList ID="ddlCliente" runat="server" CssClass="form-select">
+                    </asp:DropDownList>
+
+                    <asp:RequiredFieldValidator ID="rfvCliente" runat="server"
+                        ControlToValidate="ddlCliente"
+                        ErrorMessage="Seleccione un cliente"
+                        InitialValue="0"
+                        ValidationGroup="AgregarLinea"
+                        CssClass="text-danger error-flotante"
+                        Display="Dynamic">
+                    </asp:RequiredFieldValidator>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-3 position-relative">
                     <label for="ddlMetodoPago" class="form-label">Método de Pago</label>
                     <asp:DropDownList ID="ddlMetodoPago" runat="server" CssClass="form-select">
                         <asp:ListItem Text="-- Seleccione --" Value="0" />
@@ -36,6 +56,15 @@
                         <asp:ListItem Text="Tarjeta" Value="Tarjeta" />
                         <asp:ListItem Text="Transferencia" Value="Transferencia" />
                     </asp:DropDownList>
+
+                    <asp:RequiredFieldValidator ID="rfvMetodoPago" runat="server"
+                        ControlToValidate="ddlMetodoPago"
+                        ErrorMessage="Seleccione método"
+                        InitialValue="0"
+                        ValidationGroup="AgregarLinea"
+                        CssClass="text-danger error-flotante"
+                        Display="Dynamic">
+                    </asp:RequiredFieldValidator>
                 </div>
 
                 <div class="col-md-3">
@@ -45,35 +74,81 @@
             </div>
 
             <!-- Detalle de la venta -->
-            <hr />
             <h5 class="fw-bold mb-3">Detalle de la Venta</h5>
 
             <div class="row g-3 align-items-end mb-3">
-                <div class="col-md-5">
+
+                <div class="col-md-5 position-relative">
                     <label for="ddlProducto" class="form-label">Producto</label>
                     <asp:DropDownList ID="ddlProducto" runat="server"
                         CssClass="form-select"
                         AutoPostBack="true"
                         OnSelectedIndexChanged="ddlProducto_SelectedIndexChanged">
                     </asp:DropDownList>
+
+                    <asp:RequiredFieldValidator ID="rfvProducto" runat="server"
+                        ControlToValidate="ddlProducto"
+                        ErrorMessage="Seleccione un producto"
+                        InitialValue="0"
+                        ValidationGroup="AgregarLinea"
+                        CssClass="text-danger error-flotante"
+                        Display="Dynamic">
+                    </asp:RequiredFieldValidator>
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-2 position-relative">
                     <label for="txtCantidad" class="form-label">Cantidad</label>
-                    <asp:TextBox ID="txtCantidad" runat="server" CssClass="form-control" TextMode="Number" />
+
+                    <asp:TextBox ID="txtCantidad" runat="server"
+                        CssClass="form-control sin-flechas"
+                        TextMode="Number"
+                        min="1" />
+
+                    <asp:RequiredFieldValidator ID="rfvCantidad" runat="server"
+                        ControlToValidate="txtCantidad"
+                        ErrorMessage="Ingresar cantidad"
+                        ValidationGroup="AgregarLinea"
+                        CssClass="text-danger error-flotante"
+                        Display="Dynamic">
+                    </asp:RequiredFieldValidator>
+
+                    <asp:CompareValidator ID="cvCantidad" runat="server"
+                        ControlToValidate="txtCantidad"
+                        ErrorMessage="Debe ser mayor a 0"
+                        ValueToCompare="0"
+                        Operator="GreaterThan"
+                        Type="Currency"
+                        ValidationGroup="AgregarLinea"
+                        CssClass="text-danger error-flotante"
+                        Display="Dynamic">
+                    </asp:CompareValidator>
+
+                    <asp:CustomValidator ID="CustomValidatorCantidad" runat="server"
+                        ControlToValidate="txtCantidad"
+                        ErrorMessage="Stock insuficiente"
+                        CssClass="text-danger error-flotante"
+                        Display="Dynamic"
+                        OnServerValidate="ValidarCantidad_ServerValidate"
+                        ValidationGroup="AgregarLinea"
+                        EnableClientScript="false">
+                    </asp:CustomValidator>
                 </div>
 
                 <div class="col-md-3">
                     <label for="txtPrecio" class="form-label">Precio Unitario</label>
-                    <asp:TextBox ID="txtPrecio" runat="server" CssClass="form-control" ReadOnly="true" />
+                    <asp:TextBox ID="txtPrecio" runat="server"
+                        CssClass="form-control"
+                        ReadOnly="true" />
                 </div>
 
-                <div class="col-md-2 d-grid">
-                    <asp:Label ID="lblErrorStock" runat="server" CssClass="text-danger fw-bold" />
+                <div class="col-md-2">
+                    <asp:Label ID="lblErrorStock" runat="server" CssClass="text-danger fw-bold small d-block mb-1" />
                     <asp:Button ID="btnAgregarLinea" runat="server"
                         Text="Agregar"
-                        CssClass="btn btn-success"
-                        OnClick="btnAgregarLinea_Click" />
+                        CssClass="btn btn-success w-100"
+                        ValidationGroup="AgregarLinea"
+                        OnClick="btnAgregarLinea_Click"
+                        CausesValidation="true" />
                 </div>
             </div>
 
@@ -90,7 +165,8 @@
                             <asp:LinkButton ID="cmdEliminar" runat="server"
                                 CommandName="Eliminar"
                                 CommandArgument='<%# Container.DataItemIndex %>'
-                                CssClass="btn btn-sm btn-danger">
+                                CssClass="btn btn-sm btn-danger"
+                                CausesValidation="false">
                                 <i class="bi bi-trash"></i> Quitar
                             </asp:LinkButton>
                         </ItemTemplate>
@@ -99,24 +175,34 @@
             </asp:GridView>
 
             <div class="text-end mt-3">
-                <h5>Total: <asp:Label ID="lblTotal" runat="server"
-                    CssClass="fw-bold text-success" Text="$0.00"></asp:Label></h5>
+                <h5>Total:
+                    <asp:Label ID="lblTotal" runat="server"
+                        CssClass="fw-bold text-success" Text="$0.00"></asp:Label></h5>
             </div>
         </div>
 
         <!-- Footer botones -->
-        <div class="card-footer d-flex justify-content-end gap-2">
-            <asp:Button ID="btnCancelar" runat="server"
-                Text="Cancelar"
-                CssClass="btn btn-outline-secondary"
-                OnClick="btnCancelar_Click" />
+        <div class="card-footer pb-3">
+            <div class="d-flex justify-content-end gap-2">
+                <asp:Button ID="btnCancelar" runat="server"
+                    Text="Cancelar"
+                    CssClass="btn btn-outline-secondary"
+                    OnClick="btnCancelar_Click"
+                    CausesValidation="false"
+                    UseSubmitBehavior="false" />
 
-            <asp:Button ID="btnGuardar" runat="server"
-                Text="Guardar Venta"
-                CssClass="btn btn-success"
-                OnClick="btnGuardar_Click" />
+                <asp:Button ID="btnGuardar" runat="server"
+                    Text="Guardar Venta"
+                    CssClass="btn btn-success"
+                    OnClick="btnGuardar_Click"
+                    CausesValidation="false" />
+            </div>
+
+            <div class="mt-2 text-end">
+                <asp:Label ID="lblMensajeFooter" runat="server"
+                    CssClass="text-danger fw-bold small"
+                    Visible="false">
+        </asp:Label>
+            </div>
         </div>
-    </div>
-
 </asp:Content>
-

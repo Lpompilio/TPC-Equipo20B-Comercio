@@ -164,8 +164,18 @@ namespace TPC_Equipo20B
 
         protected void btnGuardar_Click(object sender, EventArgs e)
         {
-            if (ddlProveedor.SelectedValue == "0" || Lineas.Count == 0)
+            bool proveedorVacio = ddlProveedor.SelectedValue == "0";
+            bool sinProductos = (Lineas == null || Lineas.Count == 0);
+
+            if (proveedorVacio || sinProductos)
+            {
+
+                lblMensajeFooter.Visible = true;
+                lblMensajeFooter.Text = "Es necesario cargar los datos (Seleccione proveedor y agregue productos)";
                 return;
+            }
+
+            lblMensajeFooter.Visible = false;
 
             CompraNegocio negocio = new CompraNegocio();
 
@@ -179,7 +189,7 @@ namespace TPC_Equipo20B
             Compra compra = new Compra
             {
                 Proveedor = new Proveedor { Id = int.Parse(ddlProveedor.SelectedValue) },
-                Fecha = DateTime.Now,
+                Fecha = DateTime.Parse(txtFecha.Text),
                 Usuario = (Usuario)Session["Usuario"],
                 Observaciones = txtObservaciones.Text,
                 Lineas = Lineas
