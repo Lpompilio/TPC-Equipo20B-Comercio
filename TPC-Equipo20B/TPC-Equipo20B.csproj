@@ -79,6 +79,7 @@
     <Content Include="ConfirmarEliminar.aspx" />
     <Content Include="Dashboard.aspx" />
     <Content Include="Default.aspx" />
+    <Content Include="EditarUsuario.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Marcas.aspx" />
     <Content Include="Perfil.aspx" />
@@ -191,6 +192,13 @@
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EditarUsuario.aspx.cs">
+      <DependentUpon>EditarUsuario.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditarUsuario.aspx.designer.cs">
+      <DependentUpon>EditarUsuario.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

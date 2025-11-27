@@ -12,18 +12,15 @@ namespace Negocio
             try
             {
                 if (ExisteUsername(nuevoUsuario.Username))
-                {
                     throw new Exception("El nombre de usuario ya está en uso");
-                }
 
                 if (ExisteEmail(nuevoUsuario.Email))
-                {
                     throw new Exception("El correo electrónico ya está registrado");
-                }
 
-                datos.setearConsulta(@"INSERT INTO USUARIOS (Nombre, Documento, Email, Telefono, Direccion, Localidad, Username, Password, Activo) 
-                                       VALUES (@Nombre, @Documento, @Email, @Telefono, @Direccion, @Localidad, @Username, @Password, @Activo);
-                                       SELECT SCOPE_IDENTITY();");
+                datos.setearConsulta(@"
+                    INSERT INTO USUARIOS (Nombre, Documento, Email, Telefono, Direccion, Localidad, Username, Password, Activo) 
+                    VALUES (@Nombre, @Documento, @Email, @Telefono, @Direccion, @Localidad, @Username, @Password, @Activo);
+                    SELECT SCOPE_IDENTITY();");
 
                 datos.setearParametro("@Nombre", nuevoUsuario.Nombre);
                 datos.setearParametro("@Documento", nuevoUsuario.Documento);
@@ -42,9 +39,7 @@ namespace Negocio
 
                 // Mail de bienvenida si tiene email
                 if (!string.IsNullOrWhiteSpace(nuevoUsuario.Email))
-                {
                     EmailService.EnviarBienvenidaUsuario(nuevoUsuario);
-                }
 
                 return true;
             }
@@ -127,10 +122,11 @@ namespace Negocio
 
             try
             {
-                datos.setearConsulta(@"SELECT U.Id, U.Nombre, U.Documento, U.Email, U.Telefono, 
-                                      U.Direccion, U.Localidad, U.Username, U.Activo
-                                      FROM USUARIOS U
-                                      WHERE U.Username = @Username AND U.Password = @Password AND U.Activo = 1");
+                datos.setearConsulta(@"
+                    SELECT U.Id, U.Nombre, U.Documento, U.Email, U.Telefono, 
+                           U.Direccion, U.Localidad, U.Username, U.Activo
+                    FROM USUARIOS U
+                    WHERE U.Username = @Username AND U.Password = @Password");   // 👈 SACAMOS AND U.Activo = 1
 
                 datos.setearParametro("@Username", username);
                 datos.setearParametro("@Password", password);
@@ -175,10 +171,11 @@ namespace Negocio
 
             try
             {
-                datos.setearConsulta(@"SELECT Id, Nombre, Documento, Email, Telefono, 
-                                      Direccion, Localidad, Username, Password, Activo
-                               FROM USUARIOS
-                               WHERE Email = @Email AND Activo = 1");
+                datos.setearConsulta(@"
+                    SELECT Id, Nombre, Documento, Email, Telefono, 
+                           Direccion, Localidad, Username, Password, Activo
+                    FROM USUARIOS
+                    WHERE Email = @Email AND Activo = 1");
 
                 datos.setearParametro("@Email", email);
                 datos.ejecutarLectura();
@@ -238,7 +235,6 @@ namespace Negocio
             }
         }
 
-
         private List<UsuarioRol> ObtenerRolesUsuario(int idUsuario)
         {
             AccesoDatos datos = new AccesoDatos();
@@ -246,10 +242,11 @@ namespace Negocio
 
             try
             {
-                datos.setearConsulta(@"SELECT R.Id, R.Descripcion 
-                                      FROM ROLES R
-                                      INNER JOIN USUARIO_ROLES UR ON R.Id = UR.IdRol
-                                      WHERE UR.IdUsuario = @IdUsuario");
+                datos.setearConsulta(@"
+            SELECT R.Id, R.Descripcion 
+            FROM ROLES R
+            INNER JOIN USUARIO_ROLES UR ON R.Id = UR.IdRol
+            WHERE UR.IdUsuario = @IdUsuario");
 
                 datos.setearParametro("@IdUsuario", idUsuario);
                 datos.ejecutarLectura();
@@ -266,10 +263,6 @@ namespace Negocio
 
                 return roles;
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
             finally
             {
                 datos.CerrarConexion();
@@ -281,14 +274,15 @@ namespace Negocio
             AccesoDatos datos = new AccesoDatos();
             try
             {
-                datos.setearConsulta(@"UPDATE USUARIOS 
-                              SET Nombre = @Nombre, 
-                                  Documento = @Documento, 
-                                  Email = @Email, 
-                                  Telefono = @Telefono, 
-                                  Direccion = @Direccion, 
-                                  Localidad = @Localidad
-                              WHERE Id = @Id");
+                datos.setearConsulta(@"
+                    UPDATE USUARIOS 
+                    SET Nombre = @Nombre, 
+                        Documento = @Documento, 
+                        Email = @Email, 
+                        Telefono = @Telefono, 
+                        Direccion = @Direccion, 
+                        Localidad = @Localidad
+                    WHERE Id = @Id");
 
                 datos.setearParametro("@Nombre", usuario.Nombre);
                 datos.setearParametro("@Documento", usuario.Documento);
@@ -334,6 +328,7 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
         public List<Usuario> ListarUsuarios(string q = null)
         {
             var lista = new List<Usuario>();
@@ -342,23 +337,24 @@ namespace Negocio
             try
             {
                 string query = @"
-                SELECT 
-    U.Id, U.Nombre, U.Documento, U.Email, U.Telefono,
-    U.Direccion, U.Localidad, U.Username, U.Password, U.Activo,
-    R.Id AS IdRol,
-    R.Descripcion AS RolDescripcion
-FROM USUARIOS U
-INNER JOIN USUARIO_ROLES UR ON UR.IdUsuario = U.Id
-INNER JOIN ROLES R ON R.Id = UR.IdRol
-";
+                    SELECT 
+                        U.Id, U.Nombre, U.Documento, U.Email, U.Telefono,
+                        U.Direccion, U.Localidad, U.Username, U.Password, U.Activo,
+                        R.Id AS IdRol,
+                        R.Descripcion AS RolDescripcion
+                    FROM USUARIOS U
+                    INNER JOIN USUARIO_ROLES UR ON UR.IdUsuario = U.Id
+                    INNER JOIN ROLES R ON R.Id = UR.IdRol
+                    WHERE 1 = 1";
 
                 if (!string.IsNullOrWhiteSpace(q))
                 {
-                    query += @" AND (
+                    query += @"
+                        AND (
                             U.Nombre LIKE @q OR 
                             U.Email LIKE @q OR
                             U.Username LIKE @q
-                           )";
+                        )";
                 }
 
                 datos.setearConsulta(query);
@@ -384,13 +380,11 @@ INNER JOIN ROLES R ON R.Id = UR.IdRol
                         Activo = (bool)datos.Lector["Activo"],
                     };
 
-                    // Rol asignado
                     var rol = new UsuarioRol
                     {
                         Id = (int)datos.Lector["IdRol"],
-                        Nombre = (string)datos.Lector["RolDescripcion"] // viene de ROLES.Descripcion
+                        Nombre = (string)datos.Lector["RolDescripcion"]
                     };
-
 
                     u.Roles.Add(rol);
 
@@ -426,6 +420,75 @@ INNER JOIN ROLES R ON R.Id = UR.IdRol
             try
             {
                 datos.setearConsulta("UPDATE USUARIO_ROLES SET IdRol = 2 WHERE IdUsuario = @id");
+                datos.setearParametro("@id", idUsuario);
+                datos.ejecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public Usuario ObtenerUsuarioPorId(int idUsuario)
+        {
+            var datos = new AccesoDatos();
+            Usuario usuario = null;
+
+            try
+            {
+                datos.setearConsulta("SELECT * FROM USUARIOS WHERE Id = @id");
+                datos.setearParametro("@id", idUsuario);
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    usuario = new Usuario
+                    {
+                        Id = (int)datos.Lector["Id"],
+                        Nombre = datos.Lector["Nombre"] as string,
+                        Documento = datos.Lector["Documento"] as string,
+                        Email = datos.Lector["Email"] as string,
+                        Telefono = datos.Lector["Telefono"] as string,
+                        Direccion = datos.Lector["Direccion"] as string,
+                        Localidad = datos.Lector["Localidad"] as string,
+                        Username = datos.Lector["Username"] as string,
+                        Password = datos.Lector["Password"] as string,
+                        Activo = (bool)datos.Lector["Activo"]
+                    };
+                }
+
+                if (usuario != null)
+                    usuario.Roles = ObtenerRolesUsuario(usuario.Id);
+
+                return usuario;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public void DeshabilitarUsuario(int idUsuario)
+        {
+            var datos = new AccesoDatos();
+            try
+            {
+                datos.setearConsulta("UPDATE USUARIOS SET Activo = 0 WHERE Id = @id");
+                datos.setearParametro("@id", idUsuario);
+                datos.ejecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public void HabilitarUsuario(int idUsuario)
+        {
+            var datos = new AccesoDatos();
+            try
+            {
+                datos.setearConsulta("UPDATE USUARIOS SET Activo = 1 WHERE Id = @id");
                 datos.setearParametro("@id", idUsuario);
                 datos.ejecutarAccion();
             }

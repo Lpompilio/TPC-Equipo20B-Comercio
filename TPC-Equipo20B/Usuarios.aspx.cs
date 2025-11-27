@@ -38,25 +38,50 @@ namespace TPC_Equipo20B
 
         protected void gvUsuarios_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            if (e.CommandName == "HacerAdmin" || e.CommandName == "HacerVendedor")
-            {
-                int idActual = Convert.ToInt32(Session["UsuarioId"]);
-                int idUsuario = Convert.ToInt32(e.CommandArgument);
+            if (string.IsNullOrEmpty(e.CommandArgument.ToString()))
+                return;
 
-                // Seguridad extra: no permitir auto-modificarse
-                if (idUsuario == idActual)
+            int idActual = Convert.ToInt32(Session["UsuarioId"]);
+            int idUsuario = Convert.ToInt32(e.CommandArgument);
+
+            // No permitir auto-modificarse
+            if (idUsuario == idActual)
+                return;
+
+            UsuarioNegocio neg = new UsuarioNegocio();
+
+            switch (e.CommandName)
+            {
+                case "CambiarRol":
+                    Usuario u = neg.ObtenerUsuarioPorId(idUsuario);
+                    bool esAdmin = u.Roles.Any(r => r.Id == 1);
+
+                    if (esAdmin)
+                        neg.HacerVendedor(idUsuario);
+                    else
+                        neg.HacerAdmin(idUsuario);
+                    break;
+
+                case "EditarUsuario":
+                    Response.Redirect("EditarUsuario.aspx?id=" + idUsuario, false);
                     return;
 
-                UsuarioNegocio neg = new UsuarioNegocio();
+                case "ToggleActivo":
+                    Usuario usuario = neg.ObtenerUsuarioPorId(idUsuario);
 
-                if (e.CommandName == "HacerAdmin")
-                    neg.HacerAdmin(idUsuario);
-                else
-                    neg.HacerVendedor(idUsuario);
+                    // por seguridad: no permitir deshabilitar admins desde acá
+                    if (usuario.Roles.Any(r => r.Id == 1))
+                        return;
 
-                // Re-bind con el filtro actual (si hubiera)
-                Bind(txtBuscarUsuario.Text.Trim());
+                    if (usuario.Activo)
+                        neg.DeshabilitarUsuario(idUsuario);
+                    else
+                        neg.HabilitarUsuario(idUsuario);
+                    break;
             }
+
+            // Volvemos a bindear respetando el filtro actual
+            Bind(txtBuscarUsuario.Text.Trim());
         }
 
         protected void gvUsuarios_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -65,34 +90,48 @@ namespace TPC_Equipo20B
                 return;
 
             Usuario usuario = (Usuario)e.Row.DataItem;
-            LinkButton btn = (LinkButton)e.Row.FindControl("btnHacerAdmin");
-            if (btn == null)
-                return;
-
             int idActual = Convert.ToInt32(Session["UsuarioId"]);
 
-            // ✅ Opción A: en la fila del usuario logueado NO se muestra el botón
-            if (usuario.Id == idActual)
-            {
-                btn.Visible = false;
-                return;
-            }
+            LinkButton btnCambiarRol = (LinkButton)e.Row.FindControl("btnCambiarRol");
+            LinkButton btnEditar = (LinkButton)e.Row.FindControl("btnEditar");
+            LinkButton btnToggleActivo = (LinkButton)e.Row.FindControl("btnToggleActivo");
 
             bool esAdmin = usuario.Roles.Any(r => r.Id == 1);
 
+            // Si es el usuario logueado → ocultamos todas las acciones
+            if (usuario.Id == idActual)
+            {
+                btnCambiarRol.Visible = false;
+                btnEditar.Visible = false;
+                btnToggleActivo.Visible = false;
+                return;
+            }
+
+            // ---- Botón Cambiar Rol ----
             if (esAdmin)
             {
-                // Ya es admin → permitir pasarlo a vendedor
-                btn.Text = "Hacer Vendedor";
-                btn.CommandName = "HacerVendedor";
-                btn.CssClass = "btn btn-outline-secondary btn-action-sm";
+                btnCambiarRol.Text = "Hacer Vendedor";
+                btnCambiarRol.CssClass = "btn btn-sm btn-user-action btn-role-vendedor";
             }
             else
             {
-                // Es vendedor → permitir hacerlo admin
-                btn.Text = "Hacer Admin";
-                btn.CommandName = "HacerAdmin";
-                btn.CssClass = "btn btn-warning btn-action-sm";
+                btnCambiarRol.Text = "Hacer Admin";
+                btnCambiarRol.CssClass = "btn btn-sm btn-user-action btn-role-admin";
+            }
+
+            // ---- Botón Editar (siempre visible, ya tiene su clase en el .aspx) ----
+            btnEditar.Visible = true;
+
+            // ---- Botón Activar / Desactivar ----
+            if (usuario.Activo)
+            {
+                btnToggleActivo.Text = "Deshabilitar";
+                btnToggleActivo.CssClass = "btn btn-sm btn-user-action btn-disable";
+            }
+            else
+            {
+                btnToggleActivo.Text = "Habilitar";
+                btnToggleActivo.CssClass = "btn btn-sm btn-user-action btn-enable";
             }
         }
     }
