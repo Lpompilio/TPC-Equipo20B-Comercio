@@ -136,5 +136,28 @@ namespace Negocio
 
             EnviarCorreo(usuario.Email, asunto, sb.ToString());
         }
+
+        // ----------------------------------------------------
+        // RECUPERACIÓN DE CONTRASEÑA
+        // ----------------------------------------------------
+        public static void EnviarRecuperacionPassword(Usuario usuario, string nuevaPassword)
+        {
+            if (usuario == null || string.IsNullOrWhiteSpace(usuario.Email))
+                return;
+
+            string asunto = "Restablecimiento de contraseña - Comercio";
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<html><body>");
+            sb.Append("<h2>Hola " + usuario.Nombre + "!</h2>");
+            sb.Append("<p>Recibimos una solicitud para restablecer tu contraseña en el sistema de gestión.</p>");
+            sb.Append("<p>Tu nueva contraseña temporal es: <strong>" + nuevaPassword + "</strong></p>");
+            sb.Append("<p>Por seguridad, te recomendamos cambiarla después de iniciar sesión.</p>");
+            sb.Append("<p>Si no fuiste vos quien solicitó este cambio, por favor contactate con el administrador.</p>");
+            sb.Append("<p>Saludos,<br/>Comercio</p>");
+            sb.Append("</body></html>");
+
+            EnviarCorreo(usuario.Email, asunto, sb.ToString());
+        }
     }
 }

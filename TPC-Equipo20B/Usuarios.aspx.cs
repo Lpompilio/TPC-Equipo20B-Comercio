@@ -1,9 +1,7 @@
 ﻿using Dominio;
 using Negocio;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -40,38 +38,62 @@ namespace TPC_Equipo20B
 
         protected void gvUsuarios_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            if (e.CommandName == "HacerAdmin")
+            if (e.CommandName == "HacerAdmin" || e.CommandName == "HacerVendedor")
             {
-                // Usuario actual desde la sesión
                 int idActual = Convert.ToInt32(Session["UsuarioId"]);
                 int idUsuario = Convert.ToInt32(e.CommandArgument);
 
-                // no permitir auto-modificarse
+                // Seguridad extra: no permitir auto-modificarse
                 if (idUsuario == idActual)
                     return;
 
                 UsuarioNegocio neg = new UsuarioNegocio();
-                neg.HacerAdmin(idUsuario);
 
-                Bind();
+                if (e.CommandName == "HacerAdmin")
+                    neg.HacerAdmin(idUsuario);
+                else
+                    neg.HacerVendedor(idUsuario);
+
+                // Re-bind con el filtro actual (si hubiera)
+                Bind(txtBuscarUsuario.Text.Trim());
             }
         }
 
         protected void gvUsuarios_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (e.Row.RowType == DataControlRowType.DataRow)
+            if (e.Row.RowType != DataControlRowType.DataRow)
+                return;
+
+            Usuario usuario = (Usuario)e.Row.DataItem;
+            LinkButton btn = (LinkButton)e.Row.FindControl("btnHacerAdmin");
+            if (btn == null)
+                return;
+
+            int idActual = Convert.ToInt32(Session["UsuarioId"]);
+
+            // ✅ Opción A: en la fila del usuario logueado NO se muestra el botón
+            if (usuario.Id == idActual)
             {
-                Usuario usuario = (Usuario)e.Row.DataItem;
+                btn.Visible = false;
+                return;
+            }
 
-                bool esAdmin = usuario.Roles.Any(r => r.Id == 1);
+            bool esAdmin = usuario.Roles.Any(r => r.Id == 1);
 
-                LinkButton btn = (LinkButton)e.Row.FindControl("btnHacerAdmin");
-
-                if (esAdmin)
-                    btn.Visible = false; // si ya es admin, ocultamos el botón
+            if (esAdmin)
+            {
+                // Ya es admin → permitir pasarlo a vendedor
+                btn.Text = "Hacer Vendedor";
+                btn.CommandName = "HacerVendedor";
+                btn.CssClass = "btn btn-outline-secondary btn-action-sm";
+            }
+            else
+            {
+                // Es vendedor → permitir hacerlo admin
+                btn.Text = "Hacer Admin";
+                btn.CommandName = "HacerAdmin";
+                btn.CssClass = "btn btn-warning btn-action-sm";
             }
         }
     }
-
-
 }

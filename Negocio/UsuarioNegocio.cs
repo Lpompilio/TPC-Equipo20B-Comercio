@@ -168,6 +168,77 @@ namespace Negocio
             }
         }
 
+        public Usuario ObtenerPorEmail(string email)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            Usuario usuario = null;
+
+            try
+            {
+                datos.setearConsulta(@"SELECT Id, Nombre, Documento, Email, Telefono, 
+                                      Direccion, Localidad, Username, Password, Activo
+                               FROM USUARIOS
+                               WHERE Email = @Email AND Activo = 1");
+
+                datos.setearParametro("@Email", email);
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    usuario = new Usuario
+                    {
+                        Id = (int)datos.Lector["Id"],
+                        Nombre = datos.Lector["Nombre"] as string,
+                        Documento = datos.Lector["Documento"] as string,
+                        Email = datos.Lector["Email"] as string,
+                        Telefono = datos.Lector["Telefono"] as string,
+                        Direccion = datos.Lector["Direccion"] as string,
+                        Localidad = datos.Lector["Localidad"] as string,
+                        Username = datos.Lector["Username"] as string,
+                        Password = datos.Lector["Password"] as string,
+                        Activo = (bool)datos.Lector["Activo"]
+                    };
+
+                    usuario.Roles = ObtenerRolesUsuario(usuario.Id);
+                }
+
+                return usuario;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public bool RestablecerPasswordPorEmail(string email, string nuevaPassword)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta("UPDATE USUARIOS SET Password = @Password WHERE Email = @Email AND Activo = 1");
+                datos.setearParametro("@Password", nuevaPassword);
+                datos.setearParametro("@Email", email);
+
+                datos.ejecutarAccion();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+
         private List<UsuarioRol> ObtenerRolesUsuario(int idUsuario)
         {
             AccesoDatos datos = new AccesoDatos();
@@ -340,6 +411,21 @@ INNER JOIN ROLES R ON R.Id = UR.IdRol
             try
             {
                 datos.setearConsulta("UPDATE USUARIO_ROLES SET IdRol = 1 WHERE IdUsuario = @id");
+                datos.setearParametro("@id", idUsuario);
+                datos.ejecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public void HacerVendedor(int idUsuario)
+        {
+            var datos = new AccesoDatos();
+            try
+            {
+                datos.setearConsulta("UPDATE USUARIO_ROLES SET IdRol = 2 WHERE IdUsuario = @id");
                 datos.setearParametro("@id", idUsuario);
                 datos.ejecutarAccion();
             }

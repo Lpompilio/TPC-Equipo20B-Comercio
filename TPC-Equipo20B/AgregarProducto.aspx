@@ -68,7 +68,8 @@
 
                         <div class="col-md-4">
                             <label for="txtStockActual" class="form-label">Stock Actual</label>
-                            <asp:TextBox ID="txtStockActual" runat="server" CssClass="form-control" ReadOnly="true" Enabled="false" />
+                            <!-- Sin ReadOnly/Enabled aquí: se maneja por código -->
+                            <asp:TextBox ID="txtStockActual" runat="server" CssClass="form-control" />
                         </div>
 
                         <div class="col-md-4">
@@ -94,10 +95,14 @@
                         </div>
                     </div>
 
+                    <!-- Switch de habilitado usando input HTML para que Bootstrap lo estilice bien -->
                     <div class="form-check form-switch mb-3">
-                        <asp:CheckBox ID="chkHabilitado" runat="server" Checked="true" CssClass="form-check-input" />
-                        <label class="form-check-label" for="chkHabilitado">Producto Habilitado</label>
+                        <input id="chkHabilitado" runat="server" type="checkbox" class="form-check-input" checked="checked" />
+                        <label class="form-check-label" for="chkHabilitado">
+                            Producto habilitado
+                        </label>
                     </div>
+
                 </div>
 
                 <div class="col-md-4">

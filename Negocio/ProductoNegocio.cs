@@ -323,6 +323,7 @@ WHERE P.Id = @id");
                     CodigoSKU = @sku,
                     Descripcion = @desc,
                     StockMinimo = @min,
+                    StockActual = @act,
                     PorcentajeGanancia = @gan,
                     Habilitado = @hab,
                     IdCategoria = @idCat,
@@ -333,6 +334,7 @@ WHERE P.Id = @id");
                     datos.setearParametro("@sku", p.CodigoSKU);
                     datos.setearParametro("@desc", p.Descripcion);
                     datos.setearParametro("@min", p.StockMinimo);
+                    datos.setearParametro("@act", p.StockActual);          
                     datos.setearParametro("@gan", p.PorcentajeGanancia);
                     datos.setearParametro("@hab", p.Habilitado);
                     datos.setearParametro("@idCat", p.Categoria.Id);
@@ -346,6 +348,7 @@ WHERE P.Id = @id");
                 datos.CerrarConexion();
             }
         }
+
 
 
         public void Eliminar(int id)

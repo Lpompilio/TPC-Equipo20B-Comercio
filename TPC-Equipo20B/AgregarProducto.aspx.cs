@@ -17,6 +17,19 @@ namespace TPC_Equipo20B
             {
                 CargarCombos();
 
+                bool esAdmin = Session["EsAdmin"] != null && (bool)Session["EsAdmin"];
+
+                if (esAdmin)
+                {
+                    txtStockActual.ReadOnly = false;
+                    txtStockActual.Enabled = true;
+                }
+                else
+                {
+                    txtStockActual.ReadOnly = true;
+                    txtStockActual.Enabled = false;
+                }
+
                 if (Request.QueryString["id"] != null)
                 {
                     idProducto = int.Parse(Request.QueryString["id"]);
@@ -64,7 +77,6 @@ namespace TPC_Equipo20B
                 txtGanancia.Text = producto.PorcentajeGanancia.ToString();
                 chkHabilitado.Checked = producto.Habilitado;
 
-                // SKU existente
                 txtSKU.Text = producto.CodigoSKU;
 
                 if (producto.Marca != null)
@@ -83,9 +95,11 @@ namespace TPC_Equipo20B
                 return;
 
             ProductoNegocio negocio = new ProductoNegocio();
+            bool esAdmin = Session["EsAdmin"] != null && (bool)Session["EsAdmin"];
 
             int stockMin = 0;
             decimal ganancia = 0;
+            decimal stockActual = 0;
 
             int.TryParse(txtStockMinimo.Text, out stockMin);
             decimal.TryParse(txtGanancia.Text, out ganancia);
@@ -99,20 +113,44 @@ namespace TPC_Equipo20B
             if (idCategoria == 0)
                 return;
 
+            // --- Determinar el StockActual según si es alta/edición y si es Admin ---
+            if (ViewState["idProducto"] != null)
+            {
+                int idProd = (int)ViewState["idProducto"];
+
+                // Traemos el producto actual de la BD para no pisar el stock si no es admin
+                Producto actual = negocio.ObtenerPorId(idProd);
+                decimal stockBD = actual != null ? actual.StockActual : 0;
+
+                if (esAdmin)
+                {
+                    decimal.TryParse(txtStockActual.Text, out stockActual);
+                }
+                else
+                {
+                    stockActual = stockBD; // el vendedor NO cambia el stock
+                }
+            }
+            else
+            {
+                if (esAdmin)
+                {
+                    decimal.TryParse(txtStockActual.Text, out stockActual);
+                }
+                else
+                {
+                    stockActual = 0; // alta de producto por vendedor → arranca en 0
+                }
+            }
+
             Producto p = new Producto
             {
                 Descripcion = txtDescripcion.Text.Trim(),
                 CodigoSKU = txtSKU.Text.Trim(),
                 StockMinimo = stockMin,
-                StockActual = 0,
+                StockActual = stockActual,
                 PorcentajeGanancia = ganancia,
-
-                // AHORA: usa Habilitado
                 Habilitado = chkHabilitado.Checked,
-
-                // Activo ya NO se modifica desde el form
-                //Activo = chkActivo.Checked;
-
                 Marca = new Marca { Id = idMarca },
                 Categoria = new Categoria { Id = idCategoria }
             };
