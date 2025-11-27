@@ -55,6 +55,7 @@ namespace TPC_Equipo20B
             lblMetodoPago.Text = venta.MetodoPago ?? "-";
             lblFactura.Text = venta.NumeroFactura ?? "-";
             lblTotal.Text = venta.TotalBD.ToString("C");
+            lblVendedor.Text = venta.Usuario?.Nombre ?? "-";
 
             gvLineas.DataSource = venta.Lineas;
             gvLineas.DataBind();

@@ -28,6 +28,9 @@ namespace TPC_Equipo20B
 
         protected void btnConfirmar_Click(object sender, EventArgs e)
         {
+            if (!Page.IsValid)
+                return;
+
             if (Id == 0) { Volver(); return; }
 
             try

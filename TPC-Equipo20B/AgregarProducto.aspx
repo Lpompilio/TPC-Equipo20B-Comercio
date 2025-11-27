@@ -2,12 +2,12 @@
     AutoEventWireup="true" CodeBehind="AgregarProducto.aspx.cs" Inherits="TPC_Equipo20B.AgregarProducto" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <style>
+    <%--<style>
         .validator {
             color: red;
             font-size: 12px;
         }
-    </style>
+    </style>--%>
 
     <div class="mb-4">
         <h2 id="lblTitulo" runat="server" class="fw-bold">Agregar/Editar Producto</h2>
@@ -22,11 +22,11 @@
                     <!-- Descripción -->
                     <div class="mb-3">
                         <label for="txtDescripcion" class="form-label">Descripción</label>
-                        <asp:TextBox ID="txtDescripcion" runat="server" CssClass="form-control" placeholder="Ej: Agua Purificada 1L" />
-                        <asp:RequiredFieldValidator ErrorMessage="Agregar descripcion" CssClass="validator" ControlToValidate="txtDescripcion" runat="server" />
+                        <asp:TextBox ID="txtDescripcion" runat="server" CssClass="form-control" placeholder="Ej: Producto 1L/1KG" />
+                        <asp:RequiredFieldValidator ErrorMessage="Agregar descripcion" CssClass="text-danger small" ControlToValidate="txtDescripcion" runat="server" />
                     </div>
 
-                    <!-- CÓDIGO SKU (manual) -->
+                    <!-- CÓDIGO SKU -->
                     <div class="mb-3">
                         <label for="txtSKU" class="form-label">Código SKU</label>
                         <asp:TextBox ID="txtSKU" runat="server" CssClass="form-control" placeholder="Ej: SKU00187" />
@@ -35,7 +35,7 @@
                             runat="server"
                             ControlToValidate="txtSKU"
                             ErrorMessage="El código SKU es obligatorio."
-                            CssClass="validator"
+                            CssClass="text-danger small"
                             Display="Dynamic" />
                     </div>
 
@@ -43,7 +43,7 @@
                         <div class="col-md-6">
                             <label for="ddlMarca" class="form-label">Marca</label>
                             <asp:DropDownList ID="ddlMarca" runat="server" CssClass="form-select"></asp:DropDownList>
-                            <asp:RequiredFieldValidator ErrorMessage="Agregar Marca" CssClass="validator" ControlToValidate="ddlMarca" runat="server" InitialValue="0" Display="Dynamic" />
+                            <asp:RequiredFieldValidator ErrorMessage="Agregar Marca" CssClass="text-danger small" ControlToValidate="ddlMarca" runat="server" InitialValue="0" Display="Dynamic" />
                         </div>
 
                         <div class="col-md-6">
@@ -51,7 +51,7 @@
                             <asp:DropDownList ID="ddlCategoria" runat="server" CssClass="form-select"></asp:DropDownList>
                             <asp:RequiredFieldValidator
                                 ErrorMessage="Debe seleccionar una categoría"
-                                CssClass="validator"
+                                CssClass="text-danger small"
                                 ControlToValidate="ddlCategoria"
                                 InitialValue="0"
                                 runat="server"
@@ -63,13 +63,33 @@
                         <div class="col-md-4">
                             <label for="txtStockMinimo" class="form-label">Stock Mínimo</label>
                             <asp:TextBox ID="txtStockMinimo" runat="server" CssClass="form-control" />
-                            <asp:RequiredFieldValidator ErrorMessage="Cargar el Stock Minimo" ControlToValidate="txtStockMinimo" runat="server" CssClass="validator" Display="Dynamic" />
+                            <asp:RequiredFieldValidator ErrorMessage="Cargar el Stock Minimo" ControlToValidate="txtStockMinimo" runat="server" CssClass="text-danger small" Display="Dynamic" />
+                            <asp:RangeValidator
+                                ID="rngStockMin"
+                                runat="server"
+                                ControlToValidate="txtStockMinimo"
+                                MinimumValue="1"
+                                MaximumValue="999999"
+                                Type="Integer"
+                                ErrorMessage="* Debe ser mayor a 0"
+                                CssClass="text-danger small"
+                                Display="Dynamic" />
                         </div>
 
                         <div class="col-md-4">
                             <label for="txtStockActual" class="form-label">Stock Actual</label>
-                            <!-- Sin ReadOnly/Enabled aquí: se maneja por código -->
                             <asp:TextBox ID="txtStockActual" runat="server" CssClass="form-control" />
+                            <asp:RequiredFieldValidator ErrorMessage="Cargar el Stock Actual" ControlToValidate="txtStockActual" runat="server" CssClass="text-danger small" Display="Dynamic" />
+                            <asp:RangeValidator
+                                ID="rngStockActual"
+                                runat="server"
+                                ControlToValidate="txtStockActual"
+                                MinimumValue="0"
+                                MaximumValue="999999"
+                                Type="Integer"
+                                ErrorMessage="* Debe ser 0 o mayor"
+                                CssClass="text-danger small"
+                                Display="Dynamic" />
                         </div>
 
                         <div class="col-md-4">
@@ -81,7 +101,7 @@
                                 runat="server"
                                 ControlToValidate="txtGanancia"
                                 ErrorMessage="El formato debe ser numérico con coma decimal (ej: 150,25)."
-                                CssClass="validator"
+                                CssClass="text-danger small"
                                 Display="Dynamic"
                                 ValidationExpression="^\d+(,\d{1,2})?$" />
 
@@ -90,7 +110,7 @@
                                 runat="server"
                                 ControlToValidate="txtGanancia"
                                 ErrorMessage="El % de ganancia es requerido."
-                                CssClass="validator"
+                                CssClass="text-danger small"
                                 Display="Dynamic" />
                         </div>
                     </div>

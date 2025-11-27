@@ -113,10 +113,13 @@ WHERE 1 = 1
                 C.Id AS IdCliente,
                 C.Nombre AS NombreCliente,
                 C.Email AS EmailCliente,
-                U.Nombre AS NombreUsuarioCancelacion
+                U.Nombre AS NombreUsuarioCancelacion,
+                V.IdUsuario AS IdVendedor,
+                U2.Nombre AS NombreVendedor
             FROM VENTAS V
             INNER JOIN CLIENTES C ON V.IdCliente = C.Id
             LEFT JOIN USUARIOS U ON V.IdUsuarioCancelacion = U.Id
+            LEFT JOIN USUARIOS U2 ON V.IdUsuario = U2.Id 
             WHERE V.Id = @id
         ");
 
@@ -143,6 +146,14 @@ WHERE 1 = 1
                                 ? null
                                 : datos.Lector["EmailCliente"].ToString()
                         },
+                        Usuario = datos.Lector["IdVendedor"] == DBNull.Value
+                            ? null
+                            : new Usuario
+                            {
+                                Id = Convert.ToInt32(datos.Lector["IdVendedor"]),
+                                Nombre = datos.Lector["NombreVendedor"]?.ToString()
+                            },
+
                         Cancelada = datos.Lector["Cancelada"] != DBNull.Value && (bool)datos.Lector["Cancelada"],
                         MotivoCancelacion = datos.Lector["MotivoCancelacion"]?.ToString(),
                         FechaCancelacion = datos.Lector["FechaCancelacion"] == DBNull.Value

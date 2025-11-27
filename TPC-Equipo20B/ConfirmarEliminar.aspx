@@ -17,17 +17,25 @@
                 <div class="mb-3" id="panelMotivo" runat="server" visible="false">
                 <label class="form-label fw-bold">Motivo de cancelación</label>
                 <asp:TextBox ID="txtMotivo" runat="server" CssClass="form-control"></asp:TextBox>
+                <asp:RequiredFieldValidator ID="rfvMotivo" runat="server"
+                    ControlToValidate="txtMotivo"
+                    ErrorMessage="El motivo de cancelación es obligatorio."
+                    CssClass="text-danger"
+                    Display="Dynamic"
+                    ValidationGroup="ConfirmarEliminar" /> 
                 </div>
 
 
                 <div class="d-flex justify-content-center gap-3">
                     <asp:Button ID="btnCancelar" runat="server" Text="Cancelar"
                         CssClass="btn btn-outline-secondary px-4"
+                        CausesValidation="false"
                         OnClick="btnCancelar_Click" />
 
                     <asp:Button ID="btnConfirmar" runat="server" Text="Eliminar"
                         CssClass="btn btn-danger px-4"
-                        OnClick="btnConfirmar_Click" />
+                        OnClick="btnConfirmar_Click" 
+                        ValidationGroup="ConfirmarEliminar" />
                 </div>
             </div>
 

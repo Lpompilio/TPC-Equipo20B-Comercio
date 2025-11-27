@@ -44,7 +44,7 @@
         }
     </style>
 
-    <div class="d-flex justify-content-center align-items-center" style="min-height:80vh;">
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
         <div class="card shadow-lg border-0" style="width: 700px; max-width: 95%;">
 
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
@@ -71,15 +71,23 @@
             </div>
 
             <div runat="server" id="panelCancelada" visible="false"
-                 class="alert alert-danger fw-bold mb-0">
-                <i class="bi bi-x-circle"></i> Esta venta está cancelada.<br />
-                Motivo: <asp:Label ID="lblMotivo" runat="server" /><br />
-                N° Nota de Crédito: <asp:Label ID="lblNC" runat="server" /><br />
-                Fecha: <asp:Label ID="lblFechaCanc" runat="server" /><br />
-                Usuario: <asp:Label ID="lblUsuarioCanc" runat="server" />
+                class="alert alert-danger fw-bold mb-0">
+                <i class="bi bi-x-circle"></i>Esta venta está cancelada.<br />
+                Motivo:
+                <asp:Label ID="lblMotivo" runat="server" /><br />
+                N° Nota de Crédito:
+                <asp:Label ID="lblNC" runat="server" /><br />
+                Fecha:
+                <asp:Label ID="lblFechaCanc" runat="server" /><br />
+                Usuario:
+                <asp:Label ID="lblUsuarioCanc" runat="server" />
             </div>
 
             <div class="card-body">
+                <div class="mb-3">
+                    <strong>Vendedor:</strong>
+                    <asp:Label ID="lblVendedor" runat="server" CssClass="ms-1" />
+                </div>
 
                 <div class="mb-3">
                     <strong>Cliente:</strong>
@@ -109,11 +117,11 @@
                     <Columns>
                         <asp:BoundField DataField="Producto.Descripcion" HeaderText="Producto" />
                         <asp:BoundField DataField="Cantidad" HeaderText="Cantidad"
-                                        DataFormatString="{0:N2}" ItemStyle-HorizontalAlign="Right" />
+                            DataFormatString="{0:N2}" ItemStyle-HorizontalAlign="Right" />
                         <asp:BoundField DataField="PrecioUnitario" HeaderText="Precio Unitario"
-                                        DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" />
+                            DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" />
                         <asp:BoundField DataField="Subtotal" HeaderText="Subtotal"
-                                        DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" />
+                            DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" />
                     </Columns>
                 </asp:GridView>
             </div>
@@ -121,7 +129,7 @@
             <div class="card-footer d-flex justify-content-end bg-light">
                 <h5 class="fw-bold text-end mb-0">Total:
                     <asp:Label ID="lblTotal" runat="server"
-                               CssClass="text-success fw-bold" />
+                        CssClass="text-success fw-bold" />
                 </h5>
             </div>
 
