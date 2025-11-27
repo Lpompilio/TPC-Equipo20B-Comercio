@@ -486,7 +486,7 @@ GO
 -- VENTA 1 — 01/09/2025 — Usuario 2 — Cliente Sofía Benítez
 ---------------------------------------------------------
 INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
-VALUES (2, 4, '2025-09-01', 'A-0001-00002001', 'Efectivo', 0);
+VALUES (2, 4, '2025-09-01', 'R-0001-00002001', 'Efectivo', 0);
 DECLARE @IdVenta101 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario)
 VALUES
@@ -498,7 +498,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad * PrecioUnitario) FROM DETALLE_VE
 -- VENTA 2 — 02/09/2025 — Usuario 3 — Cliente Pablo Ferreira
 ---------------------------------------------------------
 INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
-VALUES (3, 10, '2025-09-02', 'A-0001-00002002', 'Tarjeta', 0);
+VALUES (3, 10, '2025-09-02', 'R-0001-00002002', 'Tarjeta', 0);
 DECLARE @IdVenta102 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario)
 VALUES
@@ -510,7 +510,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad * PrecioUnitario) FROM DETALLE_VE
 -- VENTA 3 — 03/09/2025 — Usuario 4 — Cliente Nicolás Guzmán
 ---------------------------------------------------------
 INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
-VALUES (4, 10, '2025-09-03', 'A-0001-00002003', 'Mercado Pago', 0);
+VALUES (4, 10, '2025-09-03', 'R-0001-00002003', 'Mercado Pago', 0);
 DECLARE @IdVenta103 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario)
 VALUES
@@ -522,7 +522,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad * PrecioUnitario) FROM DETALLE_VE
 -- VENTA 4 — 04/09/2025 — Usuario 2 — Cliente Martín Acosta
 ---------------------------------------------------------
 INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
-VALUES (2, 5, '2025-09-04', 'A-0001-00002004', 'Transferencia', 0);
+VALUES (2, 5, '2025-09-04', 'R-0001-00002004', 'Transferencia', 0);
 DECLARE @IdVenta104 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario)
 VALUES
@@ -534,7 +534,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad * PrecioUnitario) FROM DETALLE_VE
 -- VENTA 5 — 05/09/2025 — Usuario 3 — Cliente Eliana Paredes
 ---------------------------------------------------------
 INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
-VALUES (3, 12, '2025-09-05', 'A-0001-00002005', 'Efectivo', 0);
+VALUES (3, 12, '2025-09-05', 'R-0001-00002005', 'Efectivo', 0);
 DECLARE @IdVenta105 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario)
 VALUES
@@ -546,7 +546,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad * PrecioUnitario) FROM DETALLE_VE
 -- VENTA 6 — 06/09/2025 — Usuario 4 — Cliente Celeste Navarro
 ---------------------------------------------------------
 INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
-VALUES (4, 8, '2025-09-06', 'A-0001-00002006', 'Tarjeta', 0);
+VALUES (4, 8, '2025-09-06', 'R-0001-00002006', 'Tarjeta', 0);
 DECLARE @IdVenta106 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario)
 VALUES
@@ -558,7 +558,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad * PrecioUnitario) FROM DETALLE_VE
 -- VENTA 7 — 07/09/2025 — Usuario 2 — Cliente Laura Martínez
 ---------------------------------------------------------
 INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
-VALUES (2, 4, '2025-09-07', 'A-0001-00002007', 'Efectivo', 0);
+VALUES (2, 4, '2025-09-07', 'R-0001-00002007', 'Efectivo', 0);
 DECLARE @IdVenta107 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario)
 VALUES (@IdVenta107, 1, 1, 5685.66);
@@ -568,7 +568,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad * PrecioUnitario) FROM DETALLE_VE
 -- VENTA 8 — 08/09/2025 — Usuario 3 — Cliente Gabriel Muñoz
 ---------------------------------------------------------
 INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
-VALUES (3, 7, '2025-09-08', 'A-0001-00002008', 'Mercado Pago', 0);
+VALUES (3, 7, '2025-09-08', 'R-0001-00002008', 'Mercado Pago', 0);
 DECLARE @IdVenta108 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario)
 VALUES
@@ -580,7 +580,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad * PrecioUnitario) FROM DETALLE_VE
 -- VENTA 9 — 09/09/2025 — Usuario 4 — Cliente Rodrigo Salas
 ---------------------------------------------------------
 INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
-VALUES (4, 6, '2025-09-09', 'A-0001-00002009', 'Efectivo', 0);
+VALUES (4, 6, '2025-09-09', 'R-0001-00002009', 'Efectivo', 0);
 DECLARE @IdVenta109 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario)
 VALUES
@@ -592,7 +592,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad * PrecioUnitario) FROM DETALLE_VE
 -- VENTA 10 — 10/09/2025 — Usuario 2 — Cliente Valentina Torres
 ---------------------------------------------------------
 INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
-VALUES (2, 6, '2025-09-10', 'A-0001-00002010', 'Transferencia', 0);
+VALUES (2, 6, '2025-09-10', 'R-0001-00002010', 'Transferencia', 0);
 DECLARE @IdVenta110 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario)
 VALUES
@@ -604,7 +604,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad * PrecioUnitario) FROM DETALLE_VE
 -- VENTA 11 — 01/10/2025 — Usuario 2 — Cliente Javier Romero
 ---------------------------------------------------------
 INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
-VALUES (2, 7, '2025-10-01', 'A-0001-00002011', 'Efectivo', 0);
+VALUES (2, 7, '2025-10-01', 'R-0001-00002011', 'Efectivo', 0);
 DECLARE @IdVenta201 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA VALUES
 (@IdVenta201, 12, 1, 1422.30),
@@ -615,7 +615,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad * PrecioUnitario) FROM DETALLE_VE
 -- VENTA 12 — 02/10/2025 — Usuario 3 — Cliente Brenda López
 ---------------------------------------------------------
 INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)
-VALUES (3, 10, '2025-10-02', 'A-0001-00002012', 'Tarjeta', 0);
+VALUES (3, 10, '2025-10-02', 'R-0001-00002012', 'Tarjeta', 0);
 
 DECLARE @IdVenta202 INT = SCOPE_IDENTITY();
 
@@ -631,7 +631,7 @@ WHERE Id = @IdVenta202;
 ---------------------------------------------------------
 -- VENTA 13 — 03/10/2025 — Usuario 4 — Cliente Mariela Campos
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total) VALUES (4, 8, '2025-10-03', 'A-0001-00002013', 'Mercado Pago', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total) VALUES (4, 8, '2025-10-03', 'R-0001-00002013', 'Mercado Pago', 0);
 DECLARE @IdVenta203 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta203, 1, 1, 5685.66),
@@ -641,7 +641,7 @@ UPDATE VENTAS SET Total=(SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENTA 
 --------------------------------------------------- ------
 -- VENTA 14 — 04/10/2025 — Usuario 2 — Cliente Martín Acosta
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (2, 5, '2025-10-04', 'A-0001-00002014', 'Transferencia', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (2, 5, '2025-10-04', 'R-0001-00002014', 'Transferencia', 0);
 DECLARE @IdVenta204 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta204, 176, 1, 8063.67),
@@ -651,7 +651,7 @@ UPDATE VENTAS SET Total=(SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENTA 
 ---------------------------------------------------------
 -- VENTA 15 — 05/10/2025 — Usuario 3 — Cliente Pablo Ferreira
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (3, 10, '2025-10-05', 'A-0001-00002015', 'Efectivo', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (3, 10, '2025-10-05', 'R-0001-00002015', 'Efectivo', 0);
 DECLARE @IdVenta205 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta205, 37, 4, 1157.04),
@@ -661,7 +661,7 @@ UPDATE VENTAS SET Total=(SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENTA 
 ---------------------------------------------------------
 -- VENTA 16 — 06/10/2025 — Usuario 4 — Cliente Celeste Navarro
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (4, 4, '2025-10-06', 'A-0001-00002016', 'Tarjeta', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (4, 4, '2025-10-06', 'R-0001-00002016', 'Tarjeta', 0);
 DECLARE @IdVenta206 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta206, 75, 1, 7156.45),
@@ -671,7 +671,7 @@ UPDATE VENTAS SET Total=(SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENTA 
 ---------------------------------------------------------
 -- VENTA 17 — 07/10/2025 — Usuario 2 — Cliente Sofia Benítez
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (2, 4, '2025-10-07', 'A-0001-00002017', 'Efectivo', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (2, 4, '2025-10-07', 'R-0001-00002017', 'Efectivo', 0);
 DECLARE @IdVenta207 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta207, 1, 1, 5685.66);
@@ -680,7 +680,7 @@ UPDATE VENTAS SET Total=(SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENTA 
 ---------------------------------------------------------
 -- VENTA 18 — 08/10/2025 — Usuario 3 — Cliente Gabriel Muñoz
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (3, 3, '2025-10-08', 'A-0001-00002018', 'Mercado Pago', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (3, 3, '2025-10-08', 'R-0001-00002018', 'Mercado Pago', 0);
 DECLARE @IdVenta208 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta208, 14, 2, 1433.02),
@@ -690,7 +690,7 @@ UPDATE VENTAS SET Total=(SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENTA 
 ---------------------------------------------------------
 -- VENTA 19 — 09/10/2025 — Usuario 4 — Cliente Rodrigo Salas
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (4, 2, '2025-10-09', 'A-0001-00002019', 'Efectivo', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (4, 2, '2025-10-09', 'R-0001-00002019', 'Efectivo', 0);
 DECLARE @IdVenta209 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta209, 60, 1, 4323.77),
@@ -700,7 +700,7 @@ UPDATE VENTAS SET Total=(SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENTA 
 ---------------------------------------------------------
 -- VENTA 20 — 10/10/2025 — Usuario 2 — Cliente Valentina Torres
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (2, 6, '2025-10-10', 'A-0001-00002020', 'Transferencia', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (2, 6, '2025-10-10', 'R-0001-00002020', 'Transferencia', 0);
 DECLARE @IdVenta210 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta210, 19, 1, 1729.81),
@@ -711,7 +711,7 @@ UPDATE VENTAS SET Total=(SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENTA 
 ---------------------------------------------------------
 -- VENTA 21 — 01/11/2025 — Usuario 2 — Cliente Juan Pérez
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (2, 1, '2025-11-01', 'A-0001-00002021', 'Efectivo', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (2, 1, '2025-11-01', 'R-0001-00002021', 'Efectivo', 0);
 DECLARE @IdVenta301 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta301, 12, 2, 1422.30),
@@ -721,7 +721,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENT
 ---------------------------------------------------------
 -- VENTA 22 — 02/11/2025 — Usuario 3 — Cliente Ana García
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (3, 2, '2025-11-02', 'A-0001-00002022', 'Tarjeta', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (3, 2, '2025-11-02', 'R-0001-00002022', 'Tarjeta', 0);
 DECLARE @IdVenta302 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta302, 54, 1, 5971.21),
@@ -731,7 +731,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENT
 ---------------------------------------------------------
 -- VENTA 23 — 03/11/2025 — Usuario 4 — Cliente Carlos López
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (4, 3, '2025-11-03', 'A-0001-00002023', 'Mercado Pago', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (4, 3, '2025-11-03', 'R-0001-00002023', 'Mercado Pago', 0);
 DECLARE @IdVenta303 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta303, 1, 1, 5685.66),
@@ -741,7 +741,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENT
 ---------------------------------------------------------
 -- VENTA 24 — 04/11/2025 — Usuario 2 — Cliente Laura Martínez
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (2, 4, '2025-11-04', 'A-0001-00002024', 'Transferencia', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (2, 4, '2025-11-04', 'R-0001-00002024', 'Transferencia', 0);
 DECLARE @IdVenta304 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta304, 176, 1, 8063.67),
@@ -751,7 +751,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENT
 ---------------------------------------------------------
 -- VENTA 25 — 05/11/2025 — Usuario 3 — Cliente Santiago Ruiz
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (3, 7, '2025-11-05', 'A-0001-00002025', 'Mercado Pago', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (3, 7, '2025-11-05', 'R-0001-00002025', 'Mercado Pago', 0);
 DECLARE @IdVenta305 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta305, 69, 1, 2125.77),
@@ -762,7 +762,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENT
 ---------------------------------------------------------
 -- VENTA 26 — 06/11/2025 — Usuario 4 — Cliente Valentina Torres
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (4, 6, '2025-11-06', 'A-0001-00002026', 'Efectivo', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (4, 6, '2025-11-06', 'R-0001-00002026', 'Efectivo', 0);
 DECLARE @IdVenta306 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta306, 53, 1, 3072.03),
@@ -772,7 +772,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENT
 ---------------------------------------------------------
 -- VENTA 27 — 07/11/2025 — Usuario 2 — Cliente Camila Duarte
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (2, 8, '2025-11-07', 'A-0001-00002027', 'Efectivo', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (2, 8, '2025-11-07', 'R-0001-00002027', 'Efectivo', 0);
 DECLARE @IdVenta307 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta307, 1, 1, 5685.66),
@@ -783,7 +783,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENT
 ---------------------------------------------------------
 -- VENTA 28 — 08/11/2025 — Usuario 3 — Cliente Pedro Sánchez
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (3, 9, '2025-11-08', 'A-0001-00002028', 'Tarjeta', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (3, 9, '2025-11-08', 'R-0001-00002028', 'Tarjeta', 0);
 DECLARE @IdVenta308 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta308, 75, 1, 7156.45),
@@ -793,7 +793,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENT
 ---------------------------------------------------------
 -- VENTA 29 — 09/11/2025 — Usuario 4 — Cliente Rocío Medina
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (4, 10, '2025-11-09', 'A-0001-00002029', 'Efectivo', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (4, 10, '2025-11-09', 'R-0001-00002029', 'Efectivo', 0);
 DECLARE @IdVenta309 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta309, 60, 1, 4323.77),
@@ -804,7 +804,7 @@ UPDATE VENTAS SET Total = (SELECT SUM(Cantidad*PrecioUnitario) FROM DETALLE_VENT
 ---------------------------------------------------------
 -- VENTA 30 — 10/11/2025 — Usuario 2 — Cliente Matías Cabrera
 ---------------------------------------------------------
-INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (2, 5, '2025-11-10', 'A-0001-00002030', 'Transferencia', 0);
+INSERT INTO VENTAS (IdUsuario, IdCliente, Fecha, NumeroFactura, MetodoPago, Total)VALUES (2, 5, '2025-11-10', 'R-0001-00002030', 'Transferencia', 0);
 DECLARE @IdVenta310 INT = SCOPE_IDENTITY();
 INSERT INTO DETALLE_VENTA (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES
 (@IdVenta310, 37, 3, 1157.04),

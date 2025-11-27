@@ -120,7 +120,7 @@ GO
 CREATE TABLE CLIENTES (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
-    Documento VARCHAR(20) NULL UNIQUE,
+    Documento VARCHAR(20) NULL, 
     Email VARCHAR(100) NULL,
     Telefono VARCHAR(50) NULL,
     Direccion VARCHAR(200) NULL,
@@ -133,6 +133,13 @@ CREATE TABLE CLIENTES (
 );
 GO
 
+-- UNIQUE SOLO PARA CLIENTES ACTIVOS
+CREATE UNIQUE INDEX UX_CLIENTES_Documento_Habilitado
+ON CLIENTES (Documento)
+WHERE Habilitado = 1;
+GO
+
+
 
 CREATE TABLE VENTAS (
     Id INT IDENTITY(1,1) PRIMARY KEY,
@@ -140,7 +147,7 @@ CREATE TABLE VENTAS (
     IdCliente INT NOT NULL,
     Fecha DATETIME NOT NULL DEFAULT(GETDATE()),
     NumeroFactura VARCHAR(50) NULL,
-    NumeroNC VARCHAR(50) NULL,           -- NUEVO: Número de Nota de Crédito
+    NumeroNC VARCHAR(50) NULL,           
     MetodoPago VARCHAR(50) NULL,
     Total DECIMAL(18,2) NOT NULL,
 
