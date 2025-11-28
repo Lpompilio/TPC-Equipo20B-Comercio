@@ -79,13 +79,14 @@
 
     <div class="grid">
         <asp:GridView ID="gvProductos" runat="server"
-            CssClass="table table-hover align-middle"
-            AutoGenerateColumns="False"
-            AllowSorting="true"
-            OnSorting="gvProductos_Sorting"
-            DataKeyNames="Id"
-            OnRowCommand="gvProductos_RowCommand"
-            OnRowDataBound="gvProductos_RowDataBound">
+    CssClass="table table-hover align-middle text-center"
+    AutoGenerateColumns="False"
+    AllowSorting="true"
+    OnSorting="gvProductos_Sorting"
+    DataKeyNames="Id"
+    OnRowCommand="gvProductos_RowCommand"
+    OnRowDataBound="gvProductos_RowDataBound">
+
 
             <Columns>
 

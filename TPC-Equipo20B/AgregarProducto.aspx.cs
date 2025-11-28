@@ -95,6 +95,9 @@ namespace TPC_Equipo20B
             if (!Page.IsValid)
                 return;
 
+            // Limpio mensaje de error de SKU (label debajo del textbox)
+            lblErrorSku.Text = string.Empty;
+
             ProductoNegocio negocio = new ProductoNegocio();
             bool esAdmin = Session["EsAdmin"] != null && (bool)Session["EsAdmin"];
 
@@ -150,7 +153,9 @@ namespace TPC_Equipo20B
             Producto p = new Producto
             {
                 Descripcion = txtDescripcion.Text.Trim(),
-                CodigoSKU = txtSKU.Text.Trim(),
+                CodigoSKU = string.IsNullOrWhiteSpace(txtSKU.Text)
+                    ? null                     // SKU opcional
+                    : txtSKU.Text.Trim(),
                 StockMinimo = stockMin,
                 StockActual = stockActual,
                 PorcentajeGanancia = ganancia,
@@ -162,8 +167,23 @@ namespace TPC_Equipo20B
             if (ViewState["idProducto"] != null)
                 p.Id = (int)ViewState["idProducto"];
 
-            // Guardar producto
-            negocio.Guardar(p);
+            // Guardar producto (puede fallar por SKU repetido)
+            try
+            {
+                negocio.Guardar(p);
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("mismo código SKU"))
+                {
+                    lblErrorSku.Text = "Ya existe un producto con ese código SKU. Usá uno distinto o dejá el campo vacío.";
+                    txtSKU.Focus();
+                    return; // NO seguimos, no redirigimos
+                }
+
+                // Si es otro error distinto lo relanzamos
+                throw;
+            }
 
             // Guardar los proveedores asociados
             List<int> proveedoresSeleccionados = new List<int>();
@@ -182,8 +202,10 @@ namespace TPC_Equipo20B
             ProductoNegocio prodNeg = new ProductoNegocio();
             prodNeg.ActualizarProveedoresProducto(p.Id, proveedoresSeleccionados);
 
+            // Si todo salió bien, volvemos al listado
             Response.Redirect("Productos.aspx", false);
         }
+
 
         protected void btnCancelar_Click(object sender, EventArgs e)
         {

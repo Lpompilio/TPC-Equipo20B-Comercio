@@ -257,6 +257,10 @@ WHERE P.Id = @id");
 
         private bool ExisteSku(string sku, int? idProductoExcluir = null)
         {
+            // ⬅️ Si el SKU es nulo o vacío, para nosotros NO existe conflicto
+            if (string.IsNullOrWhiteSpace(sku))
+                return false;
+
             var datos = new AccesoDatos();
 
             try
@@ -285,6 +289,7 @@ WHERE P.Id = @id");
             }
         }
 
+
         public void Guardar(Producto p)
         {
             var datos = new AccesoDatos();
@@ -292,8 +297,11 @@ WHERE P.Id = @id");
             try
             {
                 int? idExcluir = p.Id == 0 ? (int?)null : p.Id;
-                if (ExisteSku(p.CodigoSKU, idExcluir))
-                    throw new Exception("Ya existe un producto con el mismo código SKU.");
+                if (!string.IsNullOrWhiteSpace(p.CodigoSKU))
+                {
+                    if (ExisteSku(p.CodigoSKU, idExcluir))
+                        throw new Exception("Ya existe un producto con el mismo código SKU.");
+                }
 
                 if (p.Id == 0)
                 {

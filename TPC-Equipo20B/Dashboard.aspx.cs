@@ -44,11 +44,15 @@ namespace TPC_Equipo20B
             gvStockBajo.DataSource = stockBajo;
             gvStockBajo.DataBind();
 
-            var listaVentas = ventaNegocio.Listar(null)
-                .Where(v => !v.Cancelada);
+            // ==============================
+            //  Últimas ventas (activas y canceladas)
+            // ==============================
+            System.Collections.Generic.IEnumerable<Dominio.Venta> listaVentas =
+                ventaNegocio.Listar(null); // Traigo todas, activas y canceladas
 
             if (idUsuario.HasValue)
-                listaVentas = listaVentas.Where(v => v.Usuario != null && v.Usuario.Id == idUsuario.Value);
+                listaVentas = listaVentas
+                    .Where(v => v.Usuario != null && v.Usuario.Id == idUsuario.Value);
 
             var ultimas = listaVentas
                 .OrderByDescending(v => v.Fecha)
@@ -60,7 +64,7 @@ namespace TPC_Equipo20B
                     Fecha = v.Fecha.ToString("dd/MM/yyyy"),
                     Total = v.TotalBD,
                     Vendedor = v.Usuario != null ? v.Usuario.Nombre : "",
-                    Estado = v.Cancelada ? "Cancelada" : "Activa"
+                    Cancelada = v.Cancelada
                 })
                 .ToList();
 

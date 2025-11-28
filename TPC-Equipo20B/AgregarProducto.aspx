@@ -22,16 +22,13 @@
 
                     <!-- CÓDIGO SKU -->
                     <div class="mb-3">
-                        <label for="txtSKU" class="form-label">Código SKU</label>
-                        <asp:TextBox ID="txtSKU" runat="server" CssClass="form-control" placeholder="Ej: SKU00187" />
-                        <asp:RequiredFieldValidator
-                            ID="rfvSKU"
-                            runat="server"
-                            ControlToValidate="txtSKU"
-                            ErrorMessage="El código SKU es obligatorio."
-                            CssClass="text-danger small"
-                            Display="Dynamic" />
-                    </div>
+    <label for="txtSKU" class="form-label">Código SKU</label>
+    <asp:TextBox ID="txtSKU" runat="server" CssClass="form-control" placeholder="Ej: SKU00187" />
+    <asp:Label ID="lblErrorSku" runat="server"
+               CssClass="text-danger small"
+               EnableViewState="false" />
+</div>
+
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
