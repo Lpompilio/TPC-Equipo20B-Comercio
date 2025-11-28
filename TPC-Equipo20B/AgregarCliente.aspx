@@ -7,6 +7,11 @@
             color: red;
             font-size: 12px;
         }
+        .validator {
+    display: block;
+    margin-top: 5px;
+}
+
     </style>
     <div class="mb-4">
         <h2 id="lblTitulo" runat="server" class="fw-bold">Agregar Nuevo Cliente</h2>
@@ -102,23 +107,6 @@
                     </asp:DropDownList>
                     <asp:RequiredFieldValidator ErrorMessage="Seleccione condición IVA" CssClass="validator" ControlToValidate="ddlCondicionIVA" runat="server" InitialValue="" />
                 </div>
-
-                <div class="col-md-6 mt-2">
-                    <div class="form-check form-switch">
-                        <!-- Único checkbox real, tipo HtmlInputCheckBox -->
-                        <input id="chkHabilitado" runat="server"
-                            type="checkbox"
-                            class="form-check-input" />
-
-                        <!-- Label asociado, usando el ClientID del checkbox -->
-                        <label class="form-check-label fw-bold"
-                            for="<%= chkHabilitado.ClientID %>">
-                            Cliente habilitado
-                        </label>
-                    </div>
-                </div>
-
-
 
 
             </div>

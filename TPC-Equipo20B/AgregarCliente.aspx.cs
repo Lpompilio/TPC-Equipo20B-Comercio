@@ -45,7 +45,6 @@ namespace TPC_Equipo20B
                 txtDireccion.Text = c.Direccion;
                 txtLocalidad.Text = c.Localidad;
                 ddlCondicionIVA.SelectedValue = c.CondicionIVA;
-                chkHabilitado.Checked = c.Habilitado;
 
                 ViewState["idCliente"] = id;
             }
@@ -67,7 +66,6 @@ namespace TPC_Equipo20B
                 Direccion = txtDireccion.Text.Trim(),
                 Localidad = txtLocalidad.Text.Trim(),
                 CondicionIVA = ddlCondicionIVA.SelectedValue,
-                Habilitado = chkHabilitado.Checked,
                 IdUsuarioAlta = (int)Session["UsuarioId"]
             };
 
