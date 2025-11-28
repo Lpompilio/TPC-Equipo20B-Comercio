@@ -28,13 +28,19 @@ namespace TPC_Equipo20B
             if (!IsPostBack)
             {
                 CargarCombos();
-                txtFecha.Text = DateTime.Now.ToString("dd/MM/yyyy");
+
+                var hoy = DateTime.Today;
+
+                // Para TextMode="Date" el formato correcto es yyyy-MM-dd
+                txtFecha.Text = hoy.ToString("yyyy-MM-dd");
+
+                // No permitir elegir fechas futuras en el datepicker
+                txtFecha.Attributes["max"] = hoy.ToString("yyyy-MM-dd");
+
                 Lineas = new List<CompraLinea>();
                 ActualizarGrid();
             }
         }
-
-
 
         private void CargarCombos()
         {
@@ -118,16 +124,18 @@ namespace TPC_Equipo20B
             // Actualizar el GridView
             ActualizarGrid();
 
+            // Si es la primera línea, bloquear proveedor y fecha
             if (Lineas.Count == 1)
+            {
                 ddlProveedor.Enabled = false;
+                txtFecha.Enabled = false;
+            }
 
             // Limpiar campos
             ddlProducto.SelectedIndex = 0;
             txtCantidad.Text = "";
             txtPrecio.Text = "";
         }
-
-
 
         protected void gvLineas_RowCommand(object sender, GridViewCommandEventArgs e)
         {
@@ -144,11 +152,14 @@ namespace TPC_Equipo20B
                 Lineas.RemoveAt(index);
                 ActualizarGrid();
 
+                // Si ya no quedan líneas, volver a habilitar proveedor y fecha
                 if (Lineas.Count == 0)
+                {
                     ddlProveedor.Enabled = true;
+                    txtFecha.Enabled = true;
+                }
             }
         }
-
 
         private void ActualizarGrid()
         {
@@ -164,32 +175,60 @@ namespace TPC_Equipo20B
 
         protected void btnGuardar_Click(object sender, EventArgs e)
         {
+            lblMensajeFooter.Visible = false;
+            lblMensajeFooter.Text = "";
+
             bool proveedorVacio = ddlProveedor.SelectedValue == "0";
             bool sinProductos = (Lineas == null || Lineas.Count == 0);
 
             if (proveedorVacio || sinProductos)
             {
-
                 lblMensajeFooter.Visible = true;
-                lblMensajeFooter.Text = "Es necesario cargar los datos (Seleccione proveedor y agregue productos)";
+                lblMensajeFooter.Text = "Es necesario seleccionar un proveedor y agregar al menos un producto.";
                 return;
             }
 
-            lblMensajeFooter.Visible = false;
+            // -------- Validación de fecha obligatoria --------
+            if (string.IsNullOrWhiteSpace(txtFecha.Text))
+            {
+                lblMensajeFooter.Visible = true;
+                lblMensajeFooter.Text = "Debe ingresar la fecha de la compra.";
+                return;
+            }
 
+            DateTime fechaCompra;
+            if (!DateTime.TryParse(txtFecha.Text, out fechaCompra))
+            {
+                lblMensajeFooter.Visible = true;
+                lblMensajeFooter.Text = "La fecha de la compra no tiene un formato válido.";
+                return;
+            }
+
+            // -------- No permitir fechas futuras --------
+            if (fechaCompra.Date > DateTime.Today)
+            {
+                lblMensajeFooter.Visible = true;
+                lblMensajeFooter.Text = "La fecha de la compra no puede ser futura.";
+                return;
+            }
+
+            // -------- Crear la compra y guardar --------
             CompraNegocio negocio = new CompraNegocio();
 
-            Session["Usuario"] = new Usuario  // temporal, solo hasta que esté el manejo de usuarios
+            // Usuario temporal mientras no esté el login
+            if (Session["Usuario"] == null)
             {
-                Id = 1,
-                Nombre = "Admin Temporal"
-            };
-
+                Session["Usuario"] = new Usuario
+                {
+                    Id = 1,
+                    Nombre = "Admin Temporal"
+                };
+            }
 
             Compra compra = new Compra
             {
                 Proveedor = new Proveedor { Id = int.Parse(ddlProveedor.SelectedValue) },
-                Fecha = DateTime.Parse(txtFecha.Text),
+                Fecha = fechaCompra,
                 Usuario = (Usuario)Session["Usuario"],
                 Observaciones = txtObservaciones.Text,
                 Lineas = Lineas

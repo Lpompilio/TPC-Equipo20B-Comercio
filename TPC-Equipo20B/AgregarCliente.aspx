@@ -103,10 +103,24 @@
                     <asp:RequiredFieldValidator ErrorMessage="Seleccione condición IVA" CssClass="validator" ControlToValidate="ddlCondicionIVA" runat="server" InitialValue="" />
                 </div>
 
-                <div class="col-md-6 d-flex align-items-center mt-2">
-                    <asp:CheckBox ID="chkHabilitado" runat="server" Checked="true" CssClass="form-check-input me-2" />
-                    <label for="chkHabilitado" class="form-check-label">Cliente habilitado</label>
-                </div>
+                <div class="col-md-6 mt-2">
+    <div class="form-check form-switch">
+        <!-- Único checkbox real, tipo HtmlInputCheckBox -->
+        <input id="chkHabilitado" runat="server"
+               type="checkbox"
+               class="form-check-input" />
+
+        <!-- Label asociado, usando el ClientID del checkbox -->
+        <label class="form-check-label fw-bold"
+               for="<%= chkHabilitado.ClientID %>">
+            Cliente habilitado
+        </label>
+    </div>
+</div>
+
+
+
+
             </div>
         </div>
 

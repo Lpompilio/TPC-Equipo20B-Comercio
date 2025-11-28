@@ -20,15 +20,22 @@ namespace TPC_Equipo20B
                     txtNombre.Text = p.Nombre;
                     txtRazonSocial.Text = p.RazonSocial;
                     txtDocumento.Text = p.Documento;
-                    txtIVA.Text = p.CondicionIVA;
                     txtEmail.Text = p.Email;
                     txtTelefono.Text = p.Telefono;
                     txtDireccion.Text = p.Direccion;
                     txtLocalidad.Text = p.Localidad;
+
+                    var item = ddlIVA.Items.FindByValue(p.CondicionIVA);
+                    if (item != null)
+                        ddlIVA.SelectedValue = p.CondicionIVA;
+                    else
+                        ddlIVA.SelectedIndex = 0;
+
                     lblTitulo.InnerText = "Editar Proveedor";
                 }
             }
         }
+
 
         protected void cvNombreRazon_ServerValidate(object source, ServerValidateEventArgs args)
         {
@@ -62,7 +69,8 @@ namespace TPC_Equipo20B
                     Telefono = txtTelefono.Text,
                     Direccion = txtDireccion.Text,
                     Localidad = txtLocalidad.Text,
-                    CondicionIVA = txtIVA.Text
+                    CondicionIVA = ddlIVA.SelectedValue
+
                 };
 
                 ProveedorNegocio negocio = new ProveedorNegocio();

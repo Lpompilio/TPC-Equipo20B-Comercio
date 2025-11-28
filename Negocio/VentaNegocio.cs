@@ -524,14 +524,33 @@ WHERE 1 = 1
             try
             {
                 string consulta = @"
-                    SELECT COUNT(DISTINCT V.IdCliente)
-                    FROM VENTAS V
-                    WHERE V.Cancelada = 0
-                      AND V.Fecha >= @inicio
-                      AND V.Fecha < @fin";
+            SELECT COUNT(*)
+            FROM CLIENTES C
+            WHERE EXISTS (
+                SELECT 1 
+                FROM VENTAS V
+                WHERE V.IdCliente = C.Id
+                  AND V.Cancelada = 0
+                  AND V.Fecha >= @inicio
+                  AND V.Fecha < @fin";
 
                 if (idUsuario.HasValue)
                     consulta += " AND V.IdUsuario = @idUsuario";
+
+                consulta += @"
+            )
+            AND NOT EXISTS (
+                SELECT 1
+                FROM VENTAS V2
+                WHERE V2.IdCliente = C.Id
+                  AND V2.Cancelada = 0
+                  AND V2.Fecha < @inicio";
+
+                if (idUsuario.HasValue)
+                    consulta += " AND V2.IdUsuario = @idUsuario";
+
+                consulta += @"
+            );";
 
                 DateTime inicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
                 DateTime fin = inicio.AddMonths(1);
@@ -554,6 +573,7 @@ WHERE 1 = 1
                 datos.CerrarConexion();
             }
         }
+
 
         public decimal ObtenerTicketPromedioMes(int? idUsuario)
         {

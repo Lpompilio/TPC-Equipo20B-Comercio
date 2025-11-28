@@ -87,13 +87,13 @@ namespace TPC_Equipo20B
         protected global::System.Web.UI.WebControls.RegularExpressionValidator revDocumento;
 
         /// <summary>
-        /// Control txtIVA.
+        /// Control ddlIVA.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtIVA;
+        protected global::System.Web.UI.WebControls.DropDownList ddlIVA;
 
         /// <summary>
         /// Control rfvIVA.

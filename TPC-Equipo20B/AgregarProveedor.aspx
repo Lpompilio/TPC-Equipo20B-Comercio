@@ -15,7 +15,7 @@
                 args.IsValid = false;
             }
         }
-</script>
+    </script>
 
     <style>
         .error-flotante {
@@ -57,7 +57,7 @@
                         ValidationGroup="GuardarProveedor"
                         CssClass="error-flotante"
                         Display="Dynamic">
-                </asp:CustomValidator>
+                    </asp:CustomValidator>
                 </div>
 
                 <div class="col-md-6">
@@ -80,15 +80,23 @@
 
                 <div class="col-md-6">
                     <label class="form-label">Condición IVA</label>
-                    <asp:TextBox ID="txtIVA" runat="server" CssClass="form-control" placeholder="Ej: Responsable Inscripto" />
+                    <asp:DropDownList ID="ddlIVA" runat="server" CssClass="form-select">
+                        <asp:ListItem Text="Seleccione..." Value=""></asp:ListItem>
+                        <asp:ListItem Text="Responsable Inscripto" Value="Responsable Inscripto"></asp:ListItem>
+                        <asp:ListItem Text="Monotributista" Value="Monotributista"></asp:ListItem>
+                        <asp:ListItem Text="Consumidor Final" Value="Consumidor Final"></asp:ListItem>
+                        <asp:ListItem Text="Exento" Value="Exento"></asp:ListItem>
+                    </asp:DropDownList>
 
                     <asp:RequiredFieldValidator ID="rfvIVA" runat="server"
-                        ControlToValidate="txtIVA"
-                        ErrorMessage="Incluir condicion fiscal"
+                        ControlToValidate="ddlIVA"
+                        InitialValue=""
+                        ErrorMessage="Seleccione condición fiscal"
                         ValidationGroup="GuardarProveedor"
                         CssClass="error-flotante"
                         Display="Dynamic" />
                 </div>
+
 
                 <div class="col-md-6">
                     <label class="form-label">Email</label>
