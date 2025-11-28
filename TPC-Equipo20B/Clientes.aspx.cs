@@ -32,6 +32,18 @@ namespace TPC_Equipo20B
             ClienteNegocio negocio = new ClienteNegocio();
             var lista = negocio.Listar(q);
 
+            bool esAdmin = Session["EsAdmin"] != null && (bool)Session["EsAdmin"];
+            int idUsuarioLogueado = Session["UsuarioId"] != null
+                ? (int)Session["UsuarioId"]
+                : -1;
+
+            if (!esAdmin)
+            {
+                lista = lista
+                    .FindAll(c => c.IdUsuarioAlta == idUsuarioLogueado);
+            }
+
+
             gvClientes.DataSource = lista;
             gvClientes.DataBind();
         }

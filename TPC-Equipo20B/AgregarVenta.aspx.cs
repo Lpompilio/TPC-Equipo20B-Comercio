@@ -46,7 +46,20 @@ namespace TPC_Equipo20B
             ClienteNegocio clienteNeg = new ClienteNegocio();
             ProductoNegocio productoNeg = new ProductoNegocio();
 
-            ddlCliente.DataSource = clienteNeg.Listar();
+            bool esAdmin = Session["EsAdmin"] != null && (bool)Session["EsAdmin"];
+            int idUsuarioLogueado = Session["UsuarioId"] != null ? (int)Session["UsuarioId"] : -1;
+
+            var listaClientes = clienteNeg.Listar();
+
+            if (!esAdmin)
+            {
+                // Solo los clientes creados por el vendedor
+                listaClientes = listaClientes
+                    .Where(c => c.IdUsuarioAlta == idUsuarioLogueado)
+                    .ToList();
+            }
+
+            ddlCliente.DataSource = listaClientes;
             ddlCliente.DataTextField = "Nombre";
             ddlCliente.DataValueField = "Id";
             ddlCliente.DataBind();

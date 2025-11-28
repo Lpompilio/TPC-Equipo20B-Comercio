@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Dominio;
+using Negocio;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Negocio;
-using Dominio;
 
 namespace TPC_Equipo20B
 {
@@ -19,6 +20,19 @@ namespace TPC_Equipo20B
         {
             var negocio = new VentaNegocio();
             List<Venta> lista = negocio.Listar(q);
+            bool esAdmin = Session["EsAdmin"] != null && (bool)Session["EsAdmin"];
+            int idUsuarioLogueado = Session["UsuarioId"] != null
+                ? (int)Session["UsuarioId"]
+                : -1;
+
+            if (!esAdmin)
+            {
+                // Solo ventas generadas por el usuario logueado
+                lista = lista
+                    .Where(v => v.Usuario != null && v.Usuario.Id == idUsuarioLogueado)
+                    .ToList();
+            }
+
             gvVentas.DataSource = lista;
             gvVentas.DataBind();
         }
@@ -51,6 +65,9 @@ namespace TPC_Equipo20B
 
             LinkButton btnCancelar = (LinkButton)e.Row.FindControl("cmdCancelar");
 
+            if (btnCancelar == null)
+                return; // 
+
             // Si ya está cancelada, no mostrar el botón
             if (venta.Cancelada)
             {
@@ -66,9 +83,14 @@ namespace TPC_Equipo20B
                 : -1;
 
             // Vendedor solo cancelar sus ventas
-            if (!esAdmin && venta.Usuario != null && venta.Usuario.Id != idUsuarioLogueado)
+            if (!esAdmin)
             {
-                btnCancelar.Visible = false;
+                int idVendedorDeLaVenta = venta.Usuario != null ? venta.Usuario.Id : -1;
+
+                if (idVendedorDeLaVenta != idUsuarioLogueado)
+                {
+                    btnCancelar.Visible = false;
+                }
             }
         }
 

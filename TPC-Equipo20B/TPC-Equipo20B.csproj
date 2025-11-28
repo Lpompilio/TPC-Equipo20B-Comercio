@@ -81,6 +81,7 @@
     <Content Include="Default.aspx" />
     <Content Include="EditarUsuario.aspx" />
     <Content Include="Global.asax" />
+    <Content Include="logo.png" />
     <Content Include="Marcas.aspx" />
     <Content Include="Perfil.aspx" />
     <Content Include="ProductoEditar.aspx" />

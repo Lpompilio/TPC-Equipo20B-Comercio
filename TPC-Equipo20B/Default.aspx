@@ -83,11 +83,10 @@
         <header class="w-100 header-custom shadow-sm">
             <div class="container py-3">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="text-primary" style="width: 24px; height: 24px;">
-                        <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                            <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
-                        </svg>
-                    </div>
+                    <img src="~/img/logo.png" runat="server"
+                        alt="AGIAPURR"
+                        style="height: 40px; width: auto;" />
+
                     <h2 class="h5 mb-0 fw-bold">AGIAPURR distribuidora</h2>
                 </div>
             </div>
@@ -182,45 +181,45 @@
         document.addEventListener('DOMContentLoaded', function () {
             const toggleButton = document.getElementById('togglePassword');
             const usernameInput = document.getElementById('<%= txtUsername.ClientID %>');
-        const passwordInput = document.getElementById('<%= txtPassword.ClientID %>');
-        const btnLogin       = document.getElementById('<%= btnLogin.ClientID %>');
-        const icon = toggleButton ? toggleButton.querySelector('.material-symbols-outlined') : null;
+            const passwordInput = document.getElementById('<%= txtPassword.ClientID %>');
+            const btnLogin = document.getElementById('<%= btnLogin.ClientID %>');
+            const icon = toggleButton ? toggleButton.querySelector('.material-symbols-outlined') : null;
 
-        // --- FOCO INICIAL ---
-        if (usernameInput) {
-            usernameInput.focus();
-        }
+            // --- FOCO INICIAL ---
+            if (usernameInput) {
+                usernameInput.focus();
+            }
 
-        // Enter en usuario -> pasa a contraseña (no envía el form)
-        if (usernameInput && passwordInput) {
-            usernameInput.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    passwordInput.focus();
-                }
-            });
-        }
+            // Enter en usuario -> pasa a contraseña (no envía el form)
+            if (usernameInput && passwordInput) {
+                usernameInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        passwordInput.focus();
+                    }
+                });
+            }
 
-        // Enter en contraseña -> hace click en Iniciar Sesión
-        if (passwordInput && btnLogin) {
-            passwordInput.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    btnLogin.click();
-                }
-            });
-        }
+            // Enter en contraseña -> hace click en Iniciar Sesión
+            if (passwordInput && btnLogin) {
+                passwordInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        btnLogin.click();
+                    }
+                });
+            }
 
-        // --- Botón mostrar/ocultar contraseña ---
-        if (toggleButton && passwordInput && icon) {
-            toggleButton.addEventListener('click', function () {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
+            // --- Botón mostrar/ocultar contraseña ---
+            if (toggleButton && passwordInput && icon) {
+                toggleButton.addEventListener('click', function () {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
 
-                icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
-            });
-        }
-    });
+                    icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+                });
+            }
+        });
     </script>
 
 </body>
