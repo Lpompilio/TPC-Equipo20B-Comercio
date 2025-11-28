@@ -20,7 +20,7 @@ namespace TPC_Equipo20B
             {
                 txtNombre.Focus();
 
-                // Si hay un id entonces es edición
+               
                 if (Request.QueryString["id"] != null)
                 {
                     idCliente = int.Parse(Request.QueryString["id"]);

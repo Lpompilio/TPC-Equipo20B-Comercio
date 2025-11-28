@@ -31,10 +31,10 @@ namespace TPC_Equipo20B
 
                 var hoy = DateTime.Today;
 
-                // Para TextMode="Date" el formato correcto es yyyy-MM-dd
+              
                 txtFecha.Text = hoy.ToString("yyyy-MM-dd");
 
-                // No permitir elegir fechas futuras en el datepicker
+                
                 txtFecha.Attributes["max"] = hoy.ToString("yyyy-MM-dd");
 
                 Lineas = new List<CompraLinea>();
@@ -44,7 +44,7 @@ namespace TPC_Equipo20B
 
         private void CargarCombos()
         {
-            // Proveedores
+           
             ProveedorNegocio provNeg = new ProveedorNegocio();
             ddlProveedor.DataSource = provNeg.Listar();
             ddlProveedor.DataTextField = "Nombre";
@@ -52,7 +52,7 @@ namespace TPC_Equipo20B
             ddlProveedor.DataBind();
             ddlProveedor.Items.Insert(0, new ListItem("-- Seleccione --", "0"));
 
-            // Productos vacío hasta elegir proveedor
+          
             ddlProducto.Items.Clear();
             ddlProducto.Items.Insert(0, new ListItem("-- Seleccione proveedor --", "0"));
         }
@@ -84,7 +84,7 @@ namespace TPC_Equipo20B
 
         protected void btnAgregarLinea_Click(object sender, EventArgs e)
         {
-            // Validaciones básicas
+            
             if (ddlProducto.SelectedValue == "0" ||
                 string.IsNullOrWhiteSpace(txtCantidad.Text) ||
                 string.IsNullOrWhiteSpace(txtPrecio.Text))
@@ -93,7 +93,7 @@ namespace TPC_Equipo20B
             int idProveedorCompra = int.Parse(ddlProveedor.SelectedValue);
             int idProducto = int.Parse(ddlProducto.SelectedValue);
 
-            // Validación de proveedor del producto
+          
             ProductoNegocio prodNeg = new ProductoNegocio();
             bool pertenece = prodNeg.ProductoPerteneceAProveedor(idProducto, idProveedorCompra);
 
@@ -104,13 +104,13 @@ namespace TPC_Equipo20B
                 return;
             }
 
-            // Ocultar mensaje si venía de antes
+         
             lblError.Visible = false;
 
-            // Obtener producto completo
+       
             Producto prod = prodNeg.ObtenerPorId(idProducto);
 
-            // Crear la línea de compra
+         
             CompraLinea nueva = new CompraLinea
             {
                 Producto = prod,
@@ -118,20 +118,20 @@ namespace TPC_Equipo20B
                 PrecioUnitario = decimal.Parse(txtPrecio.Text)
             };
 
-            // Agregar la línea a la lista en Session
+           
             Lineas.Add(nueva);
 
-            // Actualizar el GridView
+            
             ActualizarGrid();
 
-            // Si es la primera línea, bloquear proveedor y fecha
+            
             if (Lineas.Count == 1)
             {
                 ddlProveedor.Enabled = false;
                 txtFecha.Enabled = false;
             }
 
-            // Limpiar campos
+           
             ddlProducto.SelectedIndex = 0;
             txtCantidad.Text = "";
             txtPrecio.Text = "";
@@ -152,7 +152,7 @@ namespace TPC_Equipo20B
                 Lineas.RemoveAt(index);
                 ActualizarGrid();
 
-                // Si ya no quedan líneas, volver a habilitar proveedor y fecha
+                
                 if (Lineas.Count == 0)
                 {
                     ddlProveedor.Enabled = true;
@@ -188,7 +188,6 @@ namespace TPC_Equipo20B
                 return;
             }
 
-            // -------- Validación de fecha obligatoria --------
             if (string.IsNullOrWhiteSpace(txtFecha.Text))
             {
                 lblMensajeFooter.Visible = true;
@@ -204,7 +203,6 @@ namespace TPC_Equipo20B
                 return;
             }
 
-            // -------- No permitir fechas futuras --------
             if (fechaCompra.Date > DateTime.Today)
             {
                 lblMensajeFooter.Visible = true;
@@ -212,10 +210,8 @@ namespace TPC_Equipo20B
                 return;
             }
 
-            // -------- Crear la compra y guardar --------
             CompraNegocio negocio = new CompraNegocio();
 
-            // Usuario temporal mientras no esté el login
             if (Session["Usuario"] == null)
             {
                 Session["Usuario"] = new Usuario
@@ -236,7 +232,6 @@ namespace TPC_Equipo20B
 
             negocio.Registrar(compra);
 
-            // Limpiar sesión y volver
             Session.Remove("LineasCompra");
             Response.Redirect("Compras.aspx");
         }

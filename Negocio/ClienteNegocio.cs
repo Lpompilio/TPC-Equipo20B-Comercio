@@ -151,7 +151,7 @@ namespace Negocio
 
                 datos.ejecutarAccion();
 
-                // Mail de bienvenida SOLO para clientes nuevos con email
+
                 if (esNuevo && !string.IsNullOrWhiteSpace(c.Email))
                 {
                     EmailService.EnviarBienvenidaCliente(c);

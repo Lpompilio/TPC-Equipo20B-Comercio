@@ -8,14 +8,12 @@ namespace Negocio
 {
     public static class EmailService
     {
-        // TODO: si después querés, sacamos esto a web.config
+
         private const string Remitente = "tpcomercio.equipo20b@gmail.com";
         private const string Clave = "wnutobmznfmnnpog";
         private const string NombreRemitente = "Comercio";
 
-        // ----------------------------------------------------
-        // MÉTODO GENÉRICO
-        // ----------------------------------------------------
+
         public static void EnviarCorreo(string destinatario, string asunto, string cuerpoHtml)
         {
             if (string.IsNullOrWhiteSpace(destinatario))
@@ -38,9 +36,7 @@ namespace Negocio
             }
         }
 
-        // ----------------------------------------------------
-        // FACTURA / NOTA DE CRÉDITO
-        // ----------------------------------------------------
+
         public static void EnviarFactura(Venta venta)
         {
             if (venta == null || venta.Cliente == null || string.IsNullOrEmpty(venta.Cliente.Email))
@@ -95,9 +91,7 @@ namespace Negocio
             EnviarCorreo(venta.Cliente.Email, asunto, sb.ToString());
         }
 
-        // ----------------------------------------------------
-        // BIENVENIDA CLIENTE
-        // ----------------------------------------------------
+
         public static void EnviarBienvenidaCliente(Cliente cliente)
         {
             if (cliente == null || string.IsNullOrWhiteSpace(cliente.Email))
@@ -116,9 +110,6 @@ namespace Negocio
             EnviarCorreo(cliente.Email, asunto, sb.ToString());
         }
 
-        // ----------------------------------------------------
-        // BIENVENIDA USUARIO / VENDEDOR
-        // ----------------------------------------------------
         public static void EnviarBienvenidaUsuario(Usuario usuario)
         {
             if (usuario == null || string.IsNullOrWhiteSpace(usuario.Email))
@@ -137,9 +128,7 @@ namespace Negocio
             EnviarCorreo(usuario.Email, asunto, sb.ToString());
         }
 
-        // ----------------------------------------------------
-        // RECUPERACIÓN DE CONTRASEÑA
-        // ----------------------------------------------------
+ 
         public static void EnviarRecuperacionPassword(Usuario usuario, string nuevaPassword)
         {
             if (usuario == null || string.IsNullOrWhiteSpace(usuario.Email))

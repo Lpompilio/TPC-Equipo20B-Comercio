@@ -349,7 +349,7 @@ WHERE 1 = 1
                 datos.CerrarConexion();
             }
 
-            // ---------- ENVÍO AUTOMÁTICO DE FACTURA (SILENCIOSO) ----------
+            
             try
             {
                 Venta ventaCompleta = ObtenerPorId(idVenta);
@@ -363,7 +363,7 @@ WHERE 1 = 1
             }
             catch
             {
-                // silencioso: NO rompe el registro de venta
+                
             }
         }
 
@@ -426,7 +426,7 @@ WHERE 1 = 1
                 datos.CerrarConexion();
             }
 
-            // ---------- ENVÍO AUTOMÁTICO DE NOTA DE CRÉDITO (SILENCIOSO) ----------
+      
             try
             {
                 Venta ventaCancelada = ObtenerPorId(idVenta);
@@ -435,12 +435,12 @@ WHERE 1 = 1
                     ventaCancelada.Cliente != null &&
                     !string.IsNullOrEmpty(ventaCancelada.Cliente.Email))
                 {
-                    EnviarFacturaPorMail(ventaCancelada); // reutiliza el mismo método
+                    EnviarFacturaPorMail(ventaCancelada); 
                 }
             }
             catch
             {
-                // silencioso: no rompe la cancelación
+                
             }
         }
 
@@ -679,9 +679,7 @@ WHERE 1 = 1
             }
         }
 
-        // ----------------------------------------------------
-        // ENVÍO DE MAIL
-        // ----------------------------------------------------
+      
         public void EnviarFacturaPorMail(Venta venta)
         {
             EmailService.EnviarFactura(venta);

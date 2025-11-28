@@ -20,7 +20,7 @@ namespace Negocio
 
                 if (!string.IsNullOrWhiteSpace(q))
                 {
-                    // si usás Activo, acá sería: " AND Nombre LIKE @q"
+
                     consulta += " AND Nombre LIKE @q";
                 }
 
@@ -104,7 +104,7 @@ namespace Negocio
             }
         }
 
-        // Métodos que usan las páginas
+
         public void Agregar(Marca marca)
         {
             Guardar(marca);

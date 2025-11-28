@@ -74,7 +74,7 @@ namespace Negocio
         }
 
 
-        // 🟢 Listar con búsqueda opcional
+
         public List<Compra> Listar(string q = null)
         {
             List<Compra> lista = new List<Compra>();
@@ -202,7 +202,7 @@ namespace Negocio
 
             try
             {
-                // Traigo las líneas de la compra
+              
                 datos.setearConsulta("SELECT IdProducto, Cantidad FROM COMPRA_LINEAS WHERE IdCompra = @id");
                 datos.setearParametro("@id", idCompra);
                 datos.ejecutarLectura();
@@ -216,10 +216,10 @@ namespace Negocio
 
                 datos.CerrarConexion();
 
-                // Ajustar stock sin dejar valores negativos
+            
                 foreach (var item in lineas)
                 {
-                    // Traigo stock actual
+ 
                     AccesoDatos get = new AccesoDatos();
                     get.setearConsulta("SELECT StockActual FROM PRODUCTOS WHERE Id = @idProd");
                     get.setearParametro("@idProd", item.idProd);
@@ -231,12 +231,12 @@ namespace Negocio
 
                     get.CerrarConexion();
 
-                    // Calculo stock resultante
+                    
                     int nuevoStock = stockActual - item.cant;
                     if (nuevoStock < 0)
-                        nuevoStock = 0;      // evitar negativos
+                        nuevoStock = 0;    
 
-                    // Guardo el nuevo stock
+                    
                     AccesoDatos upd = new AccesoDatos();
                     upd.setearConsulta("UPDATE PRODUCTOS SET StockActual = @stk WHERE Id = @idProd");
                     upd.setearParametro("@stk", nuevoStock);
@@ -245,7 +245,7 @@ namespace Negocio
                     upd.CerrarConexion();
                 }
 
-                // Marcar la compra como cancelada
+               
                 AccesoDatos updCompra = new AccesoDatos();
                 updCompra.setearConsulta(@"
             UPDATE Compras 

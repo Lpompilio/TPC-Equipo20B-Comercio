@@ -12,7 +12,7 @@ namespace Negocio
             AccesoDatos datos = new AccesoDatos();
             try
             {
-                // Validaciones básicas
+
                 if (string.IsNullOrWhiteSpace(nuevoUsuario.Documento))
                     throw new Exception("El documento es obligatorio.");
 
@@ -137,7 +137,7 @@ namespace Negocio
                     SELECT U.Id, U.Nombre, U.Documento, U.Email, U.Telefono, 
                            U.Direccion, U.Localidad, U.Username, U.Activo
                     FROM USUARIOS U
-                    WHERE U.Username = @Username AND U.Password = @Password");   // 👈 SACAMOS AND U.Activo = 1
+                    WHERE U.Username = @Username AND U.Password = @Password");   
 
                 datos.setearParametro("@Username", username);
                 datos.setearParametro("@Password", password);

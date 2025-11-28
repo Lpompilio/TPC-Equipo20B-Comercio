@@ -10,7 +10,7 @@
 
         .error-flotante {
             position: absolute;
-            font-size: 0.8rem; /* Un poco más chico */
+            font-size: 0.8rem; 
             margin-top: 2px;
         }
 
@@ -29,7 +29,6 @@
     <div class="card shadow-sm">
         <div class="card-body">
 
-            <!-- Datos principales -->
             <div class="row g-3 mb-3">
                 <div class="col-md-6">
                     <label for="ddlProveedor" class="form-label">Proveedor</label>
@@ -149,7 +148,6 @@
                 </div>
             </div>
 
-            <!-- Grid con las líneas -->
             <asp:GridView ID="gvLineas" runat="server"
                 AutoGenerateColumns="False"
                 CssClass="table table-sm table-hover"

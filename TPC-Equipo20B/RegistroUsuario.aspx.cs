@@ -13,7 +13,7 @@ namespace TPC_Equipo20B
             {
                 txtNombre.Focus();
             }
-                // Opcional: redirigir si ya está autenticado
+              
                 if (Session["Usuario"] != null)
                 {
                     Response.Redirect("~/Default.aspx");
@@ -29,7 +29,7 @@ namespace TPC_Equipo20B
 
             try
             {
-                // Crear objeto Usuario con los datos del formulario
+                
                 Usuario nuevoUsuario = new Usuario
                 {
                     Nombre = txtNombre.Text.Trim(),
@@ -43,7 +43,7 @@ namespace TPC_Equipo20B
                     Activo = true
                 };
 
-                // Registrar usuario
+                
                 bool registrado = negocio.RegistrarUsuario(nuevoUsuario);
 
                 if (registrado)
@@ -51,7 +51,7 @@ namespace TPC_Equipo20B
                     lblSuccess.Text = "¡Registro exitoso! Redirigiendo al inicio de sesión...";
                     lblError.Text = "";
 
-                    // Redirigir al login después de 2 segundos
+                    
                     Response.AddHeader("REFRESH", "1;URL=Default.aspx");
                 }
             }

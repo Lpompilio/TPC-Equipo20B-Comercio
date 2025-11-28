@@ -42,7 +42,7 @@ namespace TPC_Equipo20B
 
                 if (ok)
                 {
-                    // Enviar correo con la nueva contraseña temporal
+                
                     EmailService.EnviarRecuperacionPassword(usuario, nuevaPassword);
 
                     lblError.Text = "";

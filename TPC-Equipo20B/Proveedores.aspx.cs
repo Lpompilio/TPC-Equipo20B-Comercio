@@ -35,7 +35,6 @@ namespace TPC_Equipo20B
             ProveedorNegocio negocio = new ProveedorNegocio();
             List<Proveedor> lista = negocio.Listar(q);
 
-            // Armamos la columna que mostraba "Nombre (RazonSocial)"
             var listaView = lista.Select(p => new
             {
                 p.Id,

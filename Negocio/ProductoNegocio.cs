@@ -81,7 +81,7 @@ namespace Negocio
 
                 datos.CerrarConexion();
 
-                // 🚀 Cargar el último precio de compra de cada producto
+
                 foreach (var prod in lista)
                 {
                     var datosPrecios = new AccesoDatos();
@@ -257,7 +257,7 @@ WHERE P.Id = @id");
 
         private bool ExisteSku(string sku, int? idProductoExcluir = null)
         {
-            // ⬅️ Si el SKU es nulo o vacío, para nosotros NO existe conflicto
+
             if (string.IsNullOrWhiteSpace(sku))
                 return false;
 

@@ -98,7 +98,7 @@ namespace Negocio
             }
         }
 
-        // Wrapper para mantener compatibilidad con el código de la web
+
         public Proveedor BuscarPorId(int id)
         {
             return ObtenerPorId(id);
@@ -110,7 +110,7 @@ namespace Negocio
 
             try
             {
-                // Busco si existe un proveedor con este CUIT
+            
                 var existente = BuscarPorCuit(p.Documento);
 
                 // Si existe y NO soy yo
@@ -118,12 +118,12 @@ namespace Negocio
                 {
                     if (existente.Activo)
                     {
-                        // Ya existe uno activo, no se puede duplicar
+                       
                         throw new Exception("Ya existe un proveedor activo con este CUIT.");
                     }
                     else
                     {
-                        // Existe pero está INACTIVO, lo IGNORAMOS
+                     
                     }
                 }
 
@@ -138,7 +138,7 @@ namespace Negocio
                 }
                 else
                 {
-                    // Modificación de un proveedor existente
+                    
                     datos.setearConsulta(@"
                 UPDATE PROVEEDORES SET
                     Nombre = @nom,
@@ -154,7 +154,7 @@ namespace Negocio
                     datos.setearParametro("@id", p.Id);
                 }
 
-                // Parámetros comunes
+               
                 datos.setearParametro("@nom", p.Nombre);
                 datos.setearParametro("@razon", p.RazonSocial);
                 datos.setearParametro("@doc", (object)p.Documento ?? DBNull.Value);
