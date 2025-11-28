@@ -27,6 +27,7 @@
         <asp:BoundField DataField="Nombre" HeaderText="Cliente" />
         <asp:BoundField DataField="Documento" HeaderText="Documento" />
         <asp:BoundField DataField="Telefono" HeaderText="Teléfono" />
+        <asp:BoundField DataField="NombreVendedor" HeaderText="Vendedor" />
 <asp:TemplateField HeaderText="Acciones">
   <ItemStyle CssClass="action-col text-center" />
   <ItemTemplate>

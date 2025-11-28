@@ -11,13 +11,14 @@ namespace TPC_Equipo20B
         {
             if (!IsPostBack)
             {
+                txtNombre.Focus();
+            }
                 // Opcional: redirigir si ya está autenticado
                 if (Session["Usuario"] != null)
                 {
                     Response.Redirect("~/Default.aspx");
                 }
             }
-        }
 
         protected void btnRegistrar_Click(object sender, EventArgs e)
         {

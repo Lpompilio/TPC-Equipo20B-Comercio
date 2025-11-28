@@ -31,24 +31,24 @@
                         ValidationExpression="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$" />
                 </div>
 
-<div class="col-md-6">
-    <label for="txtDocumento" class="form-label">Documento / CUIT</label>
-    <asp:TextBox ID="txtDocumento" runat="server" CssClass="form-control" placeholder="Ej: 30123456789" />
+                <div class="col-md-6">
+                    <label for="txtDocumento" class="form-label">Documento / CUIT</label>
+                    <asp:TextBox ID="txtDocumento" runat="server" CssClass="form-control" placeholder="Ej: 30123456789" />
 
-    <asp:RequiredFieldValidator ErrorMessage="Ingrese documento del cliente" ControlToValidate="txtDocumento" runat="server" CssClass="validator" />
+                    <asp:RequiredFieldValidator ErrorMessage="Ingrese documento del cliente" ControlToValidate="txtDocumento" runat="server" CssClass="validator" />
 
-    <asp:RegularExpressionValidator
-        ID="revSoloNumeros"
-        runat="server"
-        ControlToValidate="txtDocumento"
-        ErrorMessage="Este campo solo acepta números."
-        CssClass="validator"
-        Display="Dynamic"
-        ValidationExpression="^\d+$" />
+                    <asp:RegularExpressionValidator
+                        ID="revSoloNumeros"
+                        runat="server"
+                        ControlToValidate="txtDocumento"
+                        ErrorMessage="Este campo solo acepta números."
+                        CssClass="validator"
+                        Display="Dynamic"
+                        ValidationExpression="^\d+$" />
 
-    <asp:Label ID="lblError" runat="server" CssClass="text-danger fw-bold"></asp:Label>
-</div>
-                    
+                    <asp:Label ID="lblError" runat="server" CssClass="text-danger fw-bold"></asp:Label>
+                </div>
+
                 <div class="col-md-6">
                     <label for="txtEmail" class="form-label">Email</label>
                     <asp:TextBox ID="txtEmail" runat="server" TextMode="Email" CssClass="form-control" placeholder="correo@cliente.com" />
@@ -104,19 +104,19 @@
                 </div>
 
                 <div class="col-md-6 mt-2">
-    <div class="form-check form-switch">
-        <!-- Único checkbox real, tipo HtmlInputCheckBox -->
-        <input id="chkHabilitado" runat="server"
-               type="checkbox"
-               class="form-check-input" />
+                    <div class="form-check form-switch">
+                        <!-- Único checkbox real, tipo HtmlInputCheckBox -->
+                        <input id="chkHabilitado" runat="server"
+                            type="checkbox"
+                            class="form-check-input" />
 
-        <!-- Label asociado, usando el ClientID del checkbox -->
-        <label class="form-check-label fw-bold"
-               for="<%= chkHabilitado.ClientID %>">
-            Cliente habilitado
-        </label>
-    </div>
-</div>
+                        <!-- Label asociado, usando el ClientID del checkbox -->
+                        <label class="form-check-label fw-bold"
+                            for="<%= chkHabilitado.ClientID %>">
+                            Cliente habilitado
+                        </label>
+                    </div>
+                </div>
 
 
 

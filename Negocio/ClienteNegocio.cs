@@ -14,22 +14,33 @@ namespace Negocio
             try
             {
                 string consulta = @"
-            SELECT Id, Nombre, Documento, Email, Telefono, Direccion,
-                   Localidad, CondicionIVA, Habilitado, IdUsuarioAlta
-            FROM Clientes
-            WHERE Habilitado = 1";
+            SELECT C.Id, 
+            C.Nombre, 
+            C.Documento, 
+            C.Email, 
+            C.Telefono, 
+            C.Direccion,
+            C.Localidad, 
+            C.CondicionIVA, 
+            C.Habilitado, 
+            C.IdUsuarioAlta,
+            U.Nombre AS NombreVendedor
+            FROM Clientes C
+            INNER JOIN Usuarios U ON C.IdUsuarioAlta = U.Id
+            WHERE C.Habilitado = 1";
 
                 if (!string.IsNullOrWhiteSpace(q))
                 {
                     consulta += @"
-                AND (Nombre LIKE @q 
-                     OR Documento LIKE @q 
-                     OR Email LIKE @q 
-                     OR Telefono LIKE @q 
-                     OR Localidad LIKE @q)";
+            AND (
+               C.Nombre LIKE @q 
+            OR C.Documento LIKE @q 
+            OR C.Email LIKE @q 
+            OR C.Telefono LIKE @q 
+            OR C.Localidad LIKE @q)";
                 }
 
-                consulta += " ORDER BY Nombre";
+                consulta += " ORDER BY C.Nombre";
 
                 datos.setearConsulta(consulta);
 
@@ -53,7 +64,8 @@ namespace Negocio
                         Habilitado = (bool)datos.Lector["Habilitado"],
                         IdUsuarioAlta = datos.Lector["IdUsuarioAlta"] != DBNull.Value
                                         ? Convert.ToInt32(datos.Lector["IdUsuarioAlta"])
-                                        : 0
+                                        : 0,
+                         NombreVendedor = datos.Lector["NombreVendedor"].ToString()
                     };
 
                     lista.Add(c);
