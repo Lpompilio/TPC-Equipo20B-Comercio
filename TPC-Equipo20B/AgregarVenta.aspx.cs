@@ -29,7 +29,17 @@ namespace TPC_Equipo20B
                     CargarVenta(idVenta);
                 }
             }
+            else
+            {
+                // Si ya hay líneas, bloquear cliente y método de pago
+                if (Lineas.Count > 0)
+                {
+                    ddlCliente.Enabled = false;
+                    ddlMetodoPago.Enabled = false;
+                }
+            }
         }
+
 
         private void CargarCombos()
         {
@@ -130,6 +140,10 @@ namespace TPC_Equipo20B
             };
 
             Lineas.Add(nueva);
+            //Bloquear cliente y método de pago una vez agregada la primera línea
+            ddlCliente.Enabled = false;
+            ddlMetodoPago.Enabled = false;
+
             gvLineas.DataSource = Lineas;
             gvLineas.DataBind();
             ActualizarTotal();
@@ -146,12 +160,21 @@ namespace TPC_Equipo20B
             if (e.CommandName == "Eliminar")
             {
                 int index = Convert.ToInt32(e.CommandArgument);
+
                 Lineas.RemoveAt(index);
+
                 gvLineas.DataSource = Lineas;
                 gvLineas.DataBind();
                 ActualizarTotal();
+
+                if (Lineas.Count == 0)
+                {
+                    ddlCliente.Enabled = true;
+                    ddlMetodoPago.Enabled = true;
+                }
             }
         }
+
 
         private void ActualizarTotal()
         {
