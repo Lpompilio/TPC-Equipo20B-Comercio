@@ -25,9 +25,11 @@
     </div>
 
     <asp:GridView ID="gvVentas" runat="server" AutoGenerateColumns="False"
-        CssClass="table table-hover align-middle" DataKeyNames="Id"
-        OnRowCommand="gvVentas_RowCommand"
-        OnRowDataBound="gvVentas_RowDataBound">
+    CssClass="table table-hover align-middle text-center" 
+    DataKeyNames="Id"
+    OnRowCommand="gvVentas_RowCommand"
+    OnRowDataBound="gvVentas_RowDataBound">
+
 
         <Columns>
 
