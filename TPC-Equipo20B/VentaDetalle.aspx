@@ -30,6 +30,7 @@
             .card {
                 box-shadow: none !important;
                 border: 1px solid #000 !important;
+                width: 100% !important; /* ocupa todo el ancho al imprimir */
             }
 
             .card-header {
@@ -41,11 +42,56 @@
             .alert {
                 border: 1px solid #000 !important;
             }
+
+            /* Centrado para impresión + tamaño de fuente un poco mayor */
+            #MainContent_gvLineas {
+                width: 100% !important;
+            }
+
+            #MainContent_gvLineas th,
+            #MainContent_gvLineas td {
+                text-align: center !important;
+                font-size: 1.05rem !important;
+                padding: 8px 12px !important;
+            }
+
+            /* Primera columna (Producto) más ancha y a la izquierda */
+            #MainContent_gvLineas th:first-child,
+            #MainContent_gvLineas td:first-child {
+                text-align: left !important;
+                width: 60% !important;
+            }
+        }
+
+        /* 📦 Remito más grande en pantalla */
+        .card-remito {
+            width: 900px !important;     /* antes 700px */
+            max-width: 98% !important;
+        }
+
+        /* La tabla usa todo el ancho disponible */
+        #MainContent_gvLineas {
+            width: 100% !important;
+        }
+
+        /* ⭐ Centrar todas las columnas del Grid + mejorar legibilidad */
+        #MainContent_gvLineas th,
+        #MainContent_gvLineas td {
+            text-align: center !important;
+            font-size: 1rem !important;
+            padding: 8px 12px !important;
+        }
+
+        /* 📌 Dejar la primera columna (Producto) más ancha y alineada a la izquierda */
+        #MainContent_gvLineas th:first-child,
+        #MainContent_gvLineas td:first-child {
+            text-align: left !important;
+            width: 55% !important;
         }
     </style>
 
     <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-        <div class="card shadow-lg border-0" style="width: 700px; max-width: 95%;">
+        <div class="card shadow-lg border-0 card-remito">
 
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">
@@ -110,18 +156,28 @@
                 </div>
             </div>
 
+            <!-- 🟦 TABLA DE PRODUCTOS -->
             <div class="table-responsive px-3">
                 <asp:GridView ID="gvLineas" runat="server" AutoGenerateColumns="False"
                     CssClass="table table-sm table-striped align-middle mb-0">
                     <HeaderStyle CssClass="table-primary" />
                     <Columns>
-                        <asp:BoundField DataField="Producto.Descripcion" HeaderText="Producto" />
+
+                        <asp:TemplateField HeaderText="Producto">
+                            <ItemTemplate>
+                                <%# Eval("Producto.Descripcion") %>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
                         <asp:BoundField DataField="Cantidad" HeaderText="Cantidad"
-                            DataFormatString="{0:N2}" ItemStyle-HorizontalAlign="Right" />
+                            DataFormatString="{0:N2}" />
+
                         <asp:BoundField DataField="PrecioUnitario" HeaderText="Precio Unitario"
-                            DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" />
+                            DataFormatString="{0:C}" />
+
                         <asp:BoundField DataField="Subtotal" HeaderText="Subtotal"
-                            DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" />
+                            DataFormatString="{0:C}" />
+
                     </Columns>
                 </asp:GridView>
             </div>
