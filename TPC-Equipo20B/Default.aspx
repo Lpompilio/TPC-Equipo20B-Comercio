@@ -181,18 +181,47 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const toggleButton = document.getElementById('togglePassword');
-            const passwordInput = document.getElementById('<%= txtPassword.ClientID %>');
-            const icon = toggleButton.querySelector('.material-symbols-outlined');
+            const usernameInput = document.getElementById('<%= txtUsername.ClientID %>');
+        const passwordInput = document.getElementById('<%= txtPassword.ClientID %>');
+        const btnLogin       = document.getElementById('<%= btnLogin.ClientID %>');
+        const icon = toggleButton ? toggleButton.querySelector('.material-symbols-outlined') : null;
 
-            if (toggleButton && passwordInput) {
-                toggleButton.addEventListener('click', function () {
-                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                    passwordInput.setAttribute('type', type);
+        // --- FOCO INICIAL ---
+        if (usernameInput) {
+            usernameInput.focus();
+        }
 
-                    icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
-                });
-            }
-        });
+        // Enter en usuario -> pasa a contraseña (no envía el form)
+        if (usernameInput && passwordInput) {
+            usernameInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    passwordInput.focus();
+                }
+            });
+        }
+
+        // Enter en contraseña -> hace click en Iniciar Sesión
+        if (passwordInput && btnLogin) {
+            passwordInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    btnLogin.click();
+                }
+            });
+        }
+
+        // --- Botón mostrar/ocultar contraseña ---
+        if (toggleButton && passwordInput && icon) {
+            toggleButton.addEventListener('click', function () {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+
+                icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+            });
+        }
+    });
     </script>
+
 </body>
 </html>

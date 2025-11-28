@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Dominio;
@@ -97,12 +98,15 @@ namespace TPC_Equipo20B
             ProductoNegocio negocio = new ProductoNegocio();
             bool esAdmin = Session["EsAdmin"] != null && (bool)Session["EsAdmin"];
 
-            int stockMin = 0;
+            decimal stockMin = 0;
             decimal ganancia = 0;
             decimal stockActual = 0;
 
-            int.TryParse(txtStockMinimo.Text, out stockMin);
-            decimal.TryParse(txtGanancia.Text, out ganancia);
+            // Usamos la cultura actual para interpretar la coma como separador decimal
+            var culture = CultureInfo.CurrentCulture;
+
+            decimal.TryParse(txtStockMinimo.Text, NumberStyles.Any, culture, out stockMin);
+            decimal.TryParse(txtGanancia.Text, NumberStyles.Any, culture, out ganancia);
 
             int idMarca = 0;
             int.TryParse(ddlMarca.SelectedValue, out idMarca);
@@ -124,7 +128,7 @@ namespace TPC_Equipo20B
 
                 if (esAdmin)
                 {
-                    decimal.TryParse(txtStockActual.Text, out stockActual);
+                    decimal.TryParse(txtStockActual.Text, NumberStyles.Any, culture, out stockActual);
                 }
                 else
                 {
@@ -135,7 +139,7 @@ namespace TPC_Equipo20B
             {
                 if (esAdmin)
                 {
-                    decimal.TryParse(txtStockActual.Text, out stockActual);
+                    decimal.TryParse(txtStockActual.Text, NumberStyles.Any, culture, out stockActual);
                 }
                 else
                 {

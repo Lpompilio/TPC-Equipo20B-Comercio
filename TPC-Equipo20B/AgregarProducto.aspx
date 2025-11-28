@@ -2,12 +2,6 @@
     AutoEventWireup="true" CodeBehind="AgregarProducto.aspx.cs" Inherits="TPC_Equipo20B.AgregarProducto" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <%--<style>
-        .validator {
-            color: red;
-            font-size: 12px;
-        }
-    </style>--%>
 
     <div class="mb-4">
         <h2 id="lblTitulo" runat="server" class="fw-bold">Agregar/Editar Producto</h2>
@@ -60,38 +54,63 @@
                     </div>
 
                     <div class="row g-3 mb-3">
+
+                        <!-- STOCK MÍNIMO -->
                         <div class="col-md-4">
                             <label for="txtStockMinimo" class="form-label">Stock Mínimo</label>
                             <asp:TextBox ID="txtStockMinimo" runat="server" CssClass="form-control" />
                             <asp:RequiredFieldValidator ErrorMessage="Cargar el Stock Minimo" ControlToValidate="txtStockMinimo" runat="server" CssClass="text-danger small" Display="Dynamic" />
+
+                            <!-- Solo números con coma opcional -->
+                            <asp:RegularExpressionValidator
+                                ID="revStockMin"
+                                runat="server"
+                                ControlToValidate="txtStockMinimo"
+                                ValidationExpression="^\d+(,\d{1,2})?$"
+                                ErrorMessage="Formato inválido. Ej: 10 o 10,50"
+                                CssClass="text-danger small"
+                                Display="Dynamic" />
+
                             <asp:RangeValidator
                                 ID="rngStockMin"
                                 runat="server"
                                 ControlToValidate="txtStockMinimo"
-                                MinimumValue="1"
+                                MinimumValue="0,01"
                                 MaximumValue="999999"
-                                Type="Integer"
+                                Type="Double"
                                 ErrorMessage="* Debe ser mayor a 0"
                                 CssClass="text-danger small"
                                 Display="Dynamic" />
                         </div>
 
+                        <!-- STOCK ACTUAL -->
                         <div class="col-md-4">
                             <label for="txtStockActual" class="form-label">Stock Actual</label>
                             <asp:TextBox ID="txtStockActual" runat="server" CssClass="form-control" />
                             <asp:RequiredFieldValidator ErrorMessage="Cargar el Stock Actual" ControlToValidate="txtStockActual" runat="server" CssClass="text-danger small" Display="Dynamic" />
+
+                            <asp:RegularExpressionValidator
+                                ID="revStockActual"
+                                runat="server"
+                                ControlToValidate="txtStockActual"
+                                ValidationExpression="^\d+(,\d{1,2})?$"
+                                ErrorMessage="Formato inválido. Ej: 0 o 0,75"
+                                CssClass="text-danger small"
+                                Display="Dynamic" />
+
                             <asp:RangeValidator
                                 ID="rngStockActual"
                                 runat="server"
                                 ControlToValidate="txtStockActual"
                                 MinimumValue="0"
                                 MaximumValue="999999"
-                                Type="Integer"
+                                Type="Double"
                                 ErrorMessage="* Debe ser 0 o mayor"
                                 CssClass="text-danger small"
                                 Display="Dynamic" />
                         </div>
 
+                        <!-- % GANANCIA -->
                         <div class="col-md-4">
                             <label for="txtGanancia" class="form-label">% Ganancia</label>
                             <asp:TextBox ID="txtGanancia" runat="server" CssClass="form-control" />
@@ -167,4 +186,50 @@
                 OnClick="btnGuardar_Click" />
         </div>
     </div>
+
+    <!-- Script para avanzar el foco con Enter -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const campos = [
+                '<%= txtDescripcion.ClientID %>',
+                '<%= txtSKU.ClientID %>',
+                '<%= ddlMarca.ClientID %>',
+                '<%= ddlCategoria.ClientID %>',
+                '<%= txtStockMinimo.ClientID %>',
+                '<%= txtStockActual.ClientID %>',
+                '<%= txtGanancia.ClientID %>'
+            ];
+
+            const btnGuardar = document.getElementById('<%= btnGuardar.ClientID %>');
+
+            // Foco inicial en Descripción
+            const primero = document.getElementById('<%= txtDescripcion.ClientID %>');
+            if (primero) primero.focus();
+
+            // Recorremos los campos para asignar evento Enter
+            campos.forEach((id, index) => {
+                const input = document.getElementById(id);
+                if (!input) return;
+
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+
+                        const siguienteId = campos[index + 1];
+                        const siguiente = siguienteId ? document.getElementById(siguienteId) : null;
+
+                        // Si hay siguiente → focusear
+                        if (siguiente) {
+                            siguiente.focus();
+                        } else {
+                            // Último → click en Guardar
+                            if (btnGuardar) btnGuardar.click();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
 </asp:Content>

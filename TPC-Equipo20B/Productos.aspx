@@ -42,15 +42,19 @@
     <% } %>
 </div>
 
-<div class="form-check mb-3">
-    <asp:CheckBox ID="chkSoloHabilitados" runat="server"
-        CssClass="form-check-input"
-        AutoPostBack="true"
-        OnCheckedChanged="chkSoloHabilitados_CheckedChanged" />
-    <label class="form-check-label" for="chkSoloHabilitados">
+<div class="form-check form-switch mb-3">
+    <input id="chkSoloHabilitados" runat="server"
+           type="checkbox"
+           class="form-check-input"
+           onchange="this.form.submit();"
+           onserverchange="chkSoloHabilitados_CheckedChanged" />
+
+    <label class="form-check-label fw-bold"
+           for="<%= chkSoloHabilitados.ClientID %>">
         Mostrar solo habilitados
     </label>
 </div>
+
 
 <!-- Panel de búsqueda -->
 <asp:Panel ID="pnlBusquedaProductos" runat="server" DefaultButton="btnBuscarProducto">
