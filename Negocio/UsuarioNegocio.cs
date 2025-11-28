@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Dominio;
+using System;
 using System.Collections.Generic;
-using Dominio;
+using System.Data.SqlClient;
 
 namespace Negocio
 {
@@ -11,16 +12,24 @@ namespace Negocio
             AccesoDatos datos = new AccesoDatos();
             try
             {
+                // Validaciones básicas
+                if (string.IsNullOrWhiteSpace(nuevoUsuario.Documento))
+                    throw new Exception("El documento es obligatorio.");
+
+                if (ExisteDocumento(nuevoUsuario.Documento))
+                    throw new Exception("El documento ya está registrado.");
+
                 if (ExisteUsername(nuevoUsuario.Username))
-                    throw new Exception("El nombre de usuario ya está en uso");
+                    throw new Exception("El nombre de usuario ya está en uso.");
 
                 if (ExisteEmail(nuevoUsuario.Email))
-                    throw new Exception("El correo electrónico ya está registrado");
+                    throw new Exception("El correo electrónico ya está registrado.");
 
                 datos.setearConsulta(@"
-                    INSERT INTO USUARIOS (Nombre, Documento, Email, Telefono, Direccion, Localidad, Username, Password, Activo) 
-                    VALUES (@Nombre, @Documento, @Email, @Telefono, @Direccion, @Localidad, @Username, @Password, @Activo);
-                    SELECT SCOPE_IDENTITY();");
+            INSERT INTO USUARIOS (Nombre, Documento, Email, Telefono, Direccion, Localidad, Username, Password, Activo) 
+            VALUES (@Nombre, @Documento, @Email, @Telefono, @Direccion, @Localidad, @Username, @Password, @Activo);
+            SELECT SCOPE_IDENTITY();
+        ");
 
                 datos.setearParametro("@Nombre", nuevoUsuario.Nombre);
                 datos.setearParametro("@Documento", nuevoUsuario.Documento);
@@ -34,24 +43,26 @@ namespace Negocio
 
                 int idUsuario = Convert.ToInt32(datos.EjecutarScalar());
 
-                // Asignar rol de Vendedor (Id = 2)
                 AsignarRol(idUsuario, 2);
 
-                // Mail de bienvenida si tiene email
                 if (!string.IsNullOrWhiteSpace(nuevoUsuario.Email))
                     EmailService.EnviarBienvenidaUsuario(nuevoUsuario);
 
                 return true;
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
-                throw ex;
+                if (ex.Number == 2601 || ex.Number == 2627)
+                    throw new Exception("El documento ingresado ya está asociado a otro usuario.");
+
+                throw;
             }
             finally
             {
                 datos.CerrarConexion();
             }
         }
+
 
         public bool ExisteUsername(string username)
         {
@@ -497,5 +508,24 @@ namespace Negocio
                 datos.CerrarConexion();
             }
         }
+
+        public bool ExisteDocumento(string documento)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta("SELECT COUNT(*) FROM USUARIOS WHERE Documento = @doc");
+                datos.setearParametro("@doc", documento);
+
+                int count = (int)datos.EjecutarScalar();
+                return count > 0;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
     }
 }
